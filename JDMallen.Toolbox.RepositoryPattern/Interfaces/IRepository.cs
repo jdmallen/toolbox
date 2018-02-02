@@ -1,4 +1,4 @@
-﻿namespace JDMallen.RepositoryPattern.Interfaces
+﻿namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 {
     public interface IRepository
     {

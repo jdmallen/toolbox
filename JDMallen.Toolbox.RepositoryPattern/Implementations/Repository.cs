@@ -1,4 +1,4 @@
-﻿namespace JDMallen.RepositoryPattern.Implementations
+﻿namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 {
     public class Repository
     {

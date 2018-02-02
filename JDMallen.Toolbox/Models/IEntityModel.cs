@@ -1,4 +1,4 @@
-﻿namespace JDMallen.RepositoryPattern.Models
+﻿namespace JDMallen.Toolbox.Models
 {
     public interface IEntityModel
     {

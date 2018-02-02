@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace JDMallen.RepositoryPattern.Models
+namespace JDMallen.Toolbox.Models
 {
     public interface IQueryParameters
     {

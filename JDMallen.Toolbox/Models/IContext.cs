@@ -1,4 +1,4 @@
-﻿namespace JDMallen.RepositoryPattern.DataContexts
+﻿namespace JDMallen.Toolbox.Models
 {
     public interface IContext
     {
