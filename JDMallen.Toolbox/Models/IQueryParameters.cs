@@ -28,5 +28,4 @@ namespace JDMallen.Toolbox.Models
 
 		IEnumerable<TId> Ids { get; set; }
 	}
-
 }
