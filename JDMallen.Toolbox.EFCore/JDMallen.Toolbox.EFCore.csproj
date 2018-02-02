@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>JDMallen.Toolbox.EFCore</AssemblyName>
+    <RootNamespace>JDMallen.Toolbox.EFCore</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj" />
+  </ItemGroup>
+
+</Project>
