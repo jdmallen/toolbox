@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using JDMallen.Toolbox.EFCore.Models;
 using JDMallen.Toolbox.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +29,17 @@ namespace JDMallen.Toolbox.EFCore.Config
 
 					modelBuilder.Model.AddEntityType(type);
 				});
+
+			GetType()
+				.Assembly
+				.DefinedTypes
+				.Where(type => typeof(IComplexEntityModel).IsAssignableFrom(type)
+				               && !type.IsAbstract
+				               && !type.IsInterface)
+				.Select(Activator.CreateInstance)
+				.Cast<IComplexEntityModel>()
+				.ToList()
+				.ForEach(model => model.OnModelCreating(modelBuilder));
 		}
 
 		public Task<int> SaveAllChanges(CancellationToken cancellationToken = default(CancellationToken))
