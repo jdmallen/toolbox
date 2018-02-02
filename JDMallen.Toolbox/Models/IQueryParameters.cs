@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace JDMallen.Toolbox.Models
 {
+	/// <summary>
+	/// A set of parameters a user may set in order query a set of entities.
+	/// </summary>
     public interface IQueryParameters
     {
 	    bool IncludeNestedEntities { get; set; }
@@ -22,6 +25,10 @@ namespace JDMallen.Toolbox.Models
 		string SortDirection { get; set; }
     }
 
+	/// <inheritdoc />
+	/// <summary>
+	/// </summary>
+	/// <typeparam name="TId">The type of the primary key to search.</typeparam>
 	public interface IQueryParameters<TId> : IQueryParameters
 	{
 		TId Id { get; set; }

@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace JDMallen.Toolbox.Models
 {
+	/// <inheritdoc />
+	/// <summary>
+	/// By default, <see cref="IncludeNestedEntities"/> and <see cref="TrackEntities"/> are false.
+	/// </summary>
+	/// <typeparam name="TId"></typeparam>
 	public abstract class QueryParameters<TId> : IQueryParameters<TId>
 	{
 		protected QueryParameters()
@@ -10,9 +15,9 @@ namespace JDMallen.Toolbox.Models
 			Ids = new List<TId>();
 		}
 
-		public bool IncludeNestedEntities { get; set; }
+		public bool IncludeNestedEntities { get; set; } = false;
 
-		public bool TrackEntities { get; set; }
+		public bool TrackEntities { get; set; } = false;
 
 		public DateTime? DateCreated { get; set; }
 

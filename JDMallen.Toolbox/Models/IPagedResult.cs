@@ -2,6 +2,10 @@
 
 namespace JDMallen.Toolbox.Models
 {
+	/// <summary>
+	/// Represents a result that has been divided into pages for ease of displaying to end users.
+	/// </summary>
+	/// <typeparam name="TModel"></typeparam>
 	public interface IPagedResult<TModel> where TModel : IModel
 	{
 		int Skipped { get; set; }

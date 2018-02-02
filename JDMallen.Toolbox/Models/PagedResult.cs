@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace JDMallen.Toolbox.Models
 {
+	/// <inheritdoc />
+	/// <summary>
+	/// <see cref="PageIndex"/> and <see cref="TotalPageCount"/> are calculated values.
+	/// </summary>
+	/// <typeparam name="TModel"></typeparam>
 	public class PagedResult<TModel> : IPagedResult<TModel>
 		where TModel : class, IModel
 	{
