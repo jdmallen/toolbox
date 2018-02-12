@@ -1,7 +1,7 @@
 ﻿using JDMallen.Toolbox.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JDMallen.Toolbox.EFCore.Models
+namespace JDMallen.Toolbox.Infrastructure.EFCore.Models
 {
 	/// <inheritdoc />
 	/// <summary>

@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Implementations\Repository.Map.cs" />
+    <None Include="Implementations\Repository.Read.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace JDMallen.Toolbox.Models
 {
@@ -7,32 +8,29 @@ namespace JDMallen.Toolbox.Models
 	/// A set of parameters a user may set in order query a set of entities.
 	/// </summary>
     public interface IQueryParameters
-    {
-	    bool IncludeNestedEntities { get; set; }
+	{
+		string Id { get; set; }
+
+		IEnumerable<string> Ids { get; set; }
+
+		bool IncludeNestedEntities { get; set; }
 
 		bool TrackEntities { get; set; }
 
-		DateTime? DateCreated { get; set; }
+		DateTime? DateCreatedBefore { get; set; }
 
-		DateTime? DateModified { get; set; }
+		DateTime? DateCreatedAfter { get; set; }
 
-		int? Skip { get; set; }
+		DateTime? DateModifiedBefore { get; set; }
 
-		int? Take { get; set; }
+		DateTime? DateModifiedAfter { get; set; }
+
+		int Skip { get; set; }
+
+		int Take { get; set; }
 
 		string SortBy { get; set; }
 
-		string SortDirection { get; set; }
+		ListSortDirection SortDirection { get; set; }
     }
-
-	/// <inheritdoc />
-	/// <summary>
-	/// </summary>
-	/// <typeparam name="TId">The type of the primary key to search.</typeparam>
-	public interface IQueryParameters<TId> : IQueryParameters
-	{
-		TId Id { get; set; }
-
-		IEnumerable<TId> Ids { get; set; }
-	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace JDMallen.Toolbox.Models
@@ -9,6 +10,9 @@ namespace JDMallen.Toolbox.Models
 	/// </summary>
     public interface IContext
     {
-	    Task<int> SaveAllChanges(CancellationToken cancellationToken = default(CancellationToken));
+		IQueryable<TEntityModel> GetQueryable<TEntityModel>()
+			where TEntityModel : class, IEntityModel;
+		
+		Task<int> SaveAllChanges(CancellationToken cancellationToken = default(CancellationToken));
     }
 }

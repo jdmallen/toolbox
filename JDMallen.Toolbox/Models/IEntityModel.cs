@@ -7,8 +7,11 @@ namespace JDMallen.Toolbox.Models
 	/// </summary>
 	// ReSharper disable once InheritdocConsiderUsage
     public interface IEntityModel : IModel
-    {
-    }
+	{
+		DateTime DateCreated { get; set; }
+
+		DateTime DateModified { get; set; }
+	}
 
 	/// <inheritdoc />
 	/// <summary>
@@ -25,9 +28,5 @@ namespace JDMallen.Toolbox.Models
 		where TId : struct
 	{
 		TId Id { get; set; }
-
-		DateTime DateCreated { get; set; }
-
-		DateTime DateModified { get; set; }
 	}
 }

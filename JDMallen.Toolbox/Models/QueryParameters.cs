@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace JDMallen.Toolbox.Models
 {
@@ -7,32 +8,35 @@ namespace JDMallen.Toolbox.Models
 	/// <summary>
 	/// By default, <see cref="IncludeNestedEntities"/> and <see cref="TrackEntities"/> are false.
 	/// </summary>
-	/// <typeparam name="TId"></typeparam>
-	public abstract class QueryParameters<TId> : IQueryParameters<TId>
+	public abstract class QueryParameters : IQueryParameters
 	{
 		protected QueryParameters()
 		{
-			Ids = new List<TId>();
+			Ids = new List<string>();
 		}
+
+		public string Id { get; set; }
+
+		public IEnumerable<string> Ids { get; set; }
 
 		public bool IncludeNestedEntities { get; set; } = false;
 
 		public bool TrackEntities { get; set; } = false;
 
-		public DateTime? DateCreated { get; set; }
+		public DateTime? DateCreatedBefore { get; set; }
+		 
+		public DateTime? DateCreatedAfter { get; set; }
+		 
+		public DateTime? DateModifiedBefore { get; set; }
+		 
+		public DateTime? DateModifiedAfter { get; set; }
 
-		public DateTime? DateModified { get; set; }
+		public int Skip { get; set; } = -1;
 
-		public int? Skip { get; set; }
-
-		public int? Take { get; set; }
+		public int Take { get; set; } = -1;
 
 		public string SortBy { get; set; }
 
-		public string SortDirection { get; set; }
-
-		public TId Id { get; set; }
-
-		public IEnumerable<TId> Ids { get; set; }
+		public ListSortDirection SortDirection { get; set; } = ListSortDirection.Ascending;
 	}
 }

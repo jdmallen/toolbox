@@ -2,16 +2,16 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using JDMallen.Toolbox.EFCore.Models;
+using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JDMallen.Toolbox.EFCore.Config
+namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 {
 	/// <inheritdoc cref="DbContext" />
 	/// <summary>
 	/// Custom abstract extension of <see cref="T:Microsoft.EntityFrameworkCore.DbContext" /> that allows for the 
-	/// <see cref="T:Microsoft.EntityFrameworkCore.ModelBuilder" /> code to live inside the <see cref="T:JDMallen.Toolbox.EFCore.Models.IComplexEntityModel" />s 
+	/// <see cref="T:Microsoft.EntityFrameworkCore.ModelBuilder" /> code to live inside the <see cref="T:JDMallen.Toolbox.Infrastructure.EFCore.Models.IComplexEntityModel" />s 
 	/// themselves, rather than in one massive method here.
 	/// </summary>
 	public abstract class EFContextBase : DbContext, IContext
@@ -20,6 +20,12 @@ namespace JDMallen.Toolbox.EFCore.Config
 		/// <param name="options"></param>
 		protected EFContextBase(DbContextOptions options) : base(options)
 		{
+		}
+
+		public IQueryable<TEntityModel> GetQueryable<TEntityModel>()
+			where TEntityModel : class, IEntityModel
+		{
+			return Set<TEntityModel>();
 		}
 
 		/// <inheritdoc />
@@ -37,26 +43,26 @@ namespace JDMallen.Toolbox.EFCore.Config
 			GetType()
 				.Assembly
 				.DefinedTypes
-				.Where(type => typeof(IEntityModel).IsAssignableFrom(type)	// Get all the types that implement
-				               && !type.IsAbstract							// IEntityModel and are concrete classes
-				               && !type.IsInterface)
-				.ToList()													// Compile them all into a list
+				.Where(type => typeof(IEntityModel).IsAssignableFrom(type)  // Get all the types that implement
+							   && !type.IsAbstract                          // IEntityModel and are concrete classes
+							   && !type.IsInterface)
+				.ToList()                                                   // Compile them all into a list
 				.ForEach(type =>
-				{																  
+				{
 					if (modelBuilder.Model.FindEntityType(type) != null) return;  // And add each one to the ModelBuilder.
-					modelBuilder.Model.AddEntityType(type);						  // If it's already been added, skip it.
+					modelBuilder.Model.AddEntityType(type);                       // If it's already been added, skip it.
 				});
 
 			GetType()
 				.Assembly
 				.DefinedTypes
 				.Where(type => typeof(IComplexEntityModel).IsAssignableFrom(type)  // Get all the types that implement
-							   && !type.IsAbstract								   // IComplexEntityModel and are concrete classes
-				               && !type.IsInterface)
-				.Select(Activator.CreateInstance)							// Instantiate each 
+							   && !type.IsAbstract                                 // IComplexEntityModel and are concrete classes
+							   && !type.IsInterface)
+				.Select(Activator.CreateInstance)                           // Instantiate each 
 				.Cast<IComplexEntityModel>()                                // as an IComplexEntityModel
 				.ToList()
-				.ForEach(model => model.OnModelCreating(modelBuilder));		// And call each's respective OnModelCreating method.
+				.ForEach(model => model.OnModelCreating(modelBuilder));     // And call each's respective OnModelCreating method.
 		}
 
 		/// <summary>
