@@ -6,7 +6,7 @@ namespace JDMallen.Toolbox.Models
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// By default, <see cref="IncludeNestedEntities"/> and <see cref="TrackEntities"/> are false.
+	/// By default, <see cref="AutomaticallyIncludeFirstLevelEntities"/> and <see cref="TrackEntities"/> are false.
 	/// </summary>
 	public abstract class QueryParameters : IQueryParameters
 	{
@@ -19,7 +19,7 @@ namespace JDMallen.Toolbox.Models
 
 		public IEnumerable<string> Ids { get; set; }
 
-		public bool IncludeNestedEntities { get; set; } = false;
+		public bool AutomaticallyIncludeFirstLevelEntities { get; set; } = false;
 
 		public bool TrackEntities { get; set; } = false;
 

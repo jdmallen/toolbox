@@ -25,7 +25,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			if (!parameters.TrackEntities)
 				query = query.AsNoTracking();
 
-			if (parameters.IncludeNestedEntities)
+			if (parameters.AutomaticallyIncludeFirstLevelEntities)
 			{
 				typeof(TEntityModel)
 					.GetProperties()

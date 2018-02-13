@@ -13,7 +13,7 @@ namespace JDMallen.Toolbox.Models
 
 		IEnumerable<string> Ids { get; set; }
 
-		bool IncludeNestedEntities { get; set; }
+		bool AutomaticallyIncludeFirstLevelEntities { get; set; }
 
 		bool TrackEntities { get; set; }
 
