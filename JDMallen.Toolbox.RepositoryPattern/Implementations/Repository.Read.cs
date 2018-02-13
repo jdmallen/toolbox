@@ -1,7 +1,6 @@
 ﻿using JDMallen.Toolbox.Models;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Implementations

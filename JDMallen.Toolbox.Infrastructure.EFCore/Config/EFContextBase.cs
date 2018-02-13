@@ -28,7 +28,9 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 			return Set<TEntityModel>();
 		}
 
-		/// <inheritdoc />
+		/// <summary>
+		/// Source: https://stackoverflow.com/a/48346941/3986790
+		/// </summary>
 		/// <remarks>
 		/// This special version of OnModelCreating finds all classes implementing 
 		/// <see cref="IEntityModel"/> and adds them to the central EF model. After that,
