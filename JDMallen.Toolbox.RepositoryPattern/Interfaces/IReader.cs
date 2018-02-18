@@ -4,9 +4,8 @@ using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 {
-	public interface IReader<out TContext, TEntityModel, in TQueryParameters, in TId>
-		: IRepository<TContext>
-		where TContext : IContext
+	public interface IReader<TDomainModel, TEntityModel, in TQueryParameters, in TId> : IRepository<TDomainModel, TEntityModel>
+		where TDomainModel : IDomainModel
 		where TEntityModel : IEntityModel
 		where TQueryParameters : IQueryParameters
 		where TId : struct

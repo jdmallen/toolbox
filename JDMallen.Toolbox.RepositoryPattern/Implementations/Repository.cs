@@ -1,8 +1,9 @@
 ﻿using JDMallen.Toolbox.Models;
+using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 {
-	public partial class Repository<TContext, TDomainModel, TEntityModel, TQueryParameters, TId>
+	public partial class Repository<TContext, TDomainModel, TEntityModel, TQueryParameters, TId> : IRepository
 		where TContext : IContext
 		where TDomainModel : IDomainModel
 		where TEntityModel : IEntityModel
@@ -13,5 +14,7 @@ namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 		{
 			Context = context;
 		}
+
+		public TContext Context { get; }
 	}
 }

@@ -3,18 +3,17 @@ using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 {
-	public interface IWriter<out TContext, TEntityModel, in TId>
-		: IRepository<TContext>
-		where TContext : IContext
+	public interface IWriter<TDomainModel, TEntityModel, in TId> : IRepository<TDomainModel, TEntityModel>
+		where TDomainModel : IDomainModel
 		where TEntityModel : IEntityModel
 		where TId : struct
 	{
-		Task<int> SaveChanges();
-
 		Task<TEntityModel> Add(TEntityModel model);
 
 		Task<TEntityModel> Change(TEntityModel model);
 
 		Task<TEntityModel> Remove(TId id);
+
+		Task<int> SaveChanges();
 	}
 }

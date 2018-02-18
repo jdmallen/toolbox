@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 {
 	public abstract partial class Repository<TContext, TDomainModel, TEntityModel, TQueryParameters, TId>
-		: IMapper<TContext, TDomainModel, TEntityModel>
+		: IRepository<TDomainModel, TEntityModel>
 		where TContext : IContext
 		where TDomainModel : IDomainModel
 		where TEntityModel : IEntityModel
