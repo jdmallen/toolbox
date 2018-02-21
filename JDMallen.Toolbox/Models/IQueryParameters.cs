@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace JDMallen.Toolbox.Models
 {
@@ -31,6 +30,6 @@ namespace JDMallen.Toolbox.Models
 
 		string SortBy { get; set; }
 
-		ListSortDirection SortDirection { get; set; }
-    }
+		bool SortAscending { get; set; }
+	}
 }

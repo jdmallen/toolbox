@@ -1,24 +1,56 @@
 ﻿using System.Linq;
+using System.Reflection;
 using JDMallen.Toolbox.Extensions;
 using JDMallen.Toolbox.Infrastructure.EFCore.Extensions;
 using JDMallen.Toolbox.Infrastructure.EFCore.Filters;
+using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Models;
+using JDMallen.Toolbox.RepositoryPattern.Implementations;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract partial class EFRepository<TDomainModel, TEntityModel, TQueryParameters, TId>
+	public abstract partial class EFRepository<TContext, TDomainModel, TEntityModel, TQueryParameters, TId>
+		: Repository<
+			TContext,
+			TDomainModel,
+			TEntityModel,
+			TQueryParameters,
+			TId>
+		where TContext : class, IEFContext
 		where TDomainModel : class, IDomainModel<TId>
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
+		protected EFRepository(TContext context) : base(context)
+		{
+		}
+
+		/// <summary>
+		/// https://stackoverflow.com/a/8181736/3986790
+		/// </summary>
+		/// <param name="oldEntity"></param>
+		/// <param name="newEntity"></param>
+		private static void CopyProps(ref TEntityModel oldEntity, ref TEntityModel newEntity)
+		{
+			TEntityModel old = newEntity;
+			TEntityModel newish = oldEntity;
+			typeof(TEntityModel)
+				.GetFields(BindingFlags.Public
+				           | BindingFlags.Instance)
+				.ToList()
+				.ForEach(field => field.SetValue(old, field.GetValue(newish)));
+			oldEntity = old;
+			newEntity = newish;
+		}
+
 		protected IQueryable<TEntityModel> BuildQueryInit(
 			TQueryParameters parameters,
 			IQueryable<TEntityModel> query = null)
 		{
 			if (query == null)
-				query = Context.GetQueryable<TEntityModel>();
+				query = Context.BuildQuery<TEntityModel>();
 
 			if (parameters == null)
 				return query;
@@ -39,7 +71,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			}
 
 			if (!string.IsNullOrWhiteSpace(parameters.Id))
-				query = query.IdContains<TEntityModel,TId>(parameters.Id);
+				query = query.IdContains<TEntityModel, TId>(parameters.Id);
 
 			if (string.IsNullOrWhiteSpace(parameters.Id) && parameters.Ids.Any())
 				query = query.Where(x => parameters.Ids.Contains(x.Id.ToString()));
@@ -66,13 +98,13 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			IQueryable<TEntityModel> query = null)
 		{
 			if (query == null)
-				query = Context.GetQueryable<TEntityModel>();
+				query = Context.BuildQuery<TEntityModel>();
 
 			if (parameters == null)
 				return query;
 
 			if (!string.IsNullOrWhiteSpace(parameters.SortBy))
-				query = query.OrderBy(parameters.SortBy, parameters.SortDirection);
+				query = query.OrderBy(parameters.SortBy, parameters.SortAscending);
 
 			return query;
 		}

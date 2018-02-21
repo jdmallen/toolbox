@@ -10,9 +10,6 @@ namespace JDMallen.Toolbox.Models
 	/// </summary>
     public interface IContext
     {
-		IQueryable<TEntityModel> GetQueryable<TEntityModel>()
-			where TEntityModel : class, IEntityModel;
-		
 		Task<int> SaveAllChanges(CancellationToken cancellationToken = default(CancellationToken));
-    }
+	}
 }

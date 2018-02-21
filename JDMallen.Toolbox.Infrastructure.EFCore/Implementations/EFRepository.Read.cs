@@ -2,12 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.Extensions;
+using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract partial class EFRepository<TDomainModel, TEntityModel, TQueryParameters, TId>
+	public abstract partial class EFRepository<TContext, TDomainModel, TEntityModel, TQueryParameters, TId>
+		where TContext : class, IEFContext
 		where TDomainModel : class, IDomainModel<TId>
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters

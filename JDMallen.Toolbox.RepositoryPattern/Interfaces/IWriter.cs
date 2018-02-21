@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
@@ -14,6 +15,6 @@ namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 
 		Task<TEntityModel> Remove(TId id);
 
-		Task<int> SaveChanges();
+		Task<int> SaveChanges(CancellationToken cancellationToken = default(CancellationToken));
 	}
 }
