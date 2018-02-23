@@ -10,15 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract partial class EFRepository<TContext, TDomainModel, TEntityModel, TQueryParameters, TId>
+	public abstract partial class EFRepository<TContext, TEntityModel, TQueryParameters, TId>
 		: Repository<
 			TContext,
-			TDomainModel,
 			TEntityModel,
 			TQueryParameters,
 			TId>
 		where TContext : class, IEFContext
-		where TDomainModel : class, IDomainModel<TId>
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct

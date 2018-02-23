@@ -5,15 +5,14 @@ using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.Microservices.Models
 {
-	public abstract class ReadWriteService<TRepository, TDomainModel, TEntityModel, TQueryParameters, TId>
-		: ICreateService<TRepository, TDomainModel, TEntityModel, TId>,
-		  IReadService<TRepository, TDomainModel, TEntityModel, TQueryParameters, TId>,
-		  IUpdateService<TRepository, TDomainModel, TEntityModel, TId>,
-		  IDeleteService<TRepository, TDomainModel, TEntityModel, TId>
-		where TRepository : IReader<TDomainModel, TEntityModel, TQueryParameters, TId>, IWriter<TDomainModel, TEntityModel, TId>
-		where TDomainModel : class, IDomainModel<TId>
-		where TEntityModel : IEntityModel
-		where TQueryParameters : IQueryParameters
+	public abstract class ReadWriteService<TRepository, TEntityModel, TQueryParameters, TId>
+		: ICreateService<TRepository, TEntityModel, TId>,
+		IReadService<TRepository, TEntityModel, TQueryParameters, TId>,
+		IUpdateService<TRepository, TEntityModel, TId>,
+		IDeleteService<TRepository, TEntityModel, TId>
+		where TRepository : IReader<TEntityModel, TQueryParameters, TId>, IWriter<TEntityModel, TId>
+		where TEntityModel : class, IEntityModel<TId>
+		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
 		/// <summary>
@@ -29,72 +28,62 @@ namespace JDMallen.Toolbox.Microservices.Models
 		/// The <see cref="TRepository"/> used to perform all the CRUD actions
 		/// </summary>
 		public TRepository Repository { get; }
-		
+
 		/// <summary>
-		/// Creates a new <see cref="TDomainModel"/>
+		/// Creates a new <see cref="TEntityModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TDomainModel> Create(TDomainModel model)
-			=> await Repository.Map(await Repository.Add(await Repository.Map(model)));
+		public async Task<TEntityModel> Create(TEntityModel model)
+			=> await Repository.Add(model);
 
 		/// <summary>
-		/// Fetch a single <see cref="TDomainModel"/> via its <see cref="TId"/>
+		/// Fetch a single <see cref="TEntityModel"/> via its <see cref="TId"/>
 		/// </summary>
 		/// <param name="id">The ID of the object to fetch</param>
 		/// <returns>The fetched object</returns>
-		public async Task<TDomainModel> Read(TId id)
-			=> await Repository.Map(await Repository.Get(id));
+		public async Task<TEntityModel> Read(TId id)
+			=> await Repository.Get(id);
 
 		/// <summary>
-		/// Fetch a single <see cref="TDomainModel"/> via a set of <see cref="TQueryParameters"/>
+		/// Fetch a single <see cref="TEntityModel"/> via a set of <see cref="TQueryParameters"/>
 		/// </summary>
 		/// <param name="parameters">The search parameters</param>
 		/// <returns>The fetched object</returns>
-		public async Task<TDomainModel> Find(TQueryParameters parameters)
-			=> await Repository.Map(await Repository.Find(parameters));
+		public async Task<TEntityModel> Find(TQueryParameters parameters)
+			=> await Repository.Find(parameters);
 
 		/// <summary>
-		/// Fetch many <see cref="TDomainModel"/>s via a set of <see cref="TQueryParameters"/>
+		/// Fetch many <see cref="TEntityModel"/>s via a set of <see cref="TQueryParameters"/>
 		/// </summary>
 		/// <param name="parameters">The search parameters</param>
 		/// <returns>The fetched list of objects</returns>
-		public async Task<IEnumerable<TDomainModel>> FindAll(TQueryParameters parameters)
-			=> await Repository.Map(await Repository.FindAll(parameters));
+		public async Task<IEnumerable<TEntityModel>> FindAll(TQueryParameters parameters)
+			=> await Repository.FindAll(parameters);
 
 		/// <summary> 
-		/// Fetch many <see cref="TDomainModel"/>s via a set of <see cref="TQueryParameters"/> 
-		/// and wrap the results in an <see cref="IPagedResult{TDomainModel}"/> suitable for UI pagination.
+		/// Fetch many <see cref="TEntityModel"/>s via a set of <see cref="TQueryParameters"/> 
+		/// and wrap the results in an <see cref="IPagedResult{TEntityModel}"/> suitable for UI pagination.
 		/// </summary>
 		/// <param name="parameters">The search parameters</param>
 		/// <returns>The fetched list of objects in a paged result object</returns>
-		public async Task<IPagedResult<TDomainModel>> FindAllPaged(TQueryParameters parameters)
-		{
-			var pagedEntities = await Repository.FindAllPaged(parameters);
-			var domainModels = await Repository.Map(pagedEntities.Items);
-			return new PagedResult<TDomainModel>
-			{
-				Items = domainModels,
-				Skipped = pagedEntities.Skipped,
-				Taken = pagedEntities.Taken,
-				TotalItemCount = pagedEntities.TotalItemCount
-			};
-		}
+		public async Task<IPagedResult<TEntityModel>> FindAllPaged(TQueryParameters parameters)
+			=> await Repository.FindAllPaged(parameters);
 
 		/// <summary>
-		/// Updates an existing <see cref="TDomainModel"/>
+		/// Updates an existing <see cref="TEntityModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TDomainModel> Update(TDomainModel model)
-			=> await Repository.Map(await Repository.Change(await Repository.Map(model)));
+		public async Task<TEntityModel> Update(TEntityModel model)
+			=> await Repository.Change(model);
 
 		/// <summary>
-		/// Deletes an existing <see cref="TDomainModel"/>
+		/// Deletes an existing <see cref="TEntityModel"/>
 		/// </summary>
 		/// <param name="model">The object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public Task<TDomainModel> Delete(TDomainModel model)
+		public Task<TEntityModel> Delete(TEntityModel model)
 			=> Delete(model.Id);
 
 		/// <summary>
@@ -102,7 +91,7 @@ namespace JDMallen.Toolbox.Microservices.Models
 		/// </summary>
 		/// <param name="id">The ID of the object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public async Task<TDomainModel> Delete(TId id)
-			=> await Repository.Map(await Repository.Remove(id));
+		public async Task<TEntityModel> Delete(TId id)
+			=> await Repository.Remove(id);
 	}
 }

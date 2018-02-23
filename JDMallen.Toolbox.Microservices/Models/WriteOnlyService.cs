@@ -4,13 +4,12 @@ using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.Microservices.Models
 {
-	public abstract class WriteOnlyService<TRepository, TDomainModel, TEntityModel, TId>
-		: ICreateService<TRepository, TDomainModel, TEntityModel, TId>,
-		  IUpdateService<TRepository, TDomainModel, TEntityModel, TId>,
-		  IDeleteService<TRepository, TDomainModel, TEntityModel, TId>
-		where TRepository : IWriter<TDomainModel, TEntityModel, TId>
-		where TDomainModel : IDomainModel<TId>
-		where TEntityModel : IEntityModel
+	public abstract class WriteOnlyService<TRepository, TEntityModel, TId>
+		: ICreateService<TRepository, TEntityModel, TId>,
+		IUpdateService<TRepository, TEntityModel, TId>,
+		IDeleteService<TRepository, TEntityModel, TId>
+		where TRepository : IWriter<TEntityModel, TId>
+		where TEntityModel : class, IEntityModel<TId>
 		where TId : struct
 	{
 		/// <summary>
@@ -28,27 +27,27 @@ namespace JDMallen.Toolbox.Microservices.Models
 		public TRepository Repository { get; }
 
 		/// <summary>
-		/// Creates a new <see cref="TDomainModel"/>
+		/// Creates a new <see cref="TEntityModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TDomainModel> Create(TDomainModel model) 
-			=> await Repository.Map(await Repository.Add(await Repository.Map(model)));
+		public async Task<TEntityModel> Create(TEntityModel model)
+			=> await Repository.Add(model);
 
 		/// <summary>
-		/// Updates an existing <see cref="TDomainModel"/>
+		/// Updates an existing <see cref="TEntityModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TDomainModel> Update(TDomainModel model)
-			=> await Repository.Map(await Repository.Change(await Repository.Map(model)));
+		public async Task<TEntityModel> Update(TEntityModel model)
+			=> await Repository.Change(model);
 
 		/// <summary>
-		/// Deletes an existing <see cref="TDomainModel"/>
+		/// Deletes an existing <see cref="TEntityModel"/>
 		/// </summary>
 		/// <param name="model">The object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public Task<TDomainModel> Delete(TDomainModel model)
+		public Task<TEntityModel> Delete(TEntityModel model)
 			=> Delete(model.Id);
 
 		/// <summary>
@@ -56,7 +55,7 @@ namespace JDMallen.Toolbox.Microservices.Models
 		/// </summary>
 		/// <param name="id">The ID of the object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public async Task<TDomainModel> Delete(TId id)
-			=> await Repository.Map(await Repository.Remove(id));
+		public async Task<TEntityModel> Delete(TId id)
+			=> await Repository.Remove(id);
 	}
 }

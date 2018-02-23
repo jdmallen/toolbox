@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 {
 	public abstract partial class Repository<TContext,
-	                                         TDomainModel,
 	                                         TEntityModel,
 	                                         TQueryParameters,
 	                                         TId>
-		: IReader<TDomainModel, TEntityModel, TQueryParameters, TId>
+		: IReader<TEntityModel, TQueryParameters, TId>
 		where TContext : class, IContext
-		where TDomainModel : class, IDomainModel
 		where TEntityModel : class, IEntityModel
-		where TQueryParameters : IQueryParameters
+		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
+		protected Repository(TContext context)
+		{
+			Context = context;
+		}
+
+		public TContext Context { get; }
+
 		public abstract Task<bool> Any(TQueryParameters parameters);
 
 		public abstract Task<long> Count(TQueryParameters parameters);

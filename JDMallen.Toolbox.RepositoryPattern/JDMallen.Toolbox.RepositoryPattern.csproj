@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Implementations\Repository.Map.cs" />
     <None Include="Implementations\Repository.Read.cs" />
   </ItemGroup>
 

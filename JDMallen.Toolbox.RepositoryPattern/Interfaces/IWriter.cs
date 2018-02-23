@@ -4,9 +4,8 @@ using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 {
-	public interface IWriter<TDomainModel, TEntityModel, in TId> : IRepository<TDomainModel, TEntityModel>
-		where TDomainModel : IDomainModel
-		where TEntityModel : IEntityModel
+	public interface IWriter<TEntityModel, in TId> : IRepository
+		where TEntityModel : class, IEntityModel
 		where TId : struct
 	{
 		Task<TEntityModel> Add(TEntityModel model);
