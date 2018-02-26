@@ -1,4 +1,5 @@
-﻿using JDMallen.Toolbox.Models;
+﻿using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Models

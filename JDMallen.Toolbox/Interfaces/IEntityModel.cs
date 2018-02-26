@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JDMallen.Toolbox.Models
+namespace JDMallen.Toolbox.Interfaces
 {
 	/// <summary>
 	/// Represents a database entity, typically referred to by its respective SQL table.

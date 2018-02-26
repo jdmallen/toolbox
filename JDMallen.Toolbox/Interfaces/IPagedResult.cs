@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JDMallen.Toolbox.Models
+namespace JDMallen.Toolbox.Interfaces
 {
 	/// <summary>
 	/// Represents a result that has been divided into pages for ease of displaying to end users.

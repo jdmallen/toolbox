@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Filters

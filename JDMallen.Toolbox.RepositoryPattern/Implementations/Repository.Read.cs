@@ -2,6 +2,7 @@
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using JDMallen.Toolbox.Interfaces;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 {

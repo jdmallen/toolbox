@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace JDMallen.Toolbox.Utilities
 {
-	public class Pbkdf2PasswordHasher : IPasswordHasher<IdUser>
+	public class Pbkdf2PasswordHasher<TUser> : IPasswordHasher<TUser>
+	where TUser: IdUser
     {
 		/// <summary>
 		/// Returns a hashed representation of the supplied <paramref name="password" /> for the specified <paramref name="user" />.
@@ -14,7 +15,7 @@ namespace JDMallen.Toolbox.Utilities
 		/// <param name="user">The user whose password is to be hashed.</param>
 		/// <param name="password">The password to hash.</param>
 		/// <returns>A hashed representation of the supplied <paramref name="password" /> for the specified <paramref name="user" />.</returns>
-		public string HashPassword(IdUser user, string password)
+		public string HashPassword(TUser user, string password)
 		{
 			var keyBytes = KeyDerivation.Pbkdf2(password,
 												Encoding.UTF8.GetBytes(user.PasswordSalt),
@@ -33,7 +34,7 @@ namespace JDMallen.Toolbox.Utilities
 		/// <returns>A <see cref="T:Microsoft.AspNetCore.Identity.PasswordVerificationResult" /> indicating the result of a password hash comparison.</returns>
 		/// <remarks>Implementations of this method should be time consistent.</remarks>
 		public PasswordVerificationResult VerifyHashedPassword(
-			IdUser user,
+			TUser user,
 			string hashedPassword,
 			string providedPassword)
 		{

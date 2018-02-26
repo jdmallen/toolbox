@@ -3,8 +3,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
+using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 {
@@ -14,7 +16,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 	/// <see cref="T:Microsoft.EntityFrameworkCore.ModelBuilder" /> code to live inside the <see cref="T:JDMallen.Toolbox.Infrastructure.EFCore.Models.IComplexEntityModel" />s 
 	/// themselves, rather than in one massive method here.
 	/// </summary>
-	public abstract class EFContextBase : DbContext, IContext
+	public abstract class EFContextBase : DbContext, IEFContext
 	{
 		/// <inheritdoc />
 		/// <param name="options"></param>
@@ -79,5 +81,25 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 		{
 			return SaveChangesAsync(cancellationToken);
 		}
+
+		public Task<EntityEntry<TEntityModel>> AddAsync<TEntityModel, TId>(
+			TEntityModel model,
+			CancellationToken cancellationToken = default(CancellationToken))
+			where TEntityModel : class, IEntityModel<TId> 
+			where TId : struct
+			=> base.AddAsync(model, cancellationToken);
+
+		public IQueryable<TEntityModel> BuildQuery<TEntityModel>()
+			where TEntityModel : class, IEntityModel
+			=> Set<TEntityModel>();
+
+		public EntityEntry Update<TEntityModel, TId>(TEntityModel modelToUpdate)
+			where TEntityModel : class, IEntityModel<TId>
+			where TId : struct
+			=> Update(modelToUpdate);
+
+		public EntityEntry Remove<TEntityModel, TId>(TEntityModel modelToDelete)
+			where TEntityModel : class, IEntityModel<TId> where TId : struct
+			=> Remove(modelToDelete);
 	}
 }

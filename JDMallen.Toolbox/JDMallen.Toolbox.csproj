@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Implementations\" />
-    <Folder Include="Interfaces\" />
+    <None Remove="Resources\CommonPasswords.txt" />
+    <None Remove="Resources\FrequencyTable.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\CommonPasswords.txt" />
+    <EmbeddedResource Include="Resources\FrequencyTable.txt" />
   </ItemGroup>
 
   <ItemGroup>

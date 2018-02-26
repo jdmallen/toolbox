@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace JDMallen.Toolbox.Models
+namespace JDMallen.Toolbox.Interfaces
 {
 	/// <summary>
 	/// A set of parameters a user may set in order query a set of entities.
