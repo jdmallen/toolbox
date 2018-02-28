@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JDMallen.Toolbox.Enums
+namespace JDMallen.Toolbox.Constants
 {
 	[Flags]
 	public enum PasswordError

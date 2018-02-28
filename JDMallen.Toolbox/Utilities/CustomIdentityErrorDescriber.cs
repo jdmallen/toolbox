@@ -19,7 +19,7 @@ namespace JDMallen.Toolbox.Utilities
 			return new IdentityError
 			{
 				Code = nameof(DefaultError),
-				Description = $"An unknown failure has occurred."
+				Description = "An unknown failure has occurred."
 			};
 		}
 

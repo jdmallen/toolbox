@@ -29,7 +29,5 @@ namespace JDMallen.Toolbox.Models
 			get => MiniGuid.Encode(_id);
 			set => _id = MiniGuid.Decode(value);
 		}
-
-		public string PasswordSalt { get; set; }
 	}
 }

@@ -1,4 +1,4 @@
-﻿using JDMallen.Toolbox.Enums;
+﻿using JDMallen.Toolbox.Constants;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JDMallen.Toolbox.Enums;
+using JDMallen.Toolbox.Constants;
 using JDMallen.Toolbox.Models;
 using JDMallen.Toolbox.Options;
 using JDMallen.Toolbox.Resources;

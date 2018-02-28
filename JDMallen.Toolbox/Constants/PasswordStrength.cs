@@ -1,4 +1,4 @@
-﻿namespace JDMallen.Toolbox.Enums
+﻿namespace JDMallen.Toolbox.Constants
 {
 	public enum PasswordStrength
 	{

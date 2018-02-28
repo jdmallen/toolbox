@@ -10,5 +10,8 @@ namespace JDMallen.Toolbox.Dtos
 		[Required]
 		
 		public string Password { get; set; }
+
+		[Required]
+		public string DisplayName { get; set; }
 	}
 }
