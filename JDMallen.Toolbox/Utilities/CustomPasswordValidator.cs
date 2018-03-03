@@ -14,16 +14,16 @@ namespace JDMallen.Toolbox.Utilities
 	public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		where TUser : IdUser
 	{
-		private readonly IOptions<PasswordComplexityOptions> _options;
+		private readonly PasswordComplexityOptions _options;
 		private readonly CustomIdentityErrorDescriber _errors;
 
 		public CustomPasswordValidator(
 			IOptions<PasswordComplexityOptions> options = null,
 			CustomIdentityErrorDescriber errors = null)
 		{
-			_options = options
-			           ?? new OptionsWrapper<PasswordComplexityOptions>(new PasswordComplexityOptions());
-			_errors = errors ?? new CustomIdentityErrorDescriber(_options);
+			_options = options?.Value
+			           ?? new PasswordComplexityOptions();
+			_errors = errors ?? new CustomIdentityErrorDescriber(options);
 		}
 
 		/// <summary>Validates a password as an asynchronous operation.</summary>
@@ -59,15 +59,12 @@ namespace JDMallen.Toolbox.Utilities
 
 				if (checkPwdResult.Error.HasFlag(PasswordError.TooShort))
 				{
-					errors.Add(_errors.PasswordTooShort(checkPwdResult.Length));
+					errors.Add(_errors.PasswordTooShort(_options.MinimumLength));
 				}
 
 				return IdentityResult.Failed(errors.ToArray());
 			}
-			else
-			{
-				return result;
-			}
+			return result;
 		}
 
 		public const string LowerSet = @"abcdefghijklmnopqrstuvwxyz";
@@ -116,8 +113,8 @@ namespace JDMallen.Toolbox.Utilities
 			result.BitsOfEntropy = bits;
 			result.Strength = EvaluateStrength(bits);
 			if (isCommon) result.Error = PasswordError.TooCommon;
-			if (len < _options.Value.MinimumLength) result.Error = result.Error | PasswordError.TooShort;
-			if (bits < _options.Value.BitsThreshold)
+			if (len < _options.MinimumLength) result.Error = result.Error | PasswordError.TooShort;
+			if (bits < _options.BitsThreshold)
 				result.Error = result.Error | PasswordError.NotComplexEnough;
 			return result;
 		}

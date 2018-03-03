@@ -10,7 +10,7 @@
 		/// <summary>
 		/// Custom claim type to represent an AppRole's primary ID.
 		/// </summary>
-		public const string UserRoleId = "role";
+		public const string UserRole = "role";
 
 		/// <summary>
 		/// RFC 7519 - 4.1.1.  "iss" (Issuer) Claim

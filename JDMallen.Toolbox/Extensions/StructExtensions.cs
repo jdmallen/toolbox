@@ -8,5 +8,11 @@ namespace JDMallen.Toolbox.Extensions
 			=> (long) Math.Ceiling(dateTime.ToUniversalTime()
 											.Subtract(new DateTime(1970, 1, 1))
 											.TotalSeconds);
+
+		public static bool IsNullOrWhiteSpace(this string str) 
+			=> string.IsNullOrWhiteSpace(str);
+
+		public static bool IsNullOrEmpty(this string str) 
+			=> string.IsNullOrEmpty(str);
 	}
 }

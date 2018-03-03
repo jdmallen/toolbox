@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using JDMallen.Toolbox.Constants;
 using JDMallen.Toolbox.Extensions;
 using JDMallen.Toolbox.Options;
@@ -11,6 +13,10 @@ namespace JDMallen.Toolbox.Factories
 {
 	public interface IJwtTokenFactory
 	{
+		ClaimsIdentity GenerateClaimsIdentity(string email, string id);
+
+		ClaimsIdentity GenerateClaimsIdentity(string email, Guid id);
+
 		string GenerateToken(ClaimsIdentity identity);
 	}
 
@@ -23,18 +29,31 @@ namespace JDMallen.Toolbox.Factories
 			_jwtOptions = jwtOptions.Value;
 		}
 
+		public ClaimsIdentity GenerateClaimsIdentity(string email, string id)
+			=> new ClaimsIdentity(new GenericIdentity(email, "token"),
+								new[]
+								{
+									new Claim(JwtClaimTypes.UserId, id),
+									new Claim(ClaimTypes.Name, email),
+									new Claim(ClaimTypes.Email, email),
+									new Claim(JwtClaimTypes.UserRole, JwtClaims.ApiUser),
+								});
+
+		public ClaimsIdentity GenerateClaimsIdentity(string email, Guid id) 
+			=> GenerateClaimsIdentity(email, id.ToString("D"));
+
 		public string GenerateToken(ClaimsIdentity identity)
 		{
-			var username = identity.Claims.Single(c => c.Type == ClaimTypes.Name).Value;
+			var email = identity.Claims.Single(c => c.Type == ClaimTypes.Email).Value;
 
 			var claims = new List<Claim>
 			{
-				new Claim(JwtClaimTypes.Subject, username),
+				new Claim(JwtClaimTypes.Subject, email),
 				new Claim(JwtClaimTypes.JwtId, _jwtOptions.NewJti),
 				new Claim(JwtClaimTypes.IssuedAt,
 						"" + _jwtOptions.IssuedAt.ToUnixTimestamp(),
 						ClaimValueTypes.Integer64),
-				identity.FindFirst(JwtClaimTypes.UserRoleId),
+				identity.FindFirst(JwtClaimTypes.UserRole),
 				identity.FindFirst(JwtClaimTypes.UserId)
 			};
 
