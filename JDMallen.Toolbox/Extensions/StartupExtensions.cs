@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
+using JDMallen.Toolbox.Constants;
 using JDMallen.Toolbox.Models;
+using JDMallen.Toolbox.Options;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 
 namespace JDMallen.Toolbox.Extensions
 {
@@ -106,6 +116,90 @@ namespace JDMallen.Toolbox.Extensions
 
 			throw new InvalidOperationException(
 				"No valid certificate configuration found for the current endpoint.");
+		}
+
+		public static AuthenticationBuilder AddOAuthGitHub(
+			this AuthenticationBuilder builder,
+			OAuthConfiguration config)
+		{
+			return builder.AddOAuth(OAuthSchemes.GitHub, options =>
+			{
+				options.ClientId = config.GitHubClientId;
+				options.ClientSecret = config.GitHubClientSecret;
+				options.CallbackPath = new PathString("/signin-github");
+				options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+				options.TokenEndpoint = "https://github.com/login/oauth/access_token";
+				options.UserInformationEndpoint = "https://api.github.com/user";
+				config.GitHubScopes.ToList().ForEach(s => options.Scope.Add(s));
+				options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+				options.ClaimActions.MapJsonKey(ClaimTypes.Name, "email");
+				options.ClaimActions.MapJsonKey("urn:github:login", "login");
+				options.ClaimActions.MapJsonKey("urn:github:url", "html_url");
+				options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
+				options.ClaimActions.MapJsonKey("urn:github:displayName", "name");
+
+				options.Events = new OAuthEvents
+				{
+					OnCreatingTicket = async context =>
+					{
+						var request =
+							new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+						request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+						request.Headers.Authorization =
+							new AuthenticationHeaderValue("Bearer", context.AccessToken);
+
+						var response = await context.Backchannel.SendAsync(request,
+																			HttpCompletionOption.ResponseHeadersRead,
+																			context.HttpContext.RequestAborted);
+						response.EnsureSuccessStatusCode();
+
+						var user = JObject.Parse(await response.Content.ReadAsStringAsync());
+						Debug.WriteLine(user);
+						context.RunClaimActions(user);
+					}
+				};
+			});
+		}
+
+		public static AuthenticationBuilder AddOAuthGoogle(
+			this AuthenticationBuilder builder,
+			OAuthConfiguration config)
+		{
+			return builder.AddGoogle(OAuthSchemes.Google, options =>
+			{
+				options.ClientId = config.GoogleClientId;
+				options.ClientSecret = config.GoogleClientSecret;
+				options.TokenEndpoint = "https://accounts.google.com/o/oauth2/token";
+				config.GoogleScopes.ToList().ForEach(s => options.Scope.Add(s));
+
+				options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+				options.ClaimActions.MapJsonKey(ClaimTypes.Name, "emails[0].value");
+				options.ClaimActions.MapJsonKey("urn:google:login", "login");
+				options.ClaimActions.MapJsonKey("urn:google:url", "url");
+				options.ClaimActions.MapJsonKey("urn:google:avatar", "image.url");
+				options.ClaimActions.MapJsonKey("urn:google:displayName", "displayName");
+
+				options.Events = new OAuthEvents
+				{
+					OnCreatingTicket = async context =>
+					{
+						var request =
+							new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+						request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+						request.Headers.Authorization =
+							new AuthenticationHeaderValue("Bearer", context.AccessToken);
+
+						var response = await context.Backchannel.SendAsync(request,
+																			HttpCompletionOption.ResponseHeadersRead,
+																			context.HttpContext.RequestAborted);
+						response.EnsureSuccessStatusCode();
+
+						var user = JObject.Parse(await response.Content.ReadAsStringAsync());
+						Debug.WriteLine(user);
+						context.RunClaimActions(user);
+					}
+				};
+			});
 		}
 	}
 }
