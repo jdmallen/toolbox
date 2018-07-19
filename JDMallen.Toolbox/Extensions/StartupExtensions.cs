@@ -32,7 +32,7 @@ namespace JDMallen.Toolbox.Extensions
 			var configuration = options.ApplicationServices.GetRequiredService<IConfiguration>();
 			var environment = options.ApplicationServices.GetRequiredService<IHostingEnvironment>();
 
-			var endpoints = configuration.GetSection("HttpServer:Endpoints")
+			var endpoints = configuration.GetSection("Endpoints")
 										.GetChildren()
 										.ToDictionary(section => section.Key,
 													section =>
@@ -64,12 +64,17 @@ namespace JDMallen.Toolbox.Extensions
 
 				foreach (var address in ipAddresses)
 				{
+					Debug.WriteLine($"Adding option:{Environment.NewLine}"
+									+ $"  Address: {address}{Environment.NewLine}"
+									+ $"  Port: {port}{Environment.NewLine}"
+									+ $"  Scheme: {config.Scheme}");
 					options.Listen(address,
 									port,
 									listenOptions =>
 									{
 										if (config.Scheme != "https") return;
 										var certificate = LoadCertificate(config, environment);
+										Debug.WriteLine($"  Certificate: {certificate.FriendlyName}");
 										listenOptions.UseHttps(certificate);
 									});
 				}

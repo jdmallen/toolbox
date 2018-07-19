@@ -1,4 +1,5 @@
 ﻿using System;
+using JDMallen.Toolbox.Structs;
 
 namespace JDMallen.Toolbox.Interfaces
 {
@@ -8,9 +9,9 @@ namespace JDMallen.Toolbox.Interfaces
 	// ReSharper disable once InheritdocConsiderUsage
     public interface IEntityModel : IModel
 	{
-		DateTime? DateCreated { get; set; }
+		DateTime DateCreated { get; set; }
 
-		DateTime? DateModified { get; set; }
+		DateTime DateModified { get; set; }
 	}
 
 	/// <inheritdoc />
@@ -28,5 +29,9 @@ namespace JDMallen.Toolbox.Interfaces
 		where TId : struct
 	{
 		TId Id { get; set; }
+
+		string IdText { get; }
+
+		MiniGuid ShortId { get; set; }
 	}
 }

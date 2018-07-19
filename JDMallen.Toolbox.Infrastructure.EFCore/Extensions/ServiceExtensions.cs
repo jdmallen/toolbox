@@ -12,7 +12,6 @@ namespace Microsoft.Extensions.DependencyInjection
 		public static IdentityBuilder AddCustomIdentity<TDbContext, TUser, TRole, TValidator,
 														TErrorDescriber, TId>(
 			this IServiceCollection services,
-			string connectionString,
 			Action<IdentityOptions> identityOptions = null,
 			Action<PasswordHasherOptions> hasherOptions = null)
 				where TDbContext : DbContext
@@ -22,14 +21,6 @@ namespace Microsoft.Extensions.DependencyInjection
 				where TErrorDescriber : IdentityErrorDescriber
 				where TId : struct, IEquatable<TId>
 		{
-			services.AddDbContext<TDbContext>(contextOptions => contextOptions.UseSqlServer(
-												connectionString,
-												sqlServerOptions =>
-												{
-													sqlServerOptions.UseRowNumberForPaging(false);
-													sqlServerOptions.EnableRetryOnFailure(5);
-												}));
-
 			if (identityOptions != null)
 			{
 				services.Configure(identityOptions);
@@ -49,7 +40,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
 		public static IdentityBuilder AddCustomIdentity<TDbContext, TUser, TRole, TValidator, TId>(
 			this IServiceCollection services,
-			string connectionString,
 			Action<IdentityOptions> identityOptions = null,
 			Action<PasswordHasherOptions> hasherOptions = null)
 			where TDbContext : DbContext
@@ -60,14 +50,12 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return AddCustomIdentity<TDbContext, TUser, TRole, TValidator, CustomIdentityErrorDescriber, TId>(
 				services,
-				connectionString,
 				identityOptions,
 				hasherOptions);
 		}
 
 		public static IdentityBuilder AddCustomIdentity<TDbContext, TUser, TRole, TValidator>(
 			this IServiceCollection services,
-			string connectionString,
 			Action<IdentityOptions> identityOptions = null,
 			Action<PasswordHasherOptions> hasherOptions = null)
 			where TDbContext : DbContext
@@ -77,14 +65,12 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return AddCustomIdentity<TDbContext, TUser, TRole, TValidator, Guid>(
 				services,
-				connectionString,
 				identityOptions,
 				hasherOptions);
 		}
 
 		public static IdentityBuilder AddCustomIdentity<TDbContext, TUser, TRole>(
 			this IServiceCollection services,
-			string connectionString,
 			Action<IdentityOptions> identityOptions = null,
 			Action<PasswordHasherOptions> hasherOptions = null)
 			where TDbContext : DbContext
@@ -93,7 +79,6 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			return AddCustomIdentity<TDbContext, TUser, TRole, CustomPasswordValidator<TUser>>(
 				services,
-				connectionString,
 				identityOptions,
 				hasherOptions);
 		}
