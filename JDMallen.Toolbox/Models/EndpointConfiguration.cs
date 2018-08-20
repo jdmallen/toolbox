@@ -15,6 +15,8 @@
 
 		public string StoreLocation { get; set; }
 
+		public string Thumbprint { get; set; }
+
 		public string FilePath { get; set; }
 
 		public string CertificatePassword { get; set; }

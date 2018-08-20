@@ -101,8 +101,8 @@ namespace JDMallen.Toolbox.Extensions
 				{
 					store.Open(OpenFlags.ReadOnly);
 					var certificate = store.Certificates.Find(
-						X509FindType.FindBySubjectName,
-						config.Host,
+						X509FindType.FindByThumbprint,
+						config.Thumbprint,
 						validOnly: !environment.IsDevelopment());
 
 					if (certificate.Count == 0)
