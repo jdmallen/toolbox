@@ -11,35 +11,26 @@ using Microsoft.Extensions.Options;
 
 namespace JDMallen.Toolbox.Factories
 {
-	public interface IJwtTokenFactory
-	{
-		ClaimsIdentity GenerateClaimsIdentity(string email, string id);
-
-		ClaimsIdentity GenerateClaimsIdentity(string email, Guid id);
-
-		string GenerateToken(ClaimsIdentity identity);
-	}
-
 	public class JwtTokenFactory : IJwtTokenFactory
 	{
-		private readonly JwtOptions _jwtOptions;
+		protected readonly JwtOptions JwtOptions;
 
 		public JwtTokenFactory(IOptions<JwtOptions> jwtOptions)
 		{
-			_jwtOptions = jwtOptions.Value;
+			JwtOptions = jwtOptions.Value;
 		}
 
 		public ClaimsIdentity GenerateClaimsIdentity(string email, string id)
-			=> new ClaimsIdentity(new GenericIdentity(email, "token"),
-								new[]
-								{
-									new Claim(JwtClaimTypes.UserId, id),
-									new Claim(ClaimTypes.Name, email),
-									new Claim(ClaimTypes.Email, email),
-									new Claim(JwtClaimTypes.UserRole, JwtClaims.ApiUser),
-								});
+			=> new ClaimsIdentity(
+				new GenericIdentity(email, "token"),
+				new[]
+				{
+					new Claim(JwtClaimTypes.UserId, id),
+					new Claim(ClaimTypes.Name, email),
+					new Claim(ClaimTypes.Email, email),
+				});
 
-		public ClaimsIdentity GenerateClaimsIdentity(string email, Guid id) 
+		public ClaimsIdentity GenerateClaimsIdentity(string email, Guid id)
 			=> GenerateClaimsIdentity(email, id.ToString("D"));
 
 		public string GenerateToken(ClaimsIdentity identity)
@@ -49,20 +40,22 @@ namespace JDMallen.Toolbox.Factories
 			var claims = new List<Claim>
 			{
 				new Claim(JwtClaimTypes.Subject, email),
-				new Claim(JwtClaimTypes.JwtId, _jwtOptions.NewJti),
-				new Claim(JwtClaimTypes.IssuedAt,
-						"" + _jwtOptions.IssuedAt.ToUnixTimestamp(),
-						ClaimValueTypes.Integer64),
-				identity.FindFirst(JwtClaimTypes.UserRole),
+				new Claim(JwtClaimTypes.JwtId, JwtOptions.NewJti),
+				new Claim(
+					JwtClaimTypes.IssuedAt,
+					"" + JwtOptions.IssuedAt.ToUnixTimestamp(),
+					ClaimValueTypes.Integer64),
 				identity.FindFirst(JwtClaimTypes.UserId)
 			};
+			claims.AddRange(identity.FindAll(JwtClaimTypes.UserRole));
 
-			var token = new JwtSecurityToken(issuer: _jwtOptions.Issuer,
-											audience: _jwtOptions.Audience,
-											claims: claims,
-											notBefore: _jwtOptions.NotBefore,
-											expires: _jwtOptions.Expiration,
-											signingCredentials: _jwtOptions.SigningCredentials);
+			var token = new JwtSecurityToken(
+				issuer: JwtOptions.Issuer,
+				audience: JwtOptions.Audience,
+				claims: claims.Where(x => x != null).ToList(),
+				notBefore: JwtOptions.NotBefore,
+				expires: JwtOptions.Expiration,
+				signingCredentials: JwtOptions.SigningCredentials);
 
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
