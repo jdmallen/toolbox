@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
 	public static class ServiceExtensions
 	{
-		public static IdentityBuilder AddCustomIdentity<TDbContext, TUser, TRole, TValidator,
+		public static IdentityBuilder AddCustomIdentity<TDbContext, TUser, TRole, TUserStore, TValidator,
 														TErrorDescriber, TId>(
 			this IServiceCollection services,
 			Action<IdentityOptions> identityOptions = null,
@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
 				where TDbContext : DbContext
 				where TUser : IdentityUser<TId>
 				where TRole : IdentityRole<TId>
+				where TUserStore : UserStore<
 				where TValidator : class, IPasswordValidator<TUser>
 				where TErrorDescriber : IdentityErrorDescriber
 				where TId : struct, IEquatable<TId>
@@ -34,6 +35,7 @@ namespace Microsoft.Extensions.DependencyInjection
 			return services.AddIdentity<TUser, TRole>()
 							.AddEntityFrameworkStores<TDbContext>()
 							.AddDefaultTokenProviders()
+							.AddUserStore
 							.AddPasswordValidator<TValidator>()
 							.AddErrorDescriber<TErrorDescriber>();
 		}
@@ -68,6 +70,8 @@ namespace Microsoft.Extensions.DependencyInjection
 				identityOptions,
 				hasherOptions);
 		}
+
+
 
 		public static IdentityBuilder AddCustomIdentity<TDbContext, TUser, TRole>(
 			this IServiceCollection services,
