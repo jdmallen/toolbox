@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using JDMallen.Toolbox.Structs;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,7 @@ namespace JDMallen.Toolbox.Models
 		{
 		}
 
+		[Key]
 		public override Guid Id
 		{
 			get => _id;

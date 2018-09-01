@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Structs;
@@ -16,9 +17,10 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Models
 		: MySqlEntityModel, IEntityModel<TId>
 		where TId : struct
 	{
-		private Guid _id;
+		private TId _id;
 
-		public TId Id { get; set; }
+		[Key]
+		public TId Id { get => _id; set => _id = value; }
 
 		public string IdText => Id.ToString();
 
@@ -29,13 +31,13 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Models
 			{
 				if (typeof(TId) != typeof(Guid))
 					throw new NotSupportedException("ShortId only available for Guid IDs.");
-				return MiniGuid.Encode(_id);
+				return MiniGuid.Encode((Guid)(object)_id);
 			}
 			set
 			{
 				if (typeof(TId) != typeof(Guid))
 					throw new NotSupportedException("ShortId only available for Guid IDs.");
-				_id = MiniGuid.Decode(value);
+				_id = (TId)(object) MiniGuid.Decode(value.ToString());
 			}
 		}
 	}
