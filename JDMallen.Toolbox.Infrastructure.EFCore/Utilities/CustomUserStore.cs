@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using JDMallen.Toolbox.Utilities;
+using JDMallen.Toolbox.Models;
+using JDMallen.Toolbox.Infrastructure.EFCore.Config; 
 
-namespace JDMallen.Toolbox.Utilities 
+namespace JDMallen.Toolbox.Infrastructure.EFCore.Utilities 
 {
 	public class CustomUserStore<
 		TUser, 
@@ -31,9 +34,9 @@ namespace JDMallen.Toolbox.Utilities
 			TUserLogin, 
 			TUserToken, 
 			TRoleClaim>
-		where TUser : IdentityUser<TKey>
-		where TRole : IdentityRole<TKey>
-		where TContext : DbContext
+		where TUser : IdUser
+		where TRole : IdRole
+		where TContext : EFContextBase
 		where TKey : IEquatable<TKey>
 		where TUserClaim : IdentityUserClaim<TKey>, new()
 		where TUserRole : IdentityUserRole<TKey>, new()
@@ -45,6 +48,28 @@ namespace JDMallen.Toolbox.Utilities
 			TContext context, 
 			IdentityErrorDescriber describer = null) 
 			: base(context, describer)
+		{
+		}
+	}
+
+	public class CustomUserStore<TUser, TRole, TContext, TKey>
+		: CustomUserStore<
+			TUser,
+			TRole,
+			TContext,
+			TKey,
+			IdentityUserClaim<TKey>,
+			IdentityUserRole<TKey>,
+			IdentityUserLogin<TKey>,
+			IdentityUserToken<TKey>,
+			IdentityRoleClaim<TKey>>
+		where TUser : IdUser<TKey>
+		where TRole : IdentityRole<TKey>
+		where TContext : DbContext
+		where TKey : IEquatable<TKey>
+	{
+		public CustomUserStore(TContext context, IdentityErrorDescriber describer = null)
+		: base(context, describer)
 		{
 		}
 	}

@@ -37,9 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
 					TId,
 					TUserClaim,
 					TUserRole,
-					TUserLogin,
-					TUserToken,
-					TRoleClaim>
+					TUserLogin>
 				where TValidator : class, IPasswordValidator<TUser>
 				where TErrorDescriber : IdentityErrorDescriber
 				where TUserClaim : IdentityUserClaim<TId>, new()
