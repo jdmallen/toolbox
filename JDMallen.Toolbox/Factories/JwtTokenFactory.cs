@@ -35,18 +35,41 @@ namespace JDMallen.Toolbox.Factories
 
 		public string GenerateToken(ClaimsIdentity identity)
 		{
-			var email = identity.Claims.Single(c => c.Type == ClaimTypes.Email).Value;
+			var userName =
+				identity
+					.Claims
+					.SingleOrDefault(c => c.Type == ClaimTypes.Name)
+					?.Value;
 
 			var claims = new List<Claim>
 			{
-				new Claim(JwtClaimTypes.Subject, email),
 				new Claim(JwtClaimTypes.JwtId, JwtOptions.NewJti),
 				new Claim(
 					JwtClaimTypes.IssuedAt,
 					"" + JwtOptions.IssuedAt.ToUnixTimestamp(),
-					ClaimValueTypes.Integer64),
-				identity.FindFirst(JwtClaimTypes.UserId)
+					ClaimValueTypes.Integer64)
 			};
+
+			if (!string.IsNullOrWhiteSpace(userName))
+			{
+				claims.Add(new Claim(JwtClaimTypes.UserId, userName));
+			}
+
+//			if (!string.IsNullOrWhiteSpace(email))
+//			{
+//				claims.Add(new Claim(JwtClaimTypes.Subject, email));
+//			}
+
+			claims.Add(
+				identity.FindAll(ClaimTypes.PrimarySid)
+					.Select(claim => new Claim(OtherJwtClaimTypes.PrimarySid, claim.Value))
+					.FirstOrDefault());
+
+			claims.Add(
+				identity.FindAll(ClaimTypes.Email)
+					.Select(claim => new Claim(OtherJwtClaimTypes.Email, claim.Value))
+					.FirstOrDefault());
+
 			claims.AddRange(identity.FindAll(JwtClaimTypes.UserRole));
 
 			var token = new JwtSecurityToken(
