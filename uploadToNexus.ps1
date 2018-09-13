@@ -1,5 +1,7 @@
-﻿$pkgs = gci -Recurse -Path $env:System_DefaultWorkingDirectory\**\*.nupkg
-$encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($env:NexusUserAndPwd))
+﻿Param($drop, $endpoint, $creds)
+
+$pkgs = gci -Recurse -Path $drop\**\*.nupkg
+$encodedCreds = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($creds))
 $basicAuthValue = "Basic $encodedCreds"
 $boundary = [System.Guid]::NewGuid().ToString()
 $lf = "`r`n"
@@ -21,5 +23,5 @@ $pkgs | % {
         "--$boundary--$lf"
     ) -join $lf
 
-    Invoke-RestMethod -Method Post -Uri $env:NexusNugetEndpoint -ContentType "multipart/form-data; boundary=`"$boundary`"" -Headers $headers -Body $bodyLines
+    Invoke-RestMethod -Method Post -Uri $endpoint -ContentType "multipart/form-data; boundary=`"$boundary`"" -Headers $headers -Body $bodyLines
 }
