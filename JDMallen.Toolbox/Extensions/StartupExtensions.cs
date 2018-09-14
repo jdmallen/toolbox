@@ -45,6 +45,9 @@ namespace JDMallen.Toolbox.Extensions
 			foreach (var endpoint in endpoints)
 			{
 				var config = endpoint.Value;
+				bool.TryParse(configuration["Settings:ReverseProxy"], out var reverseProxy);
+				if (config.Scheme == "https" && reverseProxy)
+					continue;
 				var port = config.Port ?? (config.Scheme == "https" ? 443 : 80);
 
 				var ipAddresses = new List<IPAddress>();
