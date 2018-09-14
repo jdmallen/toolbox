@@ -75,7 +75,8 @@ namespace JDMallen.Toolbox.Extensions
 									port,
 									listenOptions =>
 									{
-										if (config.Scheme != "https") return;
+										if (config.Scheme != "https" || reverseProxy)
+											return;
 										var certificate = LoadCertificate(config, environment);
 										Debug.WriteLine($"  Certificate: {certificate.FriendlyName}");
 										listenOptions.UseHttps(certificate);
