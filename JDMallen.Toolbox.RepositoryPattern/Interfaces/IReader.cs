@@ -5,21 +5,19 @@ using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 {
-	public interface IReader<TEntityModel, in TQueryParameters, in TId> : IRepository
-		where TEntityModel : class, IEntityModel
-		where TQueryParameters : class, IQueryParameters
+	public interface IReader<TModel, in TQueryParameters, in TId> : IRepository
+		where TModel : class, IModel
+		where TQueryParameters : class
 		where TId : struct
 	{
 		Task<bool> Any(TQueryParameters parameters);
 
 		Task<long> Count(TQueryParameters parameters);
 
-		Task<TEntityModel> Get(TId id);
+		Task<TModel> Get(TId id);
 
-		Task<TEntityModel> Find(TQueryParameters parameters);
+		Task<List<TModel>> Find(TQueryParameters parameters);
 
-		Task<List<TEntityModel>> FindAll(TQueryParameters parameters);
-
-		Task<IPagedResult<TEntityModel>> FindAllPaged(TQueryParameters parameters);
+		Task<IPagedResult<TModel>> FindPaged(TQueryParameters parameters);
 	}
 }

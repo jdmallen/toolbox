@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -101,5 +102,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 		public EntityEntry Remove<TEntityModel, TId>(TEntityModel modelToDelete)
 			where TEntityModel : class, IEntityModel<TId> where TId : struct
 			=> Remove(modelToDelete);
+
+		public IDbConnection GetConnection() => base.Database.GetDbConnection();
 	}
 }

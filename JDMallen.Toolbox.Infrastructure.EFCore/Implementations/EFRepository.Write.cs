@@ -8,24 +8,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract partial class EFRepository<TContext, TEntityModel, TQueryParameters, TId>
+	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
 		where TContext : class, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
-		public override Task<int> SaveChanges(
+		public Task<int> SaveChanges(
 			CancellationToken cancellationToken = default(CancellationToken))
 			=> Context.SaveAllChanges(cancellationToken);
 
-		public override async Task<TEntityModel> Add(TEntityModel model)
+		public async Task<TEntityModel> Add(TEntityModel model)
 		{
 			if (model == null) return null;
 			var result = await Context.AddAsync<TEntityModel,TId>(model);
 			return (TEntityModel) result.Entity;
 		}
 
-		public override async Task<TEntityModel> Change(TEntityModel model)
+		public async Task<TEntityModel> Change(TEntityModel model)
 		{
 			if (model == null) return null;
 			var modelToUpdate = await Context.BuildQuery<TEntityModel>()
@@ -36,7 +36,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			return (TEntityModel) result.Entity;
 		}
 
-		public override async Task<TEntityModel> Remove(TId id)
+		public async Task<TEntityModel> Remove(TId id)
 		{
 			if (Equals(id, default(TId))) return null;
 			var modelToDelete = await Context.BuildQuery<TEntityModel>()

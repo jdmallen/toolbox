@@ -6,25 +6,24 @@ using JDMallen.Toolbox.Infrastructure.EFCore.Filters;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
-using JDMallen.Toolbox.RepositoryPattern.Implementations;
+using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract partial class EFRepository<TContext, TEntityModel, TQueryParameters, TId>
-		: Repository<
-			TContext,
-			TEntityModel,
-			TQueryParameters,
-			TId>
+	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
+		: IRepository
 		where TContext : class, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
-		protected EFRepository(TContext context) : base(context)
+		protected EFRepositoryBase(TContext context)
 		{
+			Context = context;
 		}
+
+		protected TContext Context { get; }
 
 		/// <summary>
 		/// https://stackoverflow.com/a/8181736/3986790

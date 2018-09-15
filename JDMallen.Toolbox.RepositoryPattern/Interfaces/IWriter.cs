@@ -5,16 +5,16 @@ using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 {
-	public interface IWriter<TEntityModel, in TId> : IRepository
-		where TEntityModel : class, IEntityModel
+	public interface IWriter<TModel, in TId> : IRepository
+		where TModel : class, IModel
 		where TId : struct
 	{
-		Task<TEntityModel> Add(TEntityModel model);
+		Task<TModel> Add(TModel model);
 
-		Task<TEntityModel> Change(TEntityModel model);
+		Task<TModel> Update(TModel model);
 
-		Task<TEntityModel> Remove(TId id);
+		Task<TModel> Remove(TModel id);
 
-		Task<int> SaveChanges(CancellationToken cancellationToken = default(CancellationToken));
+		Task<TModel> Remove(TId id);
 	}
 }

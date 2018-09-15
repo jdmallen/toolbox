@@ -5,12 +5,12 @@ using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.Microservices.Models
 {
-	public abstract class WriteOnlyService<TRepository, TEntityModel, TId>
-		: ICreateService<TRepository, TEntityModel, TId>,
-		IUpdateService<TRepository, TEntityModel, TId>,
-		IDeleteService<TRepository, TEntityModel, TId>
-		where TRepository : IWriter<TEntityModel, TId>
-		where TEntityModel : class, IEntityModel<TId>
+	public abstract class WriteOnlyService<TRepository, TModel, TId>
+		: ICreateService<TRepository, TModel, TId>,
+		IUpdateService<TRepository, TModel, TId>,
+		IDeleteService<TRepository, TModel, TId>
+		where TRepository : IWriter<TModel, TId>
+		where TModel : class, IModel
 		where TId : struct
 	{
 		/// <summary>
@@ -28,35 +28,35 @@ namespace JDMallen.Toolbox.Microservices.Models
 		public TRepository Repository { get; }
 
 		/// <summary>
-		/// Creates a new <see cref="TEntityModel"/>
+		/// Creates a new <see cref="TModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TEntityModel> Create(TEntityModel model)
+		public async Task<TModel> Create(TModel model)
 			=> await Repository.Add(model);
 
 		/// <summary>
-		/// Updates an existing <see cref="TEntityModel"/>
+		/// Updates an existing <see cref="TModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TEntityModel> Update(TEntityModel model)
-			=> await Repository.Change(model);
+		public async Task<TModel> Update(TModel model)
+			=> await Repository.Update(model);
 
 		/// <summary>
-		/// Deletes an existing <see cref="TEntityModel"/>
+		/// Deletes an existing <see cref="TModel"/>
 		/// </summary>
 		/// <param name="model">The object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public Task<TEntityModel> Delete(TEntityModel model)
-			=> Delete(model.Id);
+		public async Task<TModel> Delete(TModel model)
+			=> await Repository.Remove(model);
 
 		/// <summary>
 		/// Deletes an existing domain object from the data context via its repository
 		/// </summary>
 		/// <param name="id">The ID of the object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public async Task<TEntityModel> Delete(TId id)
+		public async Task<TModel> Delete(TId id)
 			=> await Repository.Remove(id);
 	}
 }

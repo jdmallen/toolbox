@@ -6,13 +6,13 @@ using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.Microservices.Models
 {
-	public abstract class ReadWriteService<TRepository, TEntityModel, TQueryParameters, TId>
-		: ICreateService<TRepository, TEntityModel, TId>,
-		IReadService<TRepository, TEntityModel, TQueryParameters, TId>,
-		IUpdateService<TRepository, TEntityModel, TId>,
-		IDeleteService<TRepository, TEntityModel, TId>
-		where TRepository : IReader<TEntityModel, TQueryParameters, TId>, IWriter<TEntityModel, TId>
-		where TEntityModel : class, IEntityModel<TId>
+	public abstract class ReadWriteService<TRepository, TModel, TQueryParameters, TId>
+		: ICreateService<TRepository, TModel, TId>,
+		IReadService<TRepository, TModel, TQueryParameters, TId>,
+		IUpdateService<TRepository, TModel, TId>,
+		IDeleteService<TRepository, TModel, TId>
+		where TRepository : IReader<TModel, TQueryParameters, TId>, IWriter<TModel, TId>
+		where TModel : class, IModel
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
@@ -31,68 +31,60 @@ namespace JDMallen.Toolbox.Microservices.Models
 		public TRepository Repository { get; }
 
 		/// <summary>
-		/// Creates a new <see cref="TEntityModel"/>
+		/// Creates a new <see cref="TModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TEntityModel> Create(TEntityModel model)
+		public async Task<TModel> Create(TModel model)
 			=> await Repository.Add(model);
 
 		/// <summary>
-		/// Fetch a single <see cref="TEntityModel"/> via its <see cref="TId"/>
+		/// Fetch a single <see cref="TModel"/> via its <see cref="TId"/>
 		/// </summary>
 		/// <param name="id">The ID of the object to fetch</param>
 		/// <returns>The fetched object</returns>
-		public async Task<TEntityModel> Read(TId id)
+		public async Task<TModel> Read(TId id)
 			=> await Repository.Get(id);
 
 		/// <summary>
-		/// Fetch a single <see cref="TEntityModel"/> via a set of <see cref="TQueryParameters"/>
-		/// </summary>
-		/// <param name="parameters">The search parameters</param>
-		/// <returns>The fetched object</returns>
-		public async Task<TEntityModel> Find(TQueryParameters parameters)
-			=> await Repository.Find(parameters);
-
-		/// <summary>
-		/// Fetch many <see cref="TEntityModel"/>s via a set of <see cref="TQueryParameters"/>
+		/// Fetch many <see cref="TModel"/>s via a set of <see cref="TQueryParameters"/>
 		/// </summary>
 		/// <param name="parameters">The search parameters</param>
 		/// <returns>The fetched list of objects</returns>
-		public async Task<IEnumerable<TEntityModel>> FindAll(TQueryParameters parameters)
-			=> await Repository.FindAll(parameters);
+		public async Task<IEnumerable<TModel>> Find(TQueryParameters parameters)
+			=> await Repository.Find(parameters);
 
 		/// <summary> 
-		/// Fetch many <see cref="TEntityModel"/>s via a set of <see cref="TQueryParameters"/> 
+		/// Fetch many <see cref="TModel"/>s via a set of <see cref="TQueryParameters"/> 
 		/// and wrap the results in an <see cref="IPagedResult{TEntityModel}"/> suitable for UI pagination.
 		/// </summary>
 		/// <param name="parameters">The search parameters</param>
 		/// <returns>The fetched list of objects in a paged result object</returns>
-		public async Task<IPagedResult<TEntityModel>> FindAllPaged(TQueryParameters parameters)
-			=> await Repository.FindAllPaged(parameters);
+		public async Task<IPagedResult<TModel>> FindPaged(TQueryParameters parameters)
+			=> await Repository.FindPaged(parameters);
 
 		/// <summary>
-		/// Updates an existing <see cref="TEntityModel"/>
+		/// Updates an existing <see cref="TModel"/>
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TEntityModel> Update(TEntityModel model)
-			=> await Repository.Change(model);
+		public async Task<TModel> Update(TModel model)
+			=> await Repository.Update(model);
 
 		/// <summary>
-		/// Deletes an existing <see cref="TEntityModel"/>
+		/// Deletes an existing <see cref="TModel"/>
 		/// </summary>
 		/// <param name="model">The object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public Task<TEntityModel> Delete(TEntityModel model)
-			=> Delete(model.Id);
+		public async Task<TModel> Delete(TModel model)
+			=> await Repository.Remove(model);
 
 		/// <summary>
 		/// Deletes an existing domain object from the data context via its repository
 		/// </summary>
 		/// <param name="id">The ID of the object to be deleted</param>
 		/// <returns>The deleted object</returns>
-		public async Task<TEntityModel> Delete(TId id)
+		public async Task<TModel> Delete(TId id)
 			=> await Repository.Remove(id);
 	}
 }

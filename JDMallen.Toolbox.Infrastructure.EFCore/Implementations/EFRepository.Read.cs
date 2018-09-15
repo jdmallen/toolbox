@@ -9,28 +9,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract partial class EFRepository<TContext, TEntityModel, TQueryParameters, TId>
+	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
 		where TContext : class, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
-		public override Task<bool> Any(TQueryParameters parameters)
+		public Task<bool> Any(TQueryParameters parameters)
 			=> BuildQuery(parameters).AnyAsync();
 
-		public override Task<long> Count(TQueryParameters parameters)
+		public Task<long> Count(TQueryParameters parameters)
 			=> BuildQuery(parameters).LongCountAsync();
 
-		public override Task<TEntityModel> Get(TId id)
+		public Task<TEntityModel> Get(TId id)
 			=> BuildQuery(null).SingleOrDefaultAsync(x => id.Equals(x.Id));
 
-		public override Task<TEntityModel> Find(TQueryParameters parameters)
-			=> BuildQuery(parameters).FirstOrDefaultAsync();
-
-		public override Task<List<TEntityModel>> FindAll(TQueryParameters parameters)
+		public Task<List<TEntityModel>> Find(TQueryParameters parameters)
 			=> BuildQuery(parameters).ToListAsync();
 
-		public override async Task<IPagedResult<TEntityModel>> FindAllPaged(TQueryParameters parameters)
+		public async Task<IPagedResult<TEntityModel>> FindPaged(TQueryParameters parameters)
 		{
 			var count = await Count(parameters);
 
