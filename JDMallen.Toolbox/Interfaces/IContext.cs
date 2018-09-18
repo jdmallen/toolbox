@@ -12,6 +12,7 @@ namespace JDMallen.Toolbox.Interfaces
   {
 		IDbConnection GetConnection();
 
-		Task<int> SaveAllChanges(CancellationToken cancellationToken = default(CancellationToken));
+		Task<int> SaveChangesAsync(
+			CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

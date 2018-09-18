@@ -25,21 +25,16 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 		{
 		}
 
-		public IQueryable<TEntityModel> GetQueryable<TEntityModel>()
-			where TEntityModel : class, IEntityModel
-		{
-			return Set<TEntityModel>();
-		}
-
 		/// <summary>
 		/// Source: https://stackoverflow.com/a/48346941/3986790
 		/// </summary>
 		/// <remarks>
-		/// This special version of OnModelCreating finds all classes implementing 
-		/// <see cref="IEntityModel"/> and adds them to the central EF model. After that,
-		/// it then finds all models with their own OnModelCreating method (those
-		/// implementing <see cref="IComplexEntityModel"/>) and executes that method on each
-		/// entity model in succession. This allows the user to place the ModelBuilder code
+		/// This special version of OnModelCreating finds all classes implementing
+		/// <see cref="IEntityModel"/> and adds them to the central EF model.
+		/// After that, it then finds all models with their own OnModelCreating
+		/// method (those implementing <see cref="IComplexEntityModel"/>) and
+		/// executes that method on each entity model in succession.
+		/// This allows the user to place the ModelBuilder code
 		/// in each entity class instead of all lumped together here.
 		/// </remarks>
 		/// <param name="modelBuilder"></param>
@@ -48,51 +43,52 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 			GetType()
 				.Assembly
 				.DefinedTypes
-				.Where(type => typeof(IEntityModel).IsAssignableFrom(type)  // Get all the types that implement
-							   && !type.IsAbstract                          // IEntityModel and are concrete classes
+				// Get all the types that implement
+				.Where(type => typeof(IEntityModel).IsAssignableFrom(type)
+							   // IEntityModel and are concrete classes
+							   && !type.IsAbstract
 							   && !type.IsInterface)
-				.ToList()                                                   // Compile them all into a list
+				.ToList()	 // Compile them all into a list
 				.ForEach(type =>
 				{
-					if (modelBuilder.Model.FindEntityType(type) != null) return;  // And add each one to the ModelBuilder.
-					modelBuilder.Model.AddEntityType(type);                       // If it's already been added, skip it.
+					// And add each one to the ModelBuilder.
+					if (modelBuilder.Model.FindEntityType(type) != null) return;
+					// If it's already been added, skip it.
+					modelBuilder.Model.AddEntityType(type);
 				});
 
 			GetType()
 				.Assembly
 				.DefinedTypes
-				.Where(type => typeof(IComplexEntityModel).IsAssignableFrom(type)  // Get all the types that implement
-							   && !type.IsAbstract                                 // IComplexEntityModel and are concrete classes
+				// Get all the types that implement
+				.Where(type => typeof(IComplexEntityModel).IsAssignableFrom(type)
+							   // IComplexEntityModel and are concrete classes
+							   && !type.IsAbstract
 							   && !type.IsInterface)
-				.Select(Activator.CreateInstance)                           // Instantiate each 
-				.Cast<IComplexEntityModel>()                                // as an IComplexEntityModel
+				// Instantiate each 
+				.Select(Activator.CreateInstance)
+				// as an IComplexEntityModel
+				.Cast<IComplexEntityModel>()
 				.ToList()
-				.ForEach(model => model.OnModelCreating(modelBuilder));     // And call each's respective OnModelCreating method.
+				// And call each's respective OnModelCreating method.
+				.ForEach(model => model.OnModelCreating(modelBuilder));
 		}
 
-		/// <summary>
-		/// Save all changes to the DbContext. 
-		/// Calls SaveChangesAsync on <see cref="DbContext"/>.
-		/// </summary>
-		/// <param name="cancellationToken">
-		/// Optional async cancellation token.
-		/// </param>
-		/// <returns>Number of items changed in database.</returns>
-		public Task<int> SaveAllChanges(CancellationToken cancellationToken = default(CancellationToken))
-		{
-			return SaveChangesAsync(cancellationToken);
-		}
-
-		public Task<EntityEntry<TEntityModel>> AddAsync<TEntityModel, TId>(
+		public EntityEntry<TEntityModel> Add<TEntityModel, TId>(
 			TEntityModel model,
 			CancellationToken cancellationToken = default(CancellationToken))
 			where TEntityModel : class, IEntityModel<TId> 
 			where TId : struct
-			=> base.AddAsync(model, cancellationToken);
+			=> base.Add(model);
 
 		public IQueryable<TEntityModel> BuildQuery<TEntityModel>()
 			where TEntityModel : class, IEntityModel
 			=> Set<TEntityModel>();
+
+		public EntityEntry<TEntityModel> Entry<TEntityModel, TId>(TEntityModel model)
+			where TEntityModel: class, IEntityModel<TId>
+			where TId : struct
+			=> Entry(model);
 
 		public EntityEntry Update<TEntityModel, TId>(TEntityModel modelToUpdate)
 			where TEntityModel : class, IEntityModel<TId>
@@ -100,7 +96,8 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
 			=> Update(modelToUpdate);
 
 		public EntityEntry Remove<TEntityModel, TId>(TEntityModel modelToDelete)
-			where TEntityModel : class, IEntityModel<TId> where TId : struct
+			where TEntityModel : class, IEntityModel<TId> 
+			where TId : struct
 			=> Remove(modelToDelete);
 
 		public IDbConnection GetConnection() => base.Database.GetDbConnection();

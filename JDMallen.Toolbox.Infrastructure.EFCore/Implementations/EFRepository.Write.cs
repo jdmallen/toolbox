@@ -18,23 +18,23 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 	{
 		public Task<int> SaveChanges(
 			CancellationToken cancellationToken = default(CancellationToken))
-			=> Context.SaveAllChanges(cancellationToken);
+			=> Context.SaveChangesAsync(cancellationToken);
 
 		public async Task<TEntityModel> Add(TEntityModel model)
 		{
 			if (model == null) return null;
-			var result = await Context.AddAsync<TEntityModel,TId>(model);
+			var result = Context.Add<TEntityModel,TId>(model);
 			return (TEntityModel) result.Entity;
 		}
 
 		public async Task<TEntityModel> Update(TEntityModel model)
 		{
 			if (model == null) return null;
-			var modelToUpdate = await Context.BuildQuery<TEntityModel>()
-			                                 .Where(x => model.Id.Equals(x.Id))
-			                                 .SingleOrDefaultAsync();
-			CopyProps(ref modelToUpdate, ref model);
-			var result = Context.Update<TEntityModel, TId>(modelToUpdate);
+			// var modelToUpdate = await Context.BuildQuery<TEntityModel>()
+			//                                  .Where(x => model.Id.Equals(x.Id))
+			//                                  .SingleOrDefaultAsync();
+			// CopyProps(ref modelToUpdate, ref model);
+			var result = Context.Update<TEntityModel, TId>(model);
 			return (TEntityModel) result.Entity;
 		}
 
@@ -42,6 +42,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 		{
 			if (Equals(id, default(TId))) return null;
 			var modelToDelete = await Context.BuildQuery<TEntityModel>()
+			                                 .AsNoTracking()
 			                                 .Where(x => id.Equals(x.Id))
 			                                 .SingleOrDefaultAsync();
 			if (modelToDelete == null) return null;
