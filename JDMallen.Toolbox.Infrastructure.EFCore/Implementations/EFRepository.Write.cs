@@ -11,46 +11,46 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
 	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
 		: IWriter<TEntityModel, TId>
-		where TContext : class, IEFContext
+		where TContext : DbContext, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
 	{
-		public Task<int> SaveChanges(
+		public Task<int> SaveChangesAsync(
 			CancellationToken cancellationToken = default(CancellationToken))
 			=> Context.SaveChangesAsync(cancellationToken);
 
 		public async Task<TEntityModel> Add(TEntityModel model)
 		{
 			if (model == null) return null;
-			var result = Context.Add<TEntityModel,TId>(model);
+			var result = Context.Add(model);
 			return (TEntityModel) result.Entity;
 		}
 
 		public async Task<TEntityModel> Update(TEntityModel model)
 		{
 			if (model == null) return null;
-			// var modelToUpdate = await Context.BuildQuery<TEntityModel>()
-			//                                  .Where(x => model.Id.Equals(x.Id))
-			//                                  .SingleOrDefaultAsync();
-			// CopyProps(ref modelToUpdate, ref model);
-			var result = Context.Update<TEntityModel, TId>(model);
+			Set.Attach(model);
+			var result = Context.Update(model);
 			return (TEntityModel) result.Entity;
 		}
 
 		public async Task<TEntityModel> Remove(TId id)
 		{
 			if (Equals(id, default(TId))) return null;
-			var modelToDelete = await Context.BuildQuery<TEntityModel>()
-			                                 .AsNoTracking()
-			                                 .Where(x => id.Equals(x.Id))
-			                                 .SingleOrDefaultAsync();
+			var modelToDelete = await Context.FindAsync<TEntityModel>(id);
 			if (modelToDelete == null) return null;
-			var result = Context.Remove<TEntityModel, TId>(modelToDelete);
-			return (TEntityModel) result.Entity;
+			return await Remove(modelToDelete);
 		}
 
-		public Task<TEntityModel> Remove(TEntityModel model)
-			=> Remove(model.Id);
+		public async Task<TEntityModel> Remove(TEntityModel model)
+		{
+			if (Context.Entry(model).State == EntityState.Detached)
+			{
+				Set.Attach(model);
+			}
+			var result = Context.Remove(model);
+			return result.Entity;
+		}
 	}
 }

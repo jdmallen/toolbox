@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using JDMallen.Toolbox.Extensions;
 using JDMallen.Toolbox.Infrastructure.EFCore.Extensions;
@@ -11,9 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
-		: IRepository
-		where TContext : class, IEFContext
+	public abstract partial class EFRepositoryBase<
+		TContext,
+		TEntityModel,
+		TQueryParameters,
+		TId>
+			: IRepository, IDisposable
+		where TContext : DbContext, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
@@ -21,9 +26,12 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 		protected EFRepositoryBase(TContext context)
 		{
 			Context = context;
+			Set = Context.Set<TEntityModel>();
 		}
 
 		protected TContext Context { get; }
+
+		protected DbSet<TEntityModel> Set { get; }
 
 		/// <summary>
 		/// https://stackoverflow.com/a/8181736/3986790
@@ -105,6 +113,26 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 				query = query.OrderBy(parameters.SortBy, parameters.SortAscending);
 
 			return query;
+		}
+
+		private bool disposed = false;
+
+		protected virtual void Dispose(bool disposing)
+		{
+				if (!this.disposed)
+				{
+						if (disposing)
+						{
+								Context.Dispose();
+						}
+				}
+				this.disposed = true;
+		}
+
+		public void Dispose()
+		{
+				Dispose(true);
+				GC.SuppressFinalize(this);
 		}
 	}
 }

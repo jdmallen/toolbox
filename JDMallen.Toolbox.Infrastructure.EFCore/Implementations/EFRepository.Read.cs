@@ -12,7 +12,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
 	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
 		: IReader<TEntityModel, TQueryParameters, TId>
-		where TContext : class, IEFContext
+		where TContext : DbContext, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
@@ -24,7 +24,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			=> BuildQuery(parameters).LongCountAsync();
 
 		public Task<TEntityModel> Get(TId id)
-			=> BuildQuery(null).SingleOrDefaultAsync(x => id.Equals(x.Id));
+			=> Context.FindAsync<TEntityModel>();
 
 		public Task<List<TEntityModel>> Find(TQueryParameters parameters)
 			=> BuildQuery(parameters).ToListAsync();
