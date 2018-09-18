@@ -13,7 +13,7 @@ namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 
 		Task<TModel> Update(TModel model);
 
-		Task<TModel> Remove(TModel id);
+		Task<TModel> Remove(TModel model);
 
 		Task<TModel> Remove(TId id);
 	}

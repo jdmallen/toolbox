@@ -5,11 +5,13 @@ using JDMallen.Toolbox.Extensions;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
+using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
 	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
+		: IReader<TEntityModel, TQueryParameters, TId>
 		where TContext : class, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters

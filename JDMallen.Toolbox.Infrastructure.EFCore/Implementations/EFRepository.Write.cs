@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
+using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
 	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TQueryParameters, TId>
+		: IWriter<TEntityModel, TId>
 		where TContext : class, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
@@ -25,7 +27,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			return (TEntityModel) result.Entity;
 		}
 
-		public async Task<TEntityModel> Change(TEntityModel model)
+		public async Task<TEntityModel> Update(TEntityModel model)
 		{
 			if (model == null) return null;
 			var modelToUpdate = await Context.BuildQuery<TEntityModel>()
@@ -46,5 +48,8 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			var result = Context.Remove<TEntityModel, TId>(modelToDelete);
 			return (TEntityModel) result.Entity;
 		}
+
+		public Task<TEntityModel> Remove(TEntityModel model)
+			=> Remove(model.Id);
 	}
 }
