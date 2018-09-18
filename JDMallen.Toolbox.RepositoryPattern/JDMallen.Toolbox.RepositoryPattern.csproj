@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyName>JDMallen.Toolbox.RepositoryPattern</AssemblyName>
@@ -10,10 +10,6 @@
 		<PackageLicenseUrl>https://github.com/jdmallen/toolbox/blob/master/LICENSE</PackageLicenseUrl>
 		<RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="Implementations\Repository.Read.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj" />

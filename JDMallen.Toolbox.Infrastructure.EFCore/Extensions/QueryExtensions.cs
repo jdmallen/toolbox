@@ -24,8 +24,8 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Extensions
 				(dynamic) UtilityMethods.GetExpressionFromPropertyName(typeof(TSource), fieldName);
 
 			return ascending
-				       ? Queryable.OrderBy(query, lambda)
-				       : Queryable.OrderByDescending(query, lambda);
+				? Queryable.OrderBy(query, lambda)
+				: Queryable.OrderByDescending(query, lambda);
 		}
 	}
 }

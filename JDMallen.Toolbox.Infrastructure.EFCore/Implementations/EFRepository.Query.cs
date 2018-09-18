@@ -6,7 +6,6 @@ using JDMallen.Toolbox.Infrastructure.EFCore.Extensions;
 using JDMallen.Toolbox.Infrastructure.EFCore.Filters;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
-using JDMallen.Toolbox.Models;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

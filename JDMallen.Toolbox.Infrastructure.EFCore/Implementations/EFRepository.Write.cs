@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
-using JDMallen.Toolbox.Models;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,14 +20,16 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 
 		public async Task<TEntityModel> Add(TEntityModel model)
 		{
-			if (model == null) return null;
+			if (model == null)
+				return null;
 			var result = Context.Add(model);
 			return (TEntityModel) result.Entity;
 		}
 
 		public async Task<TEntityModel> Update(TEntityModel model)
 		{
-			if (model == null) return null;
+			if (model == null)
+				return null;
 			Set.Attach(model);
 			var result = Context.Update(model);
 			return (TEntityModel) result.Entity;
@@ -37,9 +37,11 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 
 		public async Task<TEntityModel> Remove(TId id)
 		{
-			if (Equals(id, default(TId))) return null;
+			if (Equals(id, default(TId)))
+				return null;
 			var modelToDelete = await Context.FindAsync<TEntityModel>(id);
-			if (modelToDelete == null) return null;
+			if (modelToDelete == null)
+				return null;
 			return await Remove(modelToDelete);
 		}
 
@@ -49,6 +51,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			{
 				Set.Attach(model);
 			}
+
 			var result = Context.Remove(model);
 			return result.Entity;
 		}

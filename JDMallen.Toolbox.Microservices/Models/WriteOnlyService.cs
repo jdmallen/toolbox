@@ -1,7 +1,6 @@
 ﻿ using System.Threading.Tasks;
  using JDMallen.Toolbox.Interfaces;
- using JDMallen.Toolbox.Models;
-using JDMallen.Toolbox.RepositoryPattern.Interfaces;
+ using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.Microservices.Models
 {

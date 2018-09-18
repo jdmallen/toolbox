@@ -1,20 +1,19 @@
 using System;
 using System.Data;
 using JDMallen.Toolbox.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
-namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
+namespace JDMallen.Toolbox.Infrastructure.EFCore.Interfaces
 {
-	public interface IUnitOfWork<out TTransaction> : IDisposable
+	public interface IEFUnitOfWork : IDisposable
 	{
 		Guid Id { get; }
 
 		IDbConnection Connection { get; }
 
-		TTransaction Transaction { get; }
+		IDbContextTransaction Transaction { get; }
 
 		UnitOfWorkState State { get; }
-
-		void Begin();
 
 		void Commit();
 

@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.Interfaces;
-using JDMallen.Toolbox.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Models

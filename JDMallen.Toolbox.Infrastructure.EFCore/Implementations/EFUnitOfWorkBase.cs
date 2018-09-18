@@ -1,37 +1,39 @@
 using System;
 using System.Data;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Models;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
-namespace JDMallen.Toolbox.RepositoryPattern.Implementations
+namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
-	public abstract class UnitOfWorkBase<TContext, TTransaction>
-		: IUnitOfWork<TTransaction>
-		where TContext : IContext
-		where TTransaction : IDbTransaction
+	public abstract class EFUnitOfWorkBase<TContext>
+		: IUnitOfWork<IDbContextTransaction>
+		where TContext : DbContext, IEFContext
 	{
 		private bool _disposed;
 
-		protected UnitOfWorkBase(TContext connectionFactory)
+		protected TContext Context;
+
+		protected EFUnitOfWorkBase(TContext context)
 		{
-			Connection = connectionFactory.GetConnection();
+			Context = context;
 			Id = Guid.NewGuid();
 			State = UnitOfWorkState.New;
 		}
 
 		public Guid Id { get; }
 
-		public IDbConnection Connection { get; private set; }
+		public IDbConnection Connection => Context.Database.GetDbConnection();
 
-		public TTransaction Transaction { get; private set; }
+		public IDbContextTransaction Transaction { get; private set; }
 
 		public UnitOfWorkState State { get; private set; }
 
 		public void Begin()
 		{
-			Connection.Open();
-			Transaction = (TTransaction) Connection.BeginTransaction();
+			Transaction = Context.Database.BeginTransaction();
 			State = UnitOfWorkState.Open;
 		}
 
@@ -80,8 +82,8 @@ namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 				NullRepositories();
 			}
 
-			Connection = null;
-			Transaction = default(TTransaction);
+			Context = null;
+			Transaction = null;
 			_disposed = true;
 		}
 
@@ -91,7 +93,7 @@ namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 			GC.SuppressFinalize(this);
 		}
 
-		~UnitOfWorkBase()
+		~EFUnitOfWorkBase()
 		{
 			Dispose(false);
 		}

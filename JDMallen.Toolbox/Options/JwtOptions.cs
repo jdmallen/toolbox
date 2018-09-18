@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using JDMallen.Toolbox.Structs;
 using Microsoft.IdentityModel.Tokens;
 

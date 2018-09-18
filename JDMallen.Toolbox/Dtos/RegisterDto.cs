@@ -2,7 +2,7 @@
 
 namespace JDMallen.Toolbox.Dtos
 {
-    public class RegisterDto
+	public class RegisterDto
 	{
 		[Required]
 		public string Email { get; set; }
