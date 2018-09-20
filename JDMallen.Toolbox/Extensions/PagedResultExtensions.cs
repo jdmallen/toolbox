@@ -14,9 +14,9 @@ namespace JDMallen.Toolbox.Extensions
 			where TModel : class, IModel
 			=> new PagedResult<TModel>
 			{
-				Items = null,
-				Skipped = skipped,
-				Taken = taken,
+				Items = models,
+				Skipped = skipped < 0 ? 0 : skipped,
+				Taken = (int) (taken < 0 ? total : taken),
 				TotalItemCount = total
 			};
 	}
