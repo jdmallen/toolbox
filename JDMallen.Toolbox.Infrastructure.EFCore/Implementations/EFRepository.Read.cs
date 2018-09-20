@@ -23,7 +23,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			=> BuildQuery(parameters).LongCountAsync();
 
 		public Task<TEntityModel> Get(TId id)
-			=> Context.FindAsync<TEntityModel>();
+			=> Context.FindAsync<TEntityModel>(id);
 
 		public Task<List<TEntityModel>> Find(TQueryParameters parameters)
 			=> BuildQuery(parameters).ToListAsync();
