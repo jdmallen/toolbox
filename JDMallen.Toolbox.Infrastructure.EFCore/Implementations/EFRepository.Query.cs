@@ -6,17 +6,15 @@ using JDMallen.Toolbox.Infrastructure.EFCore.Extensions;
 using JDMallen.Toolbox.Infrastructure.EFCore.Filters;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
-using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
 	public abstract partial class EFRepositoryBase<
-		TContext,
-		TEntityModel,
-		TQueryParameters,
-		TId>
-			: IRepository, IDisposable
+			TContext,
+			TEntityModel,
+			TQueryParameters,
+			TId>
 		where TContext : DbContext, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TQueryParameters : class, IQueryParameters
@@ -37,13 +35,16 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 		/// </summary>
 		/// <param name="oldEntity"></param>
 		/// <param name="newEntity"></param>
-		private static void CopyProps(ref TEntityModel oldEntity, ref TEntityModel newEntity)
+		private static void CopyProps(
+			ref TEntityModel oldEntity,
+			ref TEntityModel newEntity)
 		{
 			TEntityModel old = newEntity;
 			TEntityModel newish = oldEntity;
 			typeof(TEntityModel)
-				.GetFields(BindingFlags.Public
-				           | BindingFlags.Instance)
+				.GetFields(
+					BindingFlags.Public
+					| BindingFlags.Instance)
 				.ToList()
 				.ForEach(field => field.SetValue(old, field.GetValue(newish)));
 			oldEntity = old;
@@ -67,9 +68,10 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			{
 				typeof(TEntityModel)
 					.GetProperties()
-					.Where(prop => !prop.PropertyType.IsValueType
-					               && prop.PropertyType != typeof(string)
-					               && (prop.IsVirtual() ?? false))
+					.Where(
+						prop => !prop.PropertyType.IsValueType
+						        && prop.PropertyType != typeof(string)
+						        && (prop.IsVirtual() ?? false))
 					.ToList()
 					.ForEach(
 						prop => query = query.Include(prop.Name));
@@ -78,25 +80,36 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 			if (!string.IsNullOrWhiteSpace(parameters.Id))
 				query = query.IdContains<TEntityModel, TId>(parameters.Id);
 
-			if (string.IsNullOrWhiteSpace(parameters.Id) && parameters.Ids.Any())
-				query = query.Where(x => parameters.Ids.Contains(x.Id.ToString()));
+			if (string.IsNullOrWhiteSpace(parameters.Id)
+			    && parameters.Ids.Any())
+				query = query.Where(
+					x => parameters.Ids.Contains(x.Id.ToString()));
 
 			if (parameters.DateCreatedBefore.HasValue)
-				query = query.CreatedBefore(parameters.DateCreatedBefore.Value, true);
+				query = query.CreatedBefore(
+					parameters.DateCreatedBefore.Value,
+					true);
 
 			if (parameters.DateCreatedAfter.HasValue)
-				query = query.CreatedAfter(parameters.DateCreatedAfter.Value, true);
+				query = query.CreatedAfter(
+					parameters.DateCreatedAfter.Value,
+					true);
 
 			if (parameters.DateModifiedBefore.HasValue)
-				query = query.ModifiedBefore(parameters.DateModifiedBefore.Value, true);
+				query = query.ModifiedBefore(
+					parameters.DateModifiedBefore.Value,
+					true);
 
 			if (parameters.DateModifiedAfter.HasValue)
-				query = query.ModifiedAfter(parameters.DateModifiedAfter.Value, true);
+				query = query.ModifiedAfter(
+					parameters.DateModifiedAfter.Value,
+					true);
 
 			return query;
 		}
 
-		protected abstract IQueryable<TEntityModel> BuildQuery(TQueryParameters parameters);
+		protected abstract IQueryable<TEntityModel> BuildQuery(
+			TQueryParameters parameters);
 
 		protected IQueryable<TEntityModel> BuildQueryFinal(
 			TQueryParameters parameters,
@@ -109,29 +122,32 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 				return query;
 
 			if (!string.IsNullOrWhiteSpace(parameters.SortBy))
-				query = query.OrderBy(parameters.SortBy, parameters.SortAscending);
+				query = query.OrderBy(
+					parameters.SortBy,
+					parameters.SortAscending);
 
 			return query;
 		}
 
-		private bool disposed = false;
+		private bool _disposed;
 
 		protected virtual void Dispose(bool disposing)
 		{
-				if (!this.disposed)
+			if (!_disposed)
+			{
+				if (disposing)
 				{
-						if (disposing)
-						{
-								Context.Dispose();
-						}
+					Context.Dispose();
 				}
-				this.disposed = true;
+			}
+
+			_disposed = true;
 		}
 
 		public void Dispose()
 		{
-				Dispose(true);
-				GC.SuppressFinalize(this);
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }

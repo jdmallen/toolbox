@@ -1,88 +1,102 @@
 using System;
 using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 {
-	public abstract class UnitOfWorkBase<TContext, TTransaction>
-		: IUnitOfWork<TTransaction>
+	public abstract class UnitOfWorkBase<TContext>
+		: IUnitOfWork
 		where TContext : IContext
-		where TTransaction : IDbTransaction
 	{
-		private bool _disposed;
+		protected bool Disposed;
 
-		protected UnitOfWorkBase(TContext connectionFactory)
+		protected UnitOfWorkBase(TContext context)
 		{
-			Connection = connectionFactory.GetConnection();
+			Context = context;
+			Connection = context.GetConnection();
 			Id = Guid.NewGuid();
-			State = UnitOfWorkState.New;
-		}
-
-		public Guid Id { get; }
-
-		public IDbConnection Connection { get; private set; }
-
-		public TTransaction Transaction { get; private set; }
-
-		public UnitOfWorkState State { get; private set; }
-
-		public void Begin()
-		{
 			Connection.Open();
-			Transaction = (TTransaction) Connection.BeginTransaction();
+			Transaction = Connection.BeginTransaction();
 			State = UnitOfWorkState.Open;
 		}
 
-		public void Commit()
+		protected TContext Context { get; }
+
+		public Guid Id { get; }
+
+		public IDbConnection Connection { get; protected set; }
+
+		public IDbTransaction Transaction { get; protected set; }
+
+		public UnitOfWorkState State { get; protected set; }
+		
+		public virtual void Commit()
 		{
 			try
 			{
 				Transaction.Commit();
+				State = UnitOfWorkState.Committed;
 			}
 			catch
 			{
 				Rollback();
 				throw;
 			}
-			finally
-			{
-				Dispose();
-				State = UnitOfWorkState.Committed;
-			}
 		}
 
-		public void Rollback()
+		public IRepository GetRepository(string name)
 		{
-			try
-			{
-				Transaction.Rollback();
-			}
-			finally
-			{
-				Dispose();
-				State = UnitOfWorkState.RolledBack;
-			}
+			var repo = GetType()
+				.GetProperties(
+				)
+				.Where(
+					prop => Enumerable.Contains(
+						prop.PropertyType.GetInterfaces(),
+						typeof(IRepository)))
+				.FirstOrDefault(
+					prop => prop.Name.IndexOf(
+						        name,
+						        StringComparison.InvariantCultureIgnoreCase)
+					        != -1);
+			return (IRepository) repo?.GetValue(this);
 		}
 
-		public abstract void NullRepositories();
+		protected abstract void ResetRepositories();
+
+		public void ResetUnitOfWork()
+		{
+			Transaction = Connection.BeginTransaction();
+			State = UnitOfWorkState.Open;
+			ResetRepositories();
+		}
+
+		public virtual void Rollback()
+		{
+			Transaction.Rollback();
+			State = UnitOfWorkState.RolledBack;
+		}
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (_disposed)
+			if (Disposed)
 				return;
 			if (disposing)
 			{
 				Transaction?.Dispose();
 				Connection.Close();
 				Connection.Dispose();
-				NullRepositories();
+				ResetUnitOfWork();
 			}
 
 			Connection = null;
-			Transaction = default(TTransaction);
-			_disposed = true;
+			Transaction = default(IDbTransaction);
+			Disposed = true;
+			State = UnitOfWorkState.Disposed;
 		}
 
 		public void Dispose()

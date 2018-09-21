@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using JDMallen.Toolbox.Interfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -27,8 +26,5 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Models
 		EntityEntry Remove<TEntityModel, TId>(TEntityModel modelToDelete)
 			where TEntityModel : class, IEntityModel<TId>
 			where TId : struct;
-
-		Task<int> SaveChangesAsync(
-			CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

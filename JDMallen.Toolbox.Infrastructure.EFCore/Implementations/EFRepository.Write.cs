@@ -1,9 +1,13 @@
-﻿using System.Threading;
+﻿using System;
+using System.Data;
+using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.Infrastructure.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
@@ -54,6 +58,17 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 
 			var result = Context.Remove(model);
 			return result.Entity;
+		}
+
+		public void SetTransaction(IDbTransaction transaction)
+		{
+			if (!(transaction is DbTransaction dbTransaction))
+			{
+				throw new ArgumentException(
+					"Transaction cannot be converted to DbTransaction type.",
+					nameof(transaction));
+			}
+			Context.Database.UseTransaction(dbTransaction);
 		}
 	}
 }

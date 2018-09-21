@@ -4,21 +4,21 @@ using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 {
-	public interface IUnitOfWork<out TTransaction> : IDisposable
+	public interface IUnitOfWork
 	{
 		Guid Id { get; }
 
 		IDbConnection Connection { get; }
 
-		TTransaction Transaction { get; }
+		IDbTransaction Transaction { get; }
 
 		UnitOfWorkState State { get; }
 
-		void Begin();
-
 		void Commit();
 
-		void NullRepositories();
+		IRepository GetRepository(string name);
+
+		void ResetUnitOfWork();
 
 		void Rollback();
 	}
