@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JDMallen.Toolbox.RepositoryPattern\JDMallen.Toolbox.RepositoryPattern.csproj" />
-    <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj" />
   </ItemGroup>
 
 </Project>

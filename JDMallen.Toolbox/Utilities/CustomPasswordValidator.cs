@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 namespace JDMallen.Toolbox.Utilities
 {
 	public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
-		where TUser : IdUser
+		where TUser : IdentityUser<Guid>
 	{
 		private readonly PasswordComplexityOptions _options;
 		private readonly CustomIdentityErrorDescriber _errors;
