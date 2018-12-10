@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using JDMallen.Toolbox.Interfaces;
@@ -22,7 +23,22 @@ namespace JDMallen.Toolbox.Implementations
 		[Key]
 		public TId Id { get => _id; set => _id = value; }
 
-		public string IdText => Id.ToString();
+		public string IdText
+		{
+			get => Id.ToString();
+			set
+			{
+				try
+				{
+					var converter = TypeDescriptor.GetConverter(typeof(TId));
+					Id = (TId) converter.ConvertFromString(value);
+				}
+				catch
+				{
+					Id = default(TId);
+				}
+			}
+		}
 
 		[NotMapped]
 		public MiniGuid ShortId
