@@ -1,8 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using JDMallen.Toolbox.Interfaces;
-using JDMallen.Toolbox.Structs;
 
 namespace JDMallen.Toolbox.Implementations
 {
@@ -17,27 +16,23 @@ namespace JDMallen.Toolbox.Implementations
 		: SqliteEntityModel, IEntityModel<TId>
 		where TId : struct
 	{
-		private TId _id;
-
 		[Key]
-		public TId Id { get => _id; set => _id = value; }
+		public TId Id { get; set; }
 
-		public string IdText => Id.ToString();
-
-		[NotMapped]
-		public MiniGuid ShortId
+		public string IdText
 		{
-			get
-			{
-				if (typeof(TId) != typeof(Guid))
-					throw new NotSupportedException("ShortId only available for Guid IDs.");
-				return MiniGuid.Encode((Guid)(object)_id);
-			}
+			get => Id.ToString();
 			set
 			{
-				if (typeof(TId) != typeof(Guid))
-					throw new NotSupportedException("ShortId only available for Guid IDs.");
-				_id = (TId)(object) MiniGuid.Decode(value.ToString());
+				try
+				{
+					var converter = TypeDescriptor.GetConverter(typeof(TId));
+					Id = (TId) converter.ConvertFromString(value);
+				}
+				catch
+				{
+					Id = default(TId);
+				}
 			}
 		}
 	}

@@ -3,26 +3,25 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using JDMallen.Toolbox.Interfaces;
-using JDMallen.Toolbox.Structs;
+using Newtonsoft.Json;
 
 namespace JDMallen.Toolbox.Implementations
 {
 	public abstract class MySqlEntityModel : IEntityModel
 	{
-		public DateTime DateCreated { get; set; }
+		public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
-		public DateTime DateModified { get; set; }
+		public DateTime DateModified { get; set; } = DateTime.UtcNow;
 	}
 
 	public abstract class MySqlEntityModel<TId>
 		: MySqlEntityModel, IEntityModel<TId>
 		where TId : struct
 	{
-		private TId _id;
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public TId Id { get; set; }
 
-		[Key]
-		public TId Id { get => _id; set => _id = value; }
-
+		[JsonIgnore]
 		public string IdText
 		{
 			get => Id.ToString();
@@ -37,23 +36,6 @@ namespace JDMallen.Toolbox.Implementations
 				{
 					Id = default(TId);
 				}
-			}
-		}
-
-		[NotMapped]
-		public MiniGuid ShortId
-		{
-			get
-			{
-				if (typeof(TId) != typeof(Guid))
-					throw new NotSupportedException("ShortId only available for Guid IDs.");
-				return MiniGuid.Encode((Guid)(object)_id);
-			}
-			set
-			{
-				if (typeof(TId) != typeof(Guid))
-					throw new NotSupportedException("ShortId only available for Guid IDs.");
-				_id = (TId)(object) MiniGuid.Decode(value.ToString());
 			}
 		}
 	}

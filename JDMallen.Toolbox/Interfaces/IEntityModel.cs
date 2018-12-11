@@ -1,5 +1,4 @@
 ﻿using System;
-using JDMallen.Toolbox.Structs;
 
 namespace JDMallen.Toolbox.Interfaces
 {
@@ -31,7 +30,5 @@ namespace JDMallen.Toolbox.Interfaces
 		TId Id { get; set; }
 
 		string IdText { get; }
-
-		MiniGuid ShortId { get; set; }
 	}
 }
