@@ -18,6 +18,8 @@ namespace JDMallen.Toolbox.Implementations
 
 		public DateTime DateModified { get; set; }
 
+		public bool IsDeleted { get; set; }
+
 		public string IdText
 		{
 			get => Id.ToString();

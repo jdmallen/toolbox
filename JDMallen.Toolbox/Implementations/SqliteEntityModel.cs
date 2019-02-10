@@ -10,6 +10,8 @@ namespace JDMallen.Toolbox.Implementations
 		public DateTime DateCreated { get; set; }
 
 		public DateTime DateModified { get; set; }
+
+		public bool IsDeleted { get; set; }
 	}
 
 	public abstract class SqliteEntityModel<TId>

@@ -13,7 +13,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 		: IReader<TEntityModel, TQueryParameters, TId>
 		where TContext : DbContext, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
-		where TQueryParameters : class, IQueryParameters
+		where TQueryParameters : class, IQueryParameters<TId>
 		where TId : struct
 	{
 		public Task<bool> Any(TQueryParameters parameters)
@@ -24,6 +24,9 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 
 		public Task<TEntityModel> Get(TId id)
 			=> Context.FindAsync<TEntityModel>(id);
+
+		public Task<bool> Exists(TId id)
+			=> Context.Set<TEntityModel>().AnyAsync(x => x.Id.Equals(id));
 
 		public Task<List<TEntityModel>> Find(TQueryParameters parameters)
 			=> BuildQuery(parameters).ToListAsync();

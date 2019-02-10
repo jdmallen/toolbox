@@ -1,8 +1,6 @@
 using System;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
@@ -59,7 +57,7 @@ namespace JDMallen.Toolbox.RepositoryPattern.Implementations
 						prop.PropertyType.GetInterfaces(),
 						typeof(IRepository)))
 				.FirstOrDefault(
-					prop => prop.Name.IndexOf(
+					prop => prop.PropertyType.Name.IndexOf(
 						        name,
 						        StringComparison.InvariantCultureIgnoreCase)
 					        != -1);

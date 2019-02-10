@@ -12,6 +12,8 @@ namespace JDMallen.Toolbox.Implementations
 		public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
 		public DateTime DateModified { get; set; } = DateTime.UtcNow;
+
+		public bool IsDeleted { get; set; } = false;
 	}
 
 	public abstract class MySqlEntityModel<TId>

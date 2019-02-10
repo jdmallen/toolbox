@@ -6,11 +6,13 @@ namespace JDMallen.Toolbox.Interfaces
 	/// Represents a database entity, typically referred to by its respective SQL table.
 	/// </summary>
 	// ReSharper disable once InheritdocConsiderUsage
-    public interface IEntityModel : IModel
+	public interface IEntityModel : IModel
 	{
 		DateTime DateCreated { get; set; }
 
 		DateTime DateModified { get; set; }
+
+		bool IsDeleted { get; set; }
 	}
 
 	/// <inheritdoc />

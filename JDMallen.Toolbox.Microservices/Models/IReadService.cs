@@ -1,22 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.Interfaces;
-using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
 namespace JDMallen.Toolbox.Microservices.Models
 {
 	/// <summary>
-	/// Defines a service that can read <see cref="TModel"/>s via a given <see cref="TRepository"/>
+	/// Defines a service that can read <see cref="TModel"/>s
 	/// </summary>
-	/// <typeparam name="TRepository">The repository type used to perform the data actions</typeparam>
 	/// <typeparam name="TModel">The database entity model type</typeparam>
 	/// <typeparam name="TQueryParameters">The type of object used to pass query parameters</typeparam>
 	/// <typeparam name="TId">The primary key type</typeparam>
-	public interface IReadService<out TRepository,
-	                              TModel,
+	public interface IReadService<TModel,
 	                              in TQueryParameters,
-	                              in TId> : IService<TRepository>
-		where TRepository : IReader<TModel, TQueryParameters, TId>
+	                              in TId> : IService
 		where TModel : class, IModel
 		where TQueryParameters : class, IQueryParameters
 		where TId : struct
@@ -33,7 +29,7 @@ namespace JDMallen.Toolbox.Microservices.Models
 		/// </summary>
 		/// <param name="parameters">The search parameters</param>
 		/// <returns>The fetched list of objects</returns>
-		Task<IEnumerable<TModel>> Find(TQueryParameters parameters);
+		Task<List<TModel>> Find(TQueryParameters parameters);
 
 		/// <summary> 
 		/// Fetch many <see cref="TModel"/>s via a set of <see cref="TQueryParameters"/> 

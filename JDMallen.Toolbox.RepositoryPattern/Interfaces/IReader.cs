@@ -15,6 +15,8 @@ namespace JDMallen.Toolbox.RepositoryPattern.Interfaces
 
 		Task<TModel> Get(TId id);
 
+		Task<bool> Exists(TId id);
+
 		Task<List<TModel>> Find(TQueryParameters parameters);
 
 		Task<IPagedResult<TModel>> FindPaged(TQueryParameters parameters);

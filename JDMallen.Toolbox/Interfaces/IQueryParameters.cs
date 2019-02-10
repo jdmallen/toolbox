@@ -6,12 +6,8 @@ namespace JDMallen.Toolbox.Interfaces
 	/// <summary>
 	/// A set of parameters a user may set in order query a set of entities.
 	/// </summary>
-    public interface IQueryParameters
+	public interface IQueryParameters
 	{
-		string Id { get; set; }
-
-		IEnumerable<string> Ids { get; set; }
-
 		bool AutomaticallyIncludeFirstLevelEntities { get; set; }
 
 		bool TrackEntities { get; set; }
@@ -31,5 +27,18 @@ namespace JDMallen.Toolbox.Interfaces
 		string SortBy { get; set; }
 
 		bool SortAscending { get; set; }
+
+		bool IsDeleted { get; set; }
+	}
+
+	/// <summary>
+	/// A set of parameters a user may set in order query a set of entities.
+	/// </summary>
+	public interface IQueryParameters<TId> : IQueryParameters
+		where TId : struct
+	{
+		TId? Id { get; set; }
+
+		ICollection<TId> Ids { get; set; }
 	}
 }

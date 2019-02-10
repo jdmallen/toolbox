@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Microservices.Models;
 using JDMallen.Toolbox.RepositoryPattern.Interfaces;
 
-namespace JDMallen.Toolbox.Microservices.Models
+namespace JDMallen.Toolbox.Microservices.EFCore.Models
 {
 	public abstract class ReadWriteService<TRepository, TModel, TQueryParameters, TId>
-		: ICreateService<TRepository, TModel, TId>,
-		IReadService<TRepository, TModel, TQueryParameters, TId>,
-		IUpdateService<TRepository, TModel, TId>,
-		IDeleteService<TRepository, TModel, TId>
+		: IWriteService<TModel>,
+		IReadService<TModel, TQueryParameters, TId>
 		where TRepository : IReader<TModel, TQueryParameters, TId>, IWriter<TModel, TId>
 		where TModel : class, IModel
 		where TQueryParameters : class, IQueryParameters
@@ -34,7 +33,7 @@ namespace JDMallen.Toolbox.Microservices.Models
 		/// </summary>
 		/// <param name="model">The object to be created</param>
 		/// <returns>The created object</returns>
-		public async Task<TModel> Create(TModel model)
+		public async Task<TModel> Upsert(TModel model)
 			=> await Repository.Add(model);
 
 		/// <summary>
@@ -50,7 +49,7 @@ namespace JDMallen.Toolbox.Microservices.Models
 		/// </summary>
 		/// <param name="parameters">The search parameters</param>
 		/// <returns>The fetched list of objects</returns>
-		public async Task<IEnumerable<TModel>> Find(TQueryParameters parameters)
+		public async Task<List<TModel>> Find(TQueryParameters parameters)
 			=> await Repository.Find(parameters);
 
 		/// <summary> 
@@ -77,13 +76,5 @@ namespace JDMallen.Toolbox.Microservices.Models
 		/// <returns>The deleted object</returns>
 		public async Task<TModel> Delete(TModel model)
 			=> await Repository.Remove(model);
-
-		/// <summary>
-		/// Deletes an existing domain object from the data context via its repository
-		/// </summary>
-		/// <param name="id">The ID of the object to be deleted</param>
-		/// <returns>The deleted object</returns>
-		public async Task<TModel> Delete(TId id)
-			=> await Repository.Remove(id);
 	}
 }

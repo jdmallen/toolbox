@@ -15,7 +15,7 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 		: IWriter<TEntityModel, TId>
 		where TContext : DbContext, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
-		where TQueryParameters : class, IQueryParameters
+		where TQueryParameters : class, IQueryParameters<TId>
 		where TId : struct
 	{
 		public Task<int> SaveChangesAsync(

@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 {
 	public abstract partial class EFRepositoryBase<
-			TContext,
-			TEntityModel,
-			TQueryParameters,
-			TId>
+		TContext,
+		TEntityModel,
+		TQueryParameters,
+		TId>
 		where TContext : DbContext, IEFContext
 		where TEntityModel : class, IEntityModel<TId>
-		where TQueryParameters : class, IQueryParameters
+		where TQueryParameters : class, IQueryParameters<TId>
 		where TId : struct
 	{
 		protected EFRepositoryBase(TContext context)
@@ -77,13 +77,12 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 						prop => query = query.Include(prop.Name));
 			}
 
-			if (!string.IsNullOrWhiteSpace(parameters.Id))
-				query = query.IdContains<TEntityModel, TId>(parameters.Id);
+			if (parameters.Id.HasValue)
+				query = query.Where(x => x.Id.Equals(parameters.Id));
 
-			if (string.IsNullOrWhiteSpace(parameters.Id)
-			    && parameters.Ids.Any())
+			if (!parameters.Id.HasValue && parameters.Ids.Any())
 				query = query.Where(
-					x => parameters.Ids.Contains(x.Id.ToString()));
+					x => parameters.Ids.Contains(x.Id));
 
 			if (parameters.DateCreatedBefore.HasValue)
 				query = query.CreatedBefore(
@@ -104,6 +103,8 @@ namespace JDMallen.Toolbox.Infrastructure.EFCore.Implementations
 				query = query.ModifiedAfter(
 					parameters.DateModifiedAfter.Value,
 					true);
+
+			query = query.Where(x => x.IsDeleted == parameters.IsDeleted);
 
 			return query;
 		}
