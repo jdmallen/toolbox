@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using JDMallen.Toolbox.Interfaces;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace JDMallen.Toolbox.Models
 {
@@ -32,6 +34,9 @@ namespace JDMallen.Toolbox.Models
 		public bool SortAscending { get; set; } = true;
 
 		public bool IsDeleted { get; set; } = false;
+
+		[JsonConverter(typeof(StringEnumConverter))]
+		public SearchStyle SearchStyle { get; set; } = SearchStyle.Exact;
 	}
 
 	public abstract class QueryParameters<TId>

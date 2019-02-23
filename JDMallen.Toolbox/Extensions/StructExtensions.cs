@@ -14,5 +14,8 @@ namespace JDMallen.Toolbox.Extensions
 
 		public static bool IsNullOrEmpty(this string str) 
 			=> string.IsNullOrEmpty(str);
+
+		public static bool HasValue(this string str)
+			=> !string.IsNullOrWhiteSpace(str);
 	}
 }

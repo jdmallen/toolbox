@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Infrastruc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox", "JDMallen.Toolbox\JDMallen.Toolbox.csproj", "{93CDEB1F-0FF3-4107-BBB1-11B929890462}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.Microservices", "JDMallen.Toolbox.Microservices\JDMallen.Toolbox.Microservices.csproj", "{17A51B45-1366-4765-A4C6-C43D6D5FD122}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Microservices", "JDMallen.Toolbox.Microservices\JDMallen.Toolbox.Microservices.csproj", "{17A51B45-1366-4765-A4C6-C43D6D5FD122}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.Microservices.EFCore", "JDMallen.Toolbox.Microservices.EFCore\JDMallen.Toolbox.Microservices.EFCore.csproj", "{B32FD15E-67AA-49B9-B7FC-1ABF63B7F889}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{17A51B45-1366-4765-A4C6-C43D6D5FD122}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17A51B45-1366-4765-A4C6-C43D6D5FD122}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17A51B45-1366-4765-A4C6-C43D6D5FD122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B32FD15E-67AA-49B9-B7FC-1ABF63B7F889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B32FD15E-67AA-49B9-B7FC-1ABF63B7F889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B32FD15E-67AA-49B9-B7FC-1ABF63B7F889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B32FD15E-67AA-49B9-B7FC-1ABF63B7F889}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
