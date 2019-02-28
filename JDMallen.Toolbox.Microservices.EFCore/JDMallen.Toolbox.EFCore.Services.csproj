@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>JDMallen.Toolbox.EFCore.Services</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JDMallen.Toolbox.RepositoryPattern\JDMallen.Toolbox.EFCore.Patterns.csproj" />
+  </ItemGroup>
+
+</Project>

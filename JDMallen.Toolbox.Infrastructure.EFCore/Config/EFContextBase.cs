@@ -2,17 +2,17 @@
 using System.Data;
 using System.Linq;
 using System.Threading;
-using JDMallen.Toolbox.Infrastructure.EFCore.Models;
+using JDMallen.Toolbox.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace JDMallen.Toolbox.Infrastructure.EFCore.Config
+namespace JDMallen.Toolbox.EFCore.Config
 {
 	/// <inheritdoc cref="DbContext" />
 	/// <summary>
 	/// Custom abstract extension of <see cref="T:Microsoft.EntityFrameworkCore.DbContext" /> that allows for the 
-	/// <see cref="T:Microsoft.EntityFrameworkCore.ModelBuilder" /> code to live inside the <see cref="T:JDMallen.Toolbox.Infrastructure.EFCore.Models.IComplexEntityModel" />s 
+	/// <see cref="T:Microsoft.EntityFrameworkCore.ModelBuilder" /> code to live inside the <see cref="T:JDMallen.Toolbox.EFCore.Models.IComplexEntityModel" />s 
 	/// themselves, rather than in one massive method here.
 	/// </summary>
 	public abstract class EFContextBase : DbContext, IEFContext

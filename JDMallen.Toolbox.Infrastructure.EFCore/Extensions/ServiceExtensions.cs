@@ -5,9 +5,10 @@ using JDMallen.Toolbox.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 // ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.DependencyInjection
+namespace JDMallen.Toolbox.EFCore.Extensions
 {
 	public static class ServiceExtensions
 	{

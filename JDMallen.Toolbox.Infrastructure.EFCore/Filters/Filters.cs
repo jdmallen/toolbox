@@ -5,7 +5,7 @@ using JDMallen.Toolbox.Extensions;
 using JDMallen.Toolbox.Interfaces;
 using JDMallen.Toolbox.Models;
 
-namespace JDMallen.Toolbox.Infrastructure.EFCore.Filters
+namespace JDMallen.Toolbox.EFCore.Filters
 {
 	public static class Filters
 	{

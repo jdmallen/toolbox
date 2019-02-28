@@ -1,6 +1,6 @@
-﻿using JDMallen.Toolbox.RepositoryPattern.Interfaces;
+﻿using JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces;
 
-namespace JDMallen.Toolbox.Microservices.Models
+namespace JDMallen.Toolbox.EFCore.Services.Interfaces
 {
 	/// <summary>
 	/// Defines a service used to implement business logic

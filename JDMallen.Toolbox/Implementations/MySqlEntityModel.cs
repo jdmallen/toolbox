@@ -9,9 +9,9 @@ namespace JDMallen.Toolbox.Implementations
 {
 	public abstract class MySqlEntityModel : IEntityModel
 	{
-		public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+		public DateTime DateCreated { get; protected set; } = DateTime.UtcNow;
 
-		public DateTime DateModified { get; set; } = DateTime.UtcNow;
+		public DateTime DateModified { get; protected set;  } = DateTime.UtcNow;
 
 		public bool IsDeleted { get; set; } = false;
 	}
@@ -21,13 +21,13 @@ namespace JDMallen.Toolbox.Implementations
 		where TId : struct
 	{
 		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public TId Id { get; set; }
+		public TId Id { get; protected set; }
 
 		[JsonIgnore]
 		public string IdText
 		{
 			get => Id.ToString();
-			set
+			protected set
 			{
 				try
 				{

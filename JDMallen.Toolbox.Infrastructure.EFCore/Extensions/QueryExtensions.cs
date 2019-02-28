@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace JDMallen.Toolbox.Infrastructure.EFCore.Extensions
+namespace JDMallen.Toolbox.EFCore.Extensions
 {
 	public static class QueryExtensions
 	{

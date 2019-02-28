@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>JDMallen.Toolbox.Microservices</AssemblyName>
-    <RootNamespace>JDMallen.Toolbox.Microservices</RootNamespace>
+    <AssemblyName>JDMallen.Toolbox.EFCore.Patterns</AssemblyName>
+    <RootNamespace>JDMallen.Toolbox.EFCore.Patterns</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
-		<PackageId>JDMallen.Toolbox.Microservices</PackageId>
+		<PackageId>JDMallen.Toolbox.RepositoryPattern</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>J.D. Mallen</Authors>
 		<PackageLicenseUrl>https://github.com/jdmallen/toolbox/blob/master/LICENSE</PackageLicenseUrl>
@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JDMallen.Toolbox.RepositoryPattern\JDMallen.Toolbox.RepositoryPattern.csproj" />
+    <ProjectReference Include="..\JDMallen.Toolbox.Infrastructure.EFCore\JDMallen.Toolbox.EFCore.csproj" />
   </ItemGroup>
 
 </Project>

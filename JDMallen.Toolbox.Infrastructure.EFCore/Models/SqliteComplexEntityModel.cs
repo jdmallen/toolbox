@@ -1,7 +1,7 @@
 ﻿using JDMallen.Toolbox.Implementations;
 using Microsoft.EntityFrameworkCore;
 
-namespace JDMallen.Toolbox.Infrastructure.EFCore.Models
+namespace JDMallen.Toolbox.EFCore.Models
 {
 	public abstract class SqliteComplexEntityModel
 		: SqliteEntityModel, IComplexEntityModel

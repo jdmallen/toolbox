@@ -8,11 +8,11 @@ namespace JDMallen.Toolbox.Interfaces
 	// ReSharper disable once InheritdocConsiderUsage
 	public interface IEntityModel : IModel
 	{
-		DateTime DateCreated { get; set; }
+		DateTime DateCreated { get; }
 
-		DateTime DateModified { get; set; }
+		DateTime DateModified { get; }
 
-		bool IsDeleted { get; set; }
+		bool IsDeleted { get; }
 	}
 
 	/// <inheritdoc />
@@ -29,7 +29,7 @@ namespace JDMallen.Toolbox.Interfaces
 	public interface IEntityModel<TId> : IEntityModel
 		where TId : struct
 	{
-		TId Id { get; set; }
+		TId Id { get; }
 
 		string IdText { get; }
 	}

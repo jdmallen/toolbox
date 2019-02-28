@@ -3,7 +3,7 @@ using System.Threading;
 using JDMallen.Toolbox.Interfaces;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace JDMallen.Toolbox.Infrastructure.EFCore.Models
+namespace JDMallen.Toolbox.EFCore.Models
 {
 	public interface IEFContext : IContext
 	{
