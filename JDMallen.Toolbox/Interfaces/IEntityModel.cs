@@ -26,11 +26,9 @@ namespace JDMallen.Toolbox.Interfaces
 	/// The type representing the data type for the primary key. This cannot be 
 	/// <see cref="T:System.String" /> or any reference types. Only value types are allowed.
 	/// </typeparam>
-	public interface IEntityModel<TId> : IEntityModel
+	public interface IEntityModel<out TId> : IEntityModel
 		where TId : struct
 	{
 		TId Id { get; }
-
-		string IdText { get; }
 	}
 }

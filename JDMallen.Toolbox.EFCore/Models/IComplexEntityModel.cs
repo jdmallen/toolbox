@@ -1,4 +1,5 @@
-﻿using JDMallen.Toolbox.Interfaces;
+﻿using JDMallen.Toolbox.Implementations;
+using JDMallen.Toolbox.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.EFCore.Models
@@ -18,8 +19,16 @@ namespace JDMallen.Toolbox.EFCore.Models
 	/// <summary>
 	/// </summary>
 	/// <typeparam name="TId"></typeparam>
-	public interface IComplexEntityModel<TId> : IEntityModel<TId>, IComplexEntityModel
+	public interface IComplexEntityModel<out TId>
+		: IEntityModel<TId>, IComplexEntityModel
 		where TId : struct
 	{
+	}
+
+	public abstract class ComplexEntityModel<TId>
+		: EntityModel<TId>, IComplexEntityModel<TId>
+		where TId : struct
+	{
+		public abstract void OnModelCreating(ModelBuilder modelBuilder);
 	}
 }

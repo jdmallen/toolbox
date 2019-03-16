@@ -12,7 +12,7 @@ namespace JDMallen.Toolbox.EFCore.Services.Implementations
 	/// <typeparam name="TId">The primary key type</typeparam>
 	public abstract class ServiceBase<TRepository, TModel, TId>
 		: IReadService<TRepository>
-		where TRepository : IReader<TModel, TId>
+		where TRepository : IRepository<TModel, TId>
 		where TModel : class, IModel
 		where TId : struct
 	{

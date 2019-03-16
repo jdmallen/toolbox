@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
-using System.Threading;
 using JDMallen.Toolbox.EFCore.Models;
 using JDMallen.Toolbox.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace JDMallen.Toolbox.EFCore.Config
 {
@@ -15,13 +13,23 @@ namespace JDMallen.Toolbox.EFCore.Config
 	/// <see cref="T:Microsoft.EntityFrameworkCore.ModelBuilder" /> code to live inside the <see cref="T:JDMallen.Toolbox.EFCore.Models.IComplexEntityModel" />s 
 	/// themselves, rather than in one massive method here.
 	/// </summary>
-	public abstract class EFContextBase : DbContext, IEFContext
+	public abstract class EFContextBase : DbContext, IContext
 	{
 		/// <inheritdoc />
 		/// <param name="options"></param>
-		protected EFContextBase(DbContextOptions options) : base(options)
+		/// <param name="enableEntityLevelOnModelCreating">
+		/// Set this to false if you plan on doing all your OnModelCreating
+		/// Fluent API code from within the DbContext class itself, rather
+		/// than in the individual entities.
+		/// </param>
+		protected EFContextBase(
+			DbContextOptions options,
+			bool enableEntityLevelOnModelCreating = true) : base(options)
 		{
+			EnableEntityLevelOnModelCreating = enableEntityLevelOnModelCreating;
 		}
+
+		protected bool EnableEntityLevelOnModelCreating { get; set; }
 
 		/// <summary>
 		/// Source: https://stackoverflow.com/a/48346941/3986790
@@ -38,31 +46,41 @@ namespace JDMallen.Toolbox.EFCore.Config
 		/// <param name="modelBuilder"></param>
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			GetType()
-				.Assembly
-				.DefinedTypes
-				// Get all the types that implement
-				.Where(type => typeof(IEntityModel).IsAssignableFrom(type)
-							   // IEntityModel and are concrete classes
-							   && !type.IsAbstract
-							   && !type.IsInterface)
-				.ToList()	 // Compile them all into a list
-				.ForEach(type =>
-				{
-					// And add each one to the ModelBuilder.
-					if (modelBuilder.Model.FindEntityType(type) != null) return;
-					// If it's already been added, skip it.
-					modelBuilder.Model.AddEntityType(type);
-				});
+			if (!EnableEntityLevelOnModelCreating)
+			{
+				base.OnModelCreating(modelBuilder);
+				return;
+			}
 
 			GetType()
 				.Assembly
 				.DefinedTypes
 				// Get all the types that implement
-				.Where(type => typeof(IComplexEntityModel).IsAssignableFrom(type)
-							   // IComplexEntityModel and are concrete classes
-							   && !type.IsAbstract
-							   && !type.IsInterface)
+				.Where(
+					type => typeof(IEntityModel).IsAssignableFrom(type)
+					        // IEntityModel and are concrete classes
+					        && !type.IsAbstract
+					        && !type.IsInterface)
+				.ToList() // Compile them all into a list
+				.ForEach(
+					type =>
+					{
+						// And add each one to the ModelBuilder.
+						if (modelBuilder.Model.FindEntityType(type) != null)
+							return;
+						// If it's already been added, skip it.
+						modelBuilder.Model.AddEntityType(type);
+					});
+
+			GetType()
+				.Assembly
+				.DefinedTypes
+				// Get all the types that implement
+				.Where(
+					type => typeof(IComplexEntityModel).IsAssignableFrom(type)
+					        // IComplexEntityModel and are concrete classes
+					        && !type.IsAbstract
+					        && !type.IsInterface)
 				// Instantiate each 
 				.Select(Activator.CreateInstance)
 				// as an IComplexEntityModel
@@ -71,32 +89,6 @@ namespace JDMallen.Toolbox.EFCore.Config
 				// And call each's respective OnModelCreating method.
 				.ForEach(model => model.OnModelCreating(modelBuilder));
 		}
-
-		public EntityEntry<TEntityModel> Add<TEntityModel, TId>(
-			TEntityModel model,
-			CancellationToken cancellationToken = default(CancellationToken))
-			where TEntityModel : class, IEntityModel<TId> 
-			where TId : struct
-			=> base.Add(model);
-
-		public IQueryable<TEntityModel> BuildQuery<TEntityModel>()
-			where TEntityModel : class, IEntityModel
-			=> Set<TEntityModel>();
-
-		public EntityEntry<TEntityModel> Entry<TEntityModel, TId>(TEntityModel model)
-			where TEntityModel: class, IEntityModel<TId>
-			where TId : struct
-			=> Entry(model);
-
-		public EntityEntry Update<TEntityModel, TId>(TEntityModel modelToUpdate)
-			where TEntityModel : class, IEntityModel<TId>
-			where TId : struct
-			=> Update(modelToUpdate);
-
-		public EntityEntry Remove<TEntityModel, TId>(TEntityModel modelToDelete)
-			where TEntityModel : class, IEntityModel<TId> 
-			where TId : struct
-			=> Remove(modelToDelete);
 
 		public IDbConnection GetConnection() => base.Database.GetDbConnection();
 	}

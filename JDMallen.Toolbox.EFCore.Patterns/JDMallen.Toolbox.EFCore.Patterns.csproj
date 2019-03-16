@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JDMallen.Toolbox.Infrastructure.EFCore\JDMallen.Toolbox.EFCore.csproj" />
+    <ProjectReference Include="..\JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,15 +8,9 @@ namespace JDMallen.Toolbox.Models
 {
 	/// <inheritdoc />
 	/// <summary>
-	/// By default, <see cref="AutomaticallyIncludeFirstLevelEntities"/> and <see cref="TrackEntities"/> are false.
 	/// </summary>
 	public abstract class QueryParameters : IQueryParameters
 	{
-		public bool AutomaticallyIncludeFirstLevelEntities { get; set; } =
-			false;
-
-		public bool TrackEntities { get; set; } = false;
-
 		public DateTime? DateCreatedBefore { get; set; }
 
 		public DateTime? DateCreatedAfter { get; set; }
@@ -25,9 +19,9 @@ namespace JDMallen.Toolbox.Models
 
 		public DateTime? DateModifiedAfter { get; set; }
 
-		public int Skip { get; set; } = -1;
+		public int? Skip { get; set; }
 
-		public int Take { get; set; } = -1;
+		public int? Take { get; set; }
 
 		public string SortBy { get; set; }
 

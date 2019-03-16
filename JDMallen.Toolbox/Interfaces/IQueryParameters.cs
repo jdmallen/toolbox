@@ -8,10 +8,6 @@ namespace JDMallen.Toolbox.Interfaces
 	/// </summary>
 	public interface IQueryParameters
 	{
-		bool AutomaticallyIncludeFirstLevelEntities { get; set; }
-
-		bool TrackEntities { get; set; }
-
 		DateTime? DateCreatedBefore { get; set; }
 
 		DateTime? DateCreatedAfter { get; set; }
@@ -20,9 +16,9 @@ namespace JDMallen.Toolbox.Interfaces
 
 		DateTime? DateModifiedAfter { get; set; }
 
-		int Skip { get; set; }
+		int? Skip { get; set; }
 
-		int Take { get; set; }
+		int? Take { get; set; }
 
 		string SortBy { get; set; }
 

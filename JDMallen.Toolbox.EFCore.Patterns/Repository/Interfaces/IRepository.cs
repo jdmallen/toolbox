@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
 using JDMallen.Toolbox.Interfaces;
 
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces
 {
-	public interface IReader<TModel, in TId> : IRepository
+	public interface IRepository
+	{
+	}
+
+	public interface IRepository<TModel, in TId> : IRepository, IDisposable
 		where TModel : class, IModel
 		where TId : struct
 	{
@@ -21,5 +26,11 @@ namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces
 			ISpecification<TModel> spec);
 
 		IAsyncEnumerable<TModel> ListAllAsync();
+
+		Task<TModel> AddAsync(TModel model);
+
+		Task<TModel> UpdateAsync(TModel model);
+
+		Task Remove(TModel model);
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using JDMallen.Toolbox.EFCore.Models;
+using JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
 using JDMallen.Toolbox.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +10,8 @@ namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations
 	public abstract partial class EFRepositoryBase<
 		TContext,
 		TEntityModel,
-		TId>
-		where TContext : DbContext, IEFContext
+		TId> : IRepository<TEntityModel, TId>
+		where TContext : DbContext, IContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TId : struct
 	{

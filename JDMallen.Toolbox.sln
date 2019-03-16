@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox", "JDMallen.Toolbox\JDMallen.Toolbox.csproj", "{93CDEB1F-0FF3-4107-BBB1-11B929890462}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore", "JDMallen.Toolbox.Infrastructure.EFCore\JDMallen.Toolbox.EFCore.csproj", "{B1F0F948-4E07-45CC-9FAE-A43C5FA79E29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore", "JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj", "{B1F0F948-4E07-45CC-9FAE-A43C5FA79E29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Services", "JDMallen.Toolbox.Microservices.EFCore\JDMallen.Toolbox.EFCore.Services.csproj", "{03FC3C98-78AE-4E6A-9D02-BABD591DBF4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Services", "JDMallen.Toolbox.EFCore.Services\JDMallen.Toolbox.EFCore.Services.csproj", "{03FC3C98-78AE-4E6A-9D02-BABD591DBF4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Patterns", "JDMallen.Toolbox.RepositoryPattern\JDMallen.Toolbox.EFCore.Patterns.csproj", "{BA4AA6F3-8B24-46B6-B477-978B77EB7364}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Patterns", "JDMallen.Toolbox.EFCore.Patterns\JDMallen.Toolbox.EFCore.Patterns.csproj", "{BA4AA6F3-8B24-46B6-B477-978B77EB7364}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

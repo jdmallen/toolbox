@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JDMallen.Toolbox.RepositoryPattern\JDMallen.Toolbox.EFCore.Patterns.csproj" />
+    <ProjectReference Include="..\JDMallen.Toolbox.EFCore.Patterns\JDMallen.Toolbox.EFCore.Patterns.csproj" />
   </ItemGroup>
 
 </Project>

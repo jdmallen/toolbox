@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JDMallen.Toolbox.EFCore.Models;
-using JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
 using JDMallen.Toolbox.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations
 {
 	public abstract partial class EFRepositoryBase<TContext, TEntityModel, TId>
-		: IReader<TEntityModel, TId>
-		where TContext : DbContext, IEFContext
+		where TContext : DbContext, IContext
 		where TEntityModel : class, IEntityModel<TId>
 		where TId : struct
 	{

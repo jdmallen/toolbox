@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using JDMallen.Toolbox.Utilities;
@@ -75,33 +76,44 @@ namespace JDMallen.Toolbox.EFCore.Extensions
 		/// </summary>
 		public static void DropTablesAndEnsureCreated(
 			this DbContext dbContext,
-			bool dropTables = true)
+			bool dropTables = true,
+			IEnumerable<string> orderedTablesToDrop = null)
 		{
 			if (dropTables)
 			{
+				List<string> orderOfDroppage;
+				if (orderedTablesToDrop != null)
+				{
+					orderOfDroppage = orderedTablesToDrop.ToList();
+				}
+				else
+				{
+					orderOfDroppage = dbContext.Model.GetEntityTypes()
+						.Select(
+							et => et.GetAnnotations()
+								      .FirstOrDefault(
+									      x
+										      => x.Name
+										         == "Relational:TableName")
+								      ?.Value.ToString()
+								      .ToLowerInvariant()
+							      ?? et.ClrType.Name
+								      .ToLowerInvariant())
+						.ToList();
+				}
+
 				var conn = dbContext.Database.GetDbConnection();
 				conn.Open();
-				dbContext.Model.GetEntityTypes()
-					.ToList()
+				orderOfDroppage
 					.ForEach(
-						et =>
+						tableName =>
 						{
 							bool tableExists;
-							var tableName =
-								et.GetAnnotations()
-									.FirstOrDefault(
-										x
-											=> x.Name
-											   == "Relational:TableName")
-									?.Value.ToString()
-									.ToLowerInvariant()
-								?? et.ClrType.Name
-									.ToLowerInvariant();
 							using (var cmd = conn.CreateCommand())
 							{
 								cmd.CommandText =
 									"SELECT COUNT(*) FROM information_schema.TABLES "
-									+ "WHERE TABLE_SCHEMA = "
+									+ "WHERE TABLE_CATALOG = "
 									+ $"\'{dbContext.Database.GetDbConnection().Database}\' "
 									+ $"AND TABLE_NAME = \'{tableName.ToLowerInvariant()}\';";
 								cmd.CommandType = CommandType.Text;
@@ -117,13 +129,10 @@ namespace JDMallen.Toolbox.EFCore.Extensions
 
 							if (!tableExists)
 								return;
-							var dropCommand =
-								"SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, "
-								+ "FOREIGN_KEY_CHECKS=0;"
-								+ $"DROP TABLE `{tableName.ToLowerInvariant()}`;"
-								+ "SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;";
-							dbContext.Database.ExecuteSqlCommand(
-								dropCommand);
+
+							var dropTable =
+								$"DROP TABLE {tableName.ToLowerInvariant()};";
+							dbContext.Database.ExecuteSqlCommand(dropTable);
 						});
 				conn.Close();
 			}
