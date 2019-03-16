@@ -4,7 +4,7 @@
     <AssemblyName>JDMallen.Toolbox.EFCore.Patterns</AssemblyName>
     <RootNamespace>JDMallen.Toolbox.EFCore.Patterns</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
-		<PackageId>JDMallen.Toolbox.RepositoryPattern</PackageId>
+		<PackageId>JDMallen.Toolbox.EFCore.Patterns</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>J.D. Mallen</Authors>
 		<PackageLicenseUrl>https://github.com/jdmallen/toolbox/blob/master/LICENSE</PackageLicenseUrl>
