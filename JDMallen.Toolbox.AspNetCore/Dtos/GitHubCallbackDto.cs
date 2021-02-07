@@ -1,4 +1,4 @@
-﻿namespace JDMallen.Toolbox.Dtos
+﻿namespace JDMallen.Toolbox.AspNetCore.Dtos
 {
 	public class GitHubCallbackDto
 	{

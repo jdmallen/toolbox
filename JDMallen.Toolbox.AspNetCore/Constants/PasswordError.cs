@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JDMallen.Toolbox.Constants
+namespace JDMallen.Toolbox.AspNetCore.Constants
 {
 	[Flags]
 	public enum PasswordError

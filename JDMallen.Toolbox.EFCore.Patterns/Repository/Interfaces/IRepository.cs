@@ -18,7 +18,7 @@ namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces
 
 		Task<long> CountBySpecAsync(ISpecification<TModel> spec);
 
-		Task<TModel> GetByIdAsync(TId id);
+		ValueTask<TModel> GetByIdAsync(TId id);
 
 		Task<bool> ExistsByIdAsync(TId id);
 

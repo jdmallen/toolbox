@@ -1,9 +1,9 @@
-﻿using JDMallen.Toolbox.Models;
-using JDMallen.Toolbox.Options;
+﻿using JDMallen.Toolbox.AspNetCore.Models;
+using JDMallen.Toolbox.AspNetCore.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace JDMallen.Toolbox.Utilities
+namespace JDMallen.Toolbox.AspNetCore.Utilities
 {
 	public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 	{

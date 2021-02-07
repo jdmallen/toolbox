@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
 using JDMallen.Toolbox.Interfaces;
@@ -18,7 +17,7 @@ namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations
 		public Task<long> CountBySpecAsync(ISpecification<TEntityModel> specification)
 			=> ApplySpecification(specification).LongCountAsync();
 
-		public Task<TEntityModel> GetByIdAsync(TId id)
+		public ValueTask<TEntityModel> GetByIdAsync(TId id)
 			=> Context.FindAsync<TEntityModel>(id);
 
 		public Task<bool> ExistsByIdAsync(TId id)
@@ -26,9 +25,9 @@ namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations
 
 		public IAsyncEnumerable<TEntityModel> FindBySpecAsync(
 			ISpecification<TEntityModel> specification)
-			=> ApplySpecification(specification).ToAsyncEnumerable();
+			=> ApplySpecification(specification).AsAsyncEnumerable();
 
 		public IAsyncEnumerable<TEntityModel> ListAllAsync()
-			=> Context.Set<TEntityModel>().ToAsyncEnumerable();
+			=> Context.Set<TEntityModel>().AsAsyncEnumerable();
 	}
 }

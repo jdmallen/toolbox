@@ -1,4 +1,4 @@
-﻿namespace JDMallen.Toolbox.Options
+﻿namespace JDMallen.Toolbox.AspNetCore.Options
 {
 	public class PasswordComplexityOptions
 	{

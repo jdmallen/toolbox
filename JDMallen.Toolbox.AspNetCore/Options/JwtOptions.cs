@@ -2,7 +2,7 @@
 using JDMallen.Toolbox.Structs;
 using Microsoft.IdentityModel.Tokens;
 
-namespace JDMallen.Toolbox.Options
+namespace JDMallen.Toolbox.AspNetCore.Options
 {
 	public class JwtOptions
 	{

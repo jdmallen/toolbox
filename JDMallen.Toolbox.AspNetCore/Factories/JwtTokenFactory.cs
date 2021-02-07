@@ -4,12 +4,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
-using JDMallen.Toolbox.Constants;
+using JDMallen.Toolbox.AspNetCore.Constants;
+using JDMallen.Toolbox.AspNetCore.Options;
 using JDMallen.Toolbox.Extensions;
-using JDMallen.Toolbox.Options;
 using Microsoft.Extensions.Options;
 
-namespace JDMallen.Toolbox.Factories
+namespace JDMallen.Toolbox.AspNetCore.Factories
 {
 	public class JwtTokenFactory : IJwtTokenFactory
 	{

@@ -1,7 +1,7 @@
 using System;
 using System.Security.Claims;
 
-namespace JDMallen.Toolbox.Factories
+namespace JDMallen.Toolbox.AspNetCore.Factories
 {
 	public interface IJwtTokenFactory
 	{

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using JDMallen.Toolbox.Constants;
-using JDMallen.Toolbox.Models;
-using JDMallen.Toolbox.Options;
+using JDMallen.Toolbox.AspNetCore.Constants;
+using JDMallen.Toolbox.AspNetCore.Models;
+using JDMallen.Toolbox.AspNetCore.Options;
 using JDMallen.Toolbox.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace JDMallen.Toolbox.Utilities
+namespace JDMallen.Toolbox.AspNetCore.Utilities
 {
 	public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		where TUser : IdentityUser<Guid>

@@ -1,8 +1,8 @@
-﻿using JDMallen.Toolbox.Constants;
+﻿using JDMallen.Toolbox.AspNetCore.Constants;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace JDMallen.Toolbox.Models
+namespace JDMallen.Toolbox.AspNetCore.Models
 {
 	public class PasswordResult
 	{

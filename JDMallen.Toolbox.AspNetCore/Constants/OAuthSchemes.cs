@@ -1,4 +1,4 @@
-﻿namespace JDMallen.Toolbox.Constants
+﻿namespace JDMallen.Toolbox.AspNetCore.Constants
 {
 	public class OAuthSchemes
 	{

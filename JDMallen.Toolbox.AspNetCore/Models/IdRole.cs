@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using JDMallen.Toolbox.Structs;
 using Microsoft.AspNetCore.Identity;
 
-namespace JDMallen.Toolbox.Models
+namespace JDMallen.Toolbox.AspNetCore.Models
 {
 	public class IdRole : IdentityRole<Guid>
 	{

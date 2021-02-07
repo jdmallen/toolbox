@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace JDMallen.Toolbox.Extensions
+namespace JDMallen.Toolbox.AspNetCore.Extensions
 {
 	public static class IdentityExtensions
 	{

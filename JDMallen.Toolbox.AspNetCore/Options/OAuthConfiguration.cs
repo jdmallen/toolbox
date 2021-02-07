@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JDMallen.Toolbox.Options
+namespace JDMallen.Toolbox.AspNetCore.Options
 {
 	public class OAuthConfiguration
 	{

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>JDMallen.Toolbox.EFCore.Identity</AssemblyName>
+    <RootNamespace>JDMallen.Toolbox.EFCore.Identity</RootNamespace>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackageId>JDMallen.Toolbox.EFCore.Identity</PackageId>
+    <Version>1.1.0</Version>
+    <Authors>J.D. Mallen</Authors>
+    <PackageLicenseUrl>https://github.com/jdmallen/toolbox/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JDMallen.Toolbox.AspNetCore\JDMallen.Toolbox.AspNetCore.csproj" />
+    <ProjectReference Include="..\JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj" />
+    <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>
