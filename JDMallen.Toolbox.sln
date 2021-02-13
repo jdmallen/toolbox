@@ -11,11 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Patterns", "JDMallen.Toolbox.EFCore.Patterns\JDMallen.Toolbox.EFCore.Patterns.csproj", "{BA4AA6F3-8B24-46B6-B477-978B77EB7364}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.Hosting", "JDMallen.Toolbox.Hosting\JDMallen.Toolbox.Hosting.csproj", "{32439307-BB83-4A38-A105-33913C67C744}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Hosting", "JDMallen.Toolbox.Hosting\JDMallen.Toolbox.Hosting.csproj", "{32439307-BB83-4A38-A105-33913C67C744}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.AspNetCore", "JDMallen.Toolbox.AspNetCore\JDMallen.Toolbox.AspNetCore.csproj", "{35E9FADA-AFA8-4544-BB36-189937E076BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.AspNetCore", "JDMallen.Toolbox.AspNetCore\JDMallen.Toolbox.AspNetCore.csproj", "{35E9FADA-AFA8-4544-BB36-189937E076BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.EFCore.Identity", "JDMallen.Toolbox.EFCore.Identity\JDMallen.Toolbox.EFCore.Identity.csproj", "{D65C075A-BC97-4D63-B0BD-05972A0C4DE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Identity", "JDMallen.Toolbox.EFCore.Identity\JDMallen.Toolbox.EFCore.Identity.csproj", "{D65C075A-BC97-4D63-B0BD-05972A0C4DE9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Hosting.TestWorker", "JDMallen.Toolbox.Hosting.TestWorker\JDMallen.Toolbox.Hosting.TestWorker.csproj", "{52D36AEB-D0FF-4A74-A782-61F7E56839B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{D65C075A-BC97-4D63-B0BD-05972A0C4DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D65C075A-BC97-4D63-B0BD-05972A0C4DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D65C075A-BC97-4D63-B0BD-05972A0C4DE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52D36AEB-D0FF-4A74-A782-61F7E56839B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52D36AEB-D0FF-4A74-A782-61F7E56839B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52D36AEB-D0FF-4A74-A782-61F7E56839B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52D36AEB-D0FF-4A74-A782-61F7E56839B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
