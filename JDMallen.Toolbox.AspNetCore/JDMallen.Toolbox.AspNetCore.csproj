@@ -3,12 +3,13 @@
   <PropertyGroup>
     <AssemblyName>JDMallen.Toolbox.AspNetCore</AssemblyName>
     <RootNamespace>JDMallen.Toolbox.AspNetCore</RootNamespace>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <PackageId>JDMallen.Toolbox.AspNetCore</PackageId>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Authors>J.D. Mallen</Authors>
     <PackageLicenseUrl>https://github.com/jdmallen/toolbox/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

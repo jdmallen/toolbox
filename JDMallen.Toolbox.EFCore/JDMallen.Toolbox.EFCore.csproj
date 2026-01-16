@@ -3,12 +3,13 @@
   <PropertyGroup>
     <AssemblyName>JDMallen.Toolbox.EFCore</AssemblyName>
     <RootNamespace>JDMallen.Toolbox.EFCore</RootNamespace>
-    <TargetFramework>netstandard2.1</TargetFramework>
 		<PackageId>JDMallen.Toolbox.EFCore</PackageId>
 		<Version>1.1.0</Version>
 		<Authors>J.D. Mallen</Authors>
 		<PackageLicenseUrl>https://github.com/jdmallen/toolbox/blob/master/LICENSE</PackageLicenseUrl>
 		<RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
+		<LangVersion>latest</LangVersion>
+		<TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
