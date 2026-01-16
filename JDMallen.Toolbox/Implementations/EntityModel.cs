@@ -1,5 +1,5 @@
 using System;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 namespace JDMallen.Toolbox.Implementations
 {

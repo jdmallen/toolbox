@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations

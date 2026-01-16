@@ -1,6 +1,6 @@
 ﻿using JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces;
 using JDMallen.Toolbox.EFCore.Services.Interfaces;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 namespace JDMallen.Toolbox.EFCore.Services.Implementations
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 namespace JDMallen.Toolbox.Models
 {
