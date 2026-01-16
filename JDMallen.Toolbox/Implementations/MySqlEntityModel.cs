@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using Newtonsoft.Json;
 
 namespace JDMallen.Toolbox.Implementations

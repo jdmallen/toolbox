@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.Extensions

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JDMallen.Toolbox.Interfaces
+namespace JDMallen.Toolbox.Data.Abstractions.Interfaces
 {
 	/// <summary>
 	/// Represents a result that has been divided into pages for ease of displaying to end users.

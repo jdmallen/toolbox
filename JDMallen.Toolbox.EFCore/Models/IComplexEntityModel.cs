@@ -1,5 +1,5 @@
 ﻿using JDMallen.Toolbox.Implementations;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.EFCore.Models

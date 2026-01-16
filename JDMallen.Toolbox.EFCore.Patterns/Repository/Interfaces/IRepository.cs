@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
-using JDMallen.Toolbox.Interfaces;
+using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces
 {
