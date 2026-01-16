@@ -9,6 +9,7 @@
     <Authors>J.D. Mallen</Authors>
     <PackageLicenseUrl>https://github.com/jdmallen/toolbox/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
