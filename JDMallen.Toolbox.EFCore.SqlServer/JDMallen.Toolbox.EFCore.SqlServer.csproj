@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>JDMallen.Toolbox.EFCore.SqlServer</AssemblyName>
+    <RootNamespace>JDMallen.Toolbox.EFCore.SqlServer</RootNamespace>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>JDMallen.Toolbox.EFCore.SqlServer</PackageId>
+    <Description>SQL Server provider package for JDMallen.Toolbox.EFCore. Brings in Microsoft.EntityFrameworkCore.SqlServer.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
+  </ItemGroup>
+
+</Project>
