@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
 
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Interfaces;

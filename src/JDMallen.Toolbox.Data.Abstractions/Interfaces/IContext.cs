@@ -1,13 +1,10 @@
-﻿using System;
-using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Data;
 
 namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 /// <summary>
-///   Represents a context from and to which the repository or service can
-///   create, read, update, and delete data.
+/// Represents a context from and to which the repository or service can
+/// create, read, update, and delete data.
 /// </summary>
 public interface IContext : IDisposable
 {

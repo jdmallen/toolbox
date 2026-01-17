@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,8 +8,8 @@ public class QueryBuilder<TEntityModel>
 	where TEntityModel : class, IEntityModel
 {
 	/// <summary>
-	///   Credit:
-	///   https://github.com/dotnet-architecture/eShopOnWeb/blob/master/src/Infrastructure/Data/SpecificationEvaluator.cs
+	/// Credit:
+	/// https://github.com/dotnet-architecture/eShopOnWeb/blob/master/src/Infrastructure/Data/SpecificationEvaluator.cs
 	/// </summary>
 	/// <param name="inputQuery"></param>
 	/// <param name="specification"></param>
@@ -35,9 +34,11 @@ public class QueryBuilder<TEntityModel>
 
 		if (specification.OrderBy != null)
 			query = query.OrderBy(specification.OrderBy);
-		else if (specification.OrderByDescending != null) query = query.OrderByDescending(specification.OrderByDescending);
+		else if (specification.OrderByDescending != null)
+			query = query.OrderByDescending(specification.OrderByDescending);
 
-		if (specification.IsPagingEnabled) query = query.Skip(specification.Skip).Take(specification.Take);
+		if (specification.IsPagingEnabled)
+			query = query.Skip(specification.Skip).Take(specification.Take);
 
 		return query;
 	}

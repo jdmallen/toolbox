@@ -9,7 +9,8 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 {
 	private readonly IOptions<PasswordComplexityOptions> _options;
 
-	public CustomIdentityErrorDescriber(IOptions<PasswordComplexityOptions> options)
+	public CustomIdentityErrorDescriber(
+		IOptions<PasswordComplexityOptions> options)
 	{
 		_options = options;
 	}
@@ -43,7 +44,8 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 
 	public override IdentityError InvalidToken()
 	{
-		return new IdentityError { Code = nameof(InvalidToken), Description = "Invalid token." };
+		return new IdentityError
+			{ Code = nameof(InvalidToken), Description = "Invalid token." };
 	}
 
 	public override IdentityError LoginAlreadyAssociated()
@@ -60,7 +62,8 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		return new IdentityError
 		{
 			Code = nameof(InvalidUserName),
-			Description = $"User name '{userName}' is invalid, can only contain letters or digits."
+			Description =
+				$"User name '{userName}' is invalid, can only contain letters or digits."
 		};
 	}
 
@@ -178,7 +181,8 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		return new IdentityError
 		{
 			Code = nameof(PasswordRequiresNonAlphanumeric),
-			Description = "Passwords must have at least one non alphanumeric character."
+			Description =
+				"Passwords must have at least one non alphanumeric character."
 		};
 	}
 

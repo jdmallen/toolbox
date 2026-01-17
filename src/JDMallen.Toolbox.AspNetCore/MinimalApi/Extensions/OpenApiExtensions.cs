@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi;
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions;
 
@@ -16,7 +19,29 @@ public static class OpenApiExtensions
 		string title,
 		string version = "v1")
 	{
-		throw new System.NotImplementedException();
+		return services.AddOpenApi(options =>
+		{
+			options.AddDocumentTransformer((document, context, ct) =>
+			{
+				document.Info = new OpenApiInfo
+				{
+					Title = title,
+					Version = version
+				};
+
+				document.Components ??= new OpenApiComponents();
+				document.Components.SecuritySchemes?["Bearer"] =
+					new OpenApiSecurityScheme
+					{
+						Type = SecuritySchemeType.Http,
+						Scheme = "bearer",
+						BearerFormat = "JWT",
+						Description = "Enter your JWT token"
+					};
+
+				return Task.CompletedTask;
+			});
+		});
 	}
 
 	/// <summary>
@@ -26,6 +51,13 @@ public static class OpenApiExtensions
 		this RouteHandlerBuilder builder,
 		bool includeAuth = false)
 	{
-		throw new System.NotImplementedException();
+		builder.Produces<ProblemDetails>(StatusCodes.Status500InternalServerError);
+
+		if (includeAuth)
+			builder
+				.Produces<ProblemDetails>(StatusCodes.Status401Unauthorized)
+				.Produces<ProblemDetails>(StatusCodes.Status403Forbidden);
+
+		return builder;
 	}
 }

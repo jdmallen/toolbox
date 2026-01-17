@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
 
 // ReSharper disable once CheckNamespace
@@ -11,9 +7,9 @@ namespace JDMallen.Toolbox.EFCore.Extensions;
 public static class ServiceExtensions
 {
 	/// <summary>
-	///   CAREFUL with this! It does exactly as it describes with no warning:
-	///   drops all the tables and then recreates them. Useful for designing
-	///   the structure of your entities/DB, but disastrous for production.
+	/// CAREFUL with this! It does exactly as it describes with no warning:
+	/// drops all the tables and then recreates them. Useful for designing
+	/// the structure of your entities/DB, but disastrous for production.
 	/// </summary>
 	public static async Task DropTablesAndEnsureCreated(
 		this DbContext dbContext,
@@ -29,8 +25,7 @@ public static class ServiceExtensions
 			else
 				orderOfDroppage = dbContext.Model.GetEntityTypes()
 					.Select(et => et.GetAnnotations()
-						              .FirstOrDefault(x => x.Name
-						                                   == "Relational:TableName")
+						              .FirstOrDefault(x => x.Name == "Relational:TableName")
 						              ?.Value.ToString()
 						              .ToLowerInvariant()
 					              ?? et.ClrType.Name.ToLowerInvariant())
@@ -60,7 +55,9 @@ public static class ServiceExtensions
 				if (!tableExists)
 					return;
 				var dropTable = $"DROP TABLE {tableName.ToLowerInvariant()};";
-				await dbContext.Database.ExecuteSqlRawAsync(dropTable, cancellationToken);
+				await dbContext.Database.ExecuteSqlRawAsync(
+					dropTable,
+					cancellationToken);
 			});
 			await conn.CloseAsync();
 		}

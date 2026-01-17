@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 using JDMallen.Toolbox.AspNetCore.Constants;
@@ -54,7 +51,8 @@ public class JwtTokenFactory : IJwtTokenFactory
 				ClaimValueTypes.Integer64)
 		};
 
-		if (!string.IsNullOrWhiteSpace(userName)) claims.Add(new Claim(JwtClaimTypes.UserId, userName));
+		if (!string.IsNullOrWhiteSpace(userName))
+			claims.Add(new Claim(JwtClaimTypes.UserId, userName));
 
 		//			if (!string.IsNullOrWhiteSpace(email))
 //			{

@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -12,18 +11,23 @@ public static class EndpointExtensions
 	/// <summary>
 	/// Maps an endpoint implementing IEndpoint to the route builder.
 	/// </summary>
-	public static IEndpointRouteBuilder MapEndpoint<TEndpoint>(this IEndpointRouteBuilder app)
+	public static IEndpointRouteBuilder MapEndpoint<TEndpoint>(
+		this IEndpointRouteBuilder app)
 		where TEndpoint : IEndpoint
 	{
-		throw new NotImplementedException();
+		TEndpoint.Map(app);
+		return app;
 	}
 
 	/// <summary>
 	/// Creates a route group that allows anonymous access.
 	/// </summary>
-	public static RouteGroupBuilder MapPublicGroup(this IEndpointRouteBuilder app, string? prefix = null)
+	public static RouteGroupBuilder MapPublicGroup(
+		this IEndpointRouteBuilder app,
+		string? prefix = null)
 	{
-		throw new NotImplementedException();
+		return app.MapGroup(prefix ?? string.Empty)
+			.AllowAnonymous();
 	}
 
 	/// <summary>
@@ -34,6 +38,9 @@ public static class EndpointExtensions
 		string? prefix = null,
 		Action<RouteHandlerBuilder>? configureOpenApi = null)
 	{
-		throw new NotImplementedException();
+		var group = app.MapGroup(prefix ?? string.Empty)
+			.RequireAuthorization();
+
+		return group;
 	}
 }

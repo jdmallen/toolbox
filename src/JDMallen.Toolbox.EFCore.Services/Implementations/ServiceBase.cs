@@ -5,7 +5,7 @@ using JDMallen.Toolbox.EFCore.Services.Interfaces;
 namespace JDMallen.Toolbox.EFCore.Services.Implementations;
 
 /// <summary>
-///   An abstract service that can only read data from a data source
+/// An abstract service that can only read data from a data source
 /// </summary>
 /// <typeparam name="TRepository">The repository used to perform the data actions</typeparam>
 /// <typeparam name="TModel">The database entity model type</typeparam>
@@ -17,7 +17,7 @@ public abstract class ServiceBase<TRepository, TModel, TId>
 	where TId : struct
 {
 	/// <summary>
-	///   Base constructor with DI repository
+	/// Base constructor with DI repository
 	/// </summary>
 	/// <param name="repository">The repository to use</param>
 	protected ServiceBase(TRepository repository)
@@ -26,7 +26,7 @@ public abstract class ServiceBase<TRepository, TModel, TId>
 	}
 
 	/// <summary>
-	///   The <see cref="TRepository" /> used to perform all the CRUD actions
+	/// The <see cref="TRepository" /> used to perform all the CRUD actions
 	/// </summary>
 	public TRepository Repository { get; }
 }

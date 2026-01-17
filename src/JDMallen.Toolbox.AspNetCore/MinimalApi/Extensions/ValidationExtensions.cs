@@ -1,4 +1,6 @@
+using JDMallen.Toolbox.AspNetCore.MinimalApi.Filters;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions;
 
@@ -10,9 +12,12 @@ public static class ValidationExtensions
 	/// <summary>
 	/// Adds request validation using FluentValidation or DataAnnotations.
 	/// </summary>
-	public static RouteHandlerBuilder WithRequestValidation<TRequest>(this RouteHandlerBuilder builder)
+	public static RouteHandlerBuilder WithRequestValidation<TRequest>(
+		this RouteHandlerBuilder builder)
 		where TRequest : class
 	{
-		throw new System.NotImplementedException();
+		return builder
+			.AddEndpointFilter<RequestValidationFilter<TRequest>>()
+			.ProducesValidationProblem();
 	}
 }

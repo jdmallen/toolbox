@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace JDMallen.Toolbox.AspNetCore.Extensions;
@@ -12,7 +11,8 @@ public static class IdentityExtensions
 	{
 		result.Errors
 			.ToList()
-			.ForEach(error => modelState.TryAddModelError(error.Code, error.Description));
+			.ForEach(error =>
+				modelState.TryAddModelError(error.Code, error.Description));
 		return modelState;
 	}
 

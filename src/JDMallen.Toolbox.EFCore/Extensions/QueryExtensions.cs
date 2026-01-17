@@ -1,11 +1,9 @@
-﻿using System.Linq;
-
-namespace JDMallen.Toolbox.EFCore.Extensions;
+﻿namespace JDMallen.Toolbox.EFCore.Extensions;
 
 public static class QueryExtensions
 {
 	/// <summary>
-	///   https://stackoverflow.com/a/40572006/3986790
+	/// https://stackoverflow.com/a/40572006/3986790
 	/// </summary>
 	/// <typeparam name="TSource"></typeparam>
 	/// <param name="query"></param>
@@ -21,7 +19,9 @@ public static class QueryExtensions
 			return query;
 
 		var lambda =
-			(dynamic)UtilityMethods.GetExpressionFromPropertyName(typeof(TSource), fieldName);
+			(dynamic)UtilityMethods.GetExpressionFromPropertyName(
+				typeof(TSource),
+				fieldName);
 
 		return ascending
 			? Queryable.OrderBy(query, lambda)

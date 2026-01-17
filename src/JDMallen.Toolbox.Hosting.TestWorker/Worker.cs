@@ -1,9 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-
 namespace JDMallen.Toolbox.Hosting.TestWorker;
 
 public class Worker : ScheduledBackgroundService<Worker>
@@ -12,7 +6,10 @@ public class Worker : ScheduledBackgroundService<Worker>
 
 	public Worker(
 		ILogger<Worker> logger,
-		IServiceScopeFactory scopeFactory) : base(logger, scopeFactory, "I am a bad schedule")
+		IServiceScopeFactory scopeFactory) : base(
+		logger,
+		scopeFactory,
+		"I am a bad schedule")
 	{
 		_logger = logger;
 	}
