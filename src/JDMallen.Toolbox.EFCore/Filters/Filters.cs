@@ -5,8 +5,19 @@ using JDMallen.Toolbox.Models;
 
 namespace JDMallen.Toolbox.EFCore.Filters;
 
+/// <summary>
+/// Extension methods for filtering IQueryable entity collections by date and other criteria.
+/// </summary>
 public static class Filters
 {
+	/// <summary>
+	/// Filters entities created before a specified date and time.
+	/// </summary>
+	/// <typeparam name="TEntityModel">The entity type.</typeparam>
+	/// <param name="query">The query to filter.</param>
+	/// <param name="dateTime">The date and time to compare against.</param>
+	/// <param name="inclusive">If true, includes entities created exactly at the specified time.</param>
+	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> CreatedBefore<TEntityModel>(
 		this IQueryable<TEntityModel> query,
 		DateTime dateTime,
@@ -18,6 +29,14 @@ public static class Filters
 			: e.DateCreated < dateTime);
 	}
 
+	/// <summary>
+	/// Filters entities created after a specified date and time.
+	/// </summary>
+	/// <typeparam name="TEntityModel">The entity type.</typeparam>
+	/// <param name="query">The query to filter.</param>
+	/// <param name="dateTime">The date and time to compare against.</param>
+	/// <param name="inclusive">If true, includes entities created exactly at the specified time.</param>
+	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> CreatedAfter<TEntityModel>(
 		this IQueryable<TEntityModel> query,
 		DateTime dateTime,
@@ -29,6 +48,14 @@ public static class Filters
 			: e.DateCreated > dateTime);
 	}
 
+	/// <summary>
+	/// Filters entities modified before a specified date and time.
+	/// </summary>
+	/// <typeparam name="TEntityModel">The entity type.</typeparam>
+	/// <param name="query">The query to filter.</param>
+	/// <param name="dateTime">The date and time to compare against.</param>
+	/// <param name="inclusive">If true, includes entities modified exactly at the specified time.</param>
+	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> ModifiedBefore<TEntityModel>(
 		this IQueryable<TEntityModel> query,
 		DateTime dateTime,
@@ -40,6 +67,14 @@ public static class Filters
 			: e.DateModified < dateTime);
 	}
 
+	/// <summary>
+	/// Filters entities modified after a specified date and time.
+	/// </summary>
+	/// <typeparam name="TEntityModel">The entity type.</typeparam>
+	/// <param name="query">The query to filter.</param>
+	/// <param name="dateTime">The date and time to compare against.</param>
+	/// <param name="inclusive">If true, includes entities modified exactly at the specified time.</param>
+	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> ModifiedAfter<TEntityModel>(
 		this IQueryable<TEntityModel> query,
 		DateTime dateTime,

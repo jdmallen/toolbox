@@ -2,6 +2,9 @@
 
 namespace JDMallen.Toolbox.AspNetCore.Dtos;
 
+/// <summary>
+/// Data transfer object for user login requests.
+/// </summary>
 public class LoginDto
 {
 	[Required] public string Email { get; set; }

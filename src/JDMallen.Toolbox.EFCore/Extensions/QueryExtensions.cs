@@ -1,5 +1,8 @@
 ﻿namespace JDMallen.Toolbox.EFCore.Extensions;
 
+/// <summary>
+/// Extension methods for IQueryable to provide dynamic ordering capabilities.
+/// </summary>
 public static class QueryExtensions
 {
 	/// <summary>

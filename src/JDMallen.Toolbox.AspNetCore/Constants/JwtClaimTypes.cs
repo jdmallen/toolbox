@@ -1,5 +1,8 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
 
+/// <summary>
+/// Constants for JWT claim types following RFC 7519 standard.
+/// </summary>
 public class JwtClaimTypes
 {
 	/// <summary>

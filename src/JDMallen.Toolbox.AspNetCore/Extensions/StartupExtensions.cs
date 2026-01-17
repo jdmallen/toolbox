@@ -126,6 +126,12 @@ public static class StartupExtensions
 			"No valid certificate configuration found for the current endpoint.");
 	}
 
+	/// <summary>
+	/// Adds GitHub OAuth authentication to the application.
+	/// </summary>
+	/// <param name="builder">The authentication builder.</param>
+	/// <param name="config">The OAuth configuration containing GitHub client credentials.</param>
+	/// <returns>The authentication builder for method chaining.</returns>
 	public static AuthenticationBuilder AddOAuthGitHub(
 		this AuthenticationBuilder builder,
 		OAuthConfiguration config)
@@ -174,6 +180,12 @@ public static class StartupExtensions
 			});
 	}
 
+	/// <summary>
+	/// Adds Google OAuth authentication to the application.
+	/// </summary>
+	/// <param name="builder">The authentication builder.</param>
+	/// <param name="config">The OAuth configuration containing Google client credentials.</param>
+	/// <returns>The authentication builder for method chaining.</returns>
 	public static AuthenticationBuilder AddOAuthGoogle(
 		this AuthenticationBuilder builder,
 		OAuthConfiguration config)

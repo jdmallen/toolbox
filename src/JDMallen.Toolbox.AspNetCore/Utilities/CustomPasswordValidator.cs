@@ -7,21 +7,46 @@ using Microsoft.Extensions.Options;
 
 namespace JDMallen.Toolbox.AspNetCore.Utilities;
 
+/// <summary>
+/// Custom password validator that evaluates password strength using entropy calculation
+/// and checks against common password lists.
+/// </summary>
+/// <typeparam name="TUser">The user type.</typeparam>
 public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 	where TUser : IdentityUser<Guid>
 {
-	public const string LowerSet = @"abcdefghijklmnopqrstuvwxyz";
+	/// <summary>
+	/// Character set containing lowercase letters.
+	/// </summary>
+	public const string LowerSet = "abcdefghijklmnopqrstuvwxyz";
 
-	public const string UpperSet = @"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	/// <summary>
+	/// Character set containing uppercase letters.
+	/// </summary>
+	public const string UpperSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-	public const string NumberSet = @"0123456789";
+	/// <summary>
+	/// Character set containing digits.
+	/// </summary>
+	public const string NumberSet = "0123456789";
 
-	public const string SymbolSet1 = @"!@#$%^&*()";
+	/// <summary>
+	/// Character set containing common symbols.
+	/// </summary>
+	public const string SymbolSet1 = "!@#$%^&*()";
 
+	/// <summary>
+	/// Character set containing additional symbols.
+	/// </summary>
 	public const string SymbolSet2 = @"`~-_=+[{]}\|;:'"",<.>/?";
 	private readonly CustomIdentityErrorDescriber _errors;
 	private readonly PasswordComplexityOptions _options;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CustomPasswordValidator{TUser}"/> class.
+	/// </summary>
+	/// <param name="options">The password complexity options.</param>
+	/// <param name="errors">The custom error describer.</param>
 	public CustomPasswordValidator(
 		IOptions<PasswordComplexityOptions> options = null,
 		CustomIdentityErrorDescriber errors = null)
@@ -184,9 +209,12 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 
 	private static PasswordStrength EvaluateStrength(float bits)
 	{
-		if (bits > 120) return PasswordStrength.Excellent;
-		if (bits > 90) return PasswordStrength.Great;
-		if (bits > 60) return PasswordStrength.Good;
-		return bits > 30 ? PasswordStrength.Fair : PasswordStrength.Poor;
+		return bits switch
+		{
+			> 120 => PasswordStrength.Excellent,
+			> 90 => PasswordStrength.Great,
+			> 60 => PasswordStrength.Good,
+			_ => bits > 30 ? PasswordStrength.Fair : PasswordStrength.Poor
+		};
 	}
 }

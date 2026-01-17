@@ -16,21 +16,29 @@ public class BaseSpecification<T> : ISpecification<T>
 		Criteria = criteria;
 	}
 
+	/// <inheritdoc />
 	public int Take { get; private set; }
 
+	/// <inheritdoc />
 	public int Skip { get; private set; }
 
+	/// <inheritdoc />
 	public bool IsPagingEnabled { get; private set; }
 
+	/// <inheritdoc />
 	public Expression<Func<T, object>> OrderBy { get; private set; }
 
+	/// <inheritdoc />
 	public Expression<Func<T, object>> OrderByDescending { get; private set; }
 
+	/// <inheritdoc />
 	public Expression<Func<T, bool>> Criteria { get; }
 
+	/// <inheritdoc />
 	public IEnumerable<Expression<Func<T, object>>> Includes =>
 		_includes?.AsReadOnly();
 
+	/// <inheritdoc />
 	public IEnumerable<string> IncludeStrings => _includeStrings?.AsReadOnly();
 
 	/// <summary>

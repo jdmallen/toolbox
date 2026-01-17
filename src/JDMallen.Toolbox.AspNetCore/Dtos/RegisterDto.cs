@@ -2,6 +2,9 @@
 
 namespace JDMallen.Toolbox.AspNetCore.Dtos;
 
+/// <summary>
+/// Data transfer object for user registration requests.
+/// </summary>
 public class RegisterDto
 {
 	[Required] public string Email { get; set; }

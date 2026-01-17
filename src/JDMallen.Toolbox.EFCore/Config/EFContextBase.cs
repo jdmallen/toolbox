@@ -16,22 +16,14 @@ namespace JDMallen.Toolbox.EFCore.Config;
 /// </summary>
 public abstract class EFContextBase : DbContext, IContext
 {
-	/// <inheritdoc />
-	/// <param name="options"></param>
-	/// <param name="enableEntityLevelOnModelCreating">
-	/// Set this to false if you plan on doing all your OnModelCreating
-	/// Fluent API code from within the DbContext class itself, rather
-	/// than in the individual entities.
-	/// </param>
 	/// <summary>
 	/// Initializes a new instance of the <see cref="EFContextBase"/> class.
 	/// </summary>
 	/// <param name="options">The Entity Framework Core context options.</param>
 	/// <param name="enableEntityLevelOnModelCreating">
-	/// If true, enables entity-level OnModelCreating configuration where each entity
-	/// implements its own model configuration via <see cref="IComplexEntityModel"/>.
-	/// If false, all configuration must be done in this DbContext's OnModelCreating method.
-	/// Default is true.
+	/// Set this to false if you plan on doing all your OnModelCreating
+	/// Fluent API code from within the DbContext class itself, rather
+	/// than in the individual entities. Default is true.
 	/// </param>
 	protected EFContextBase(
 		DbContextOptions options,
@@ -50,6 +42,10 @@ public abstract class EFContextBase : DbContext, IContext
 	/// </remarks>
 	protected bool EnableEntityLevelOnModelCreating { get; set; }
 
+	/// <summary>
+	/// Gets the underlying database connection for this context.
+	/// </summary>
+	/// <returns>The database connection associated with this context.</returns>
 	public IDbConnection GetConnection()
 	{
 		return base.Database.GetDbConnection();

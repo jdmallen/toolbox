@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations;
 
+/// <summary>
+/// Builds Entity Framework Core queries by applying specifications to queryable entities.
+/// </summary>
+/// <typeparam name="TEntityModel">The entity model type.</typeparam>
 public class QueryBuilder<TEntityModel>
 	where TEntityModel : class, IEntityModel
 {

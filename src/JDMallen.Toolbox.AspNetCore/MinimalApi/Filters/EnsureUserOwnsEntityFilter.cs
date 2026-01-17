@@ -12,6 +12,9 @@ namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Filters;
 /// </summary>
 public interface IOwnedEntity
 {
+	/// <summary>
+	/// Gets the ID of the user who owns this entity.
+	/// </summary>
 	Guid UserId { get; }
 }
 
@@ -21,6 +24,15 @@ public interface IOwnedEntity
 public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 	where TEntity : class, IOwnedEntity
 {
+	/// <summary>
+	/// Invokes the filter to verify entity ownership before processing the request.
+	/// </summary>
+	/// <param name="context">The endpoint filter invocation context.</param>
+	/// <param name="next">The next filter in the pipeline.</param>
+	/// <returns>
+	/// A forbidden or not found result if the user doesn't own the entity,
+	/// otherwise the result of the next filter.
+	/// </returns>
 	public async ValueTask<object> InvokeAsync(
 		EndpointFilterInvocationContext context,
 		EndpointFilterDelegate next)
