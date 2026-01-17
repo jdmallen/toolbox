@@ -1,26 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <AssemblyName>JDMallen.Toolbox.EFCore</AssemblyName>
-    <RootNamespace>JDMallen.Toolbox.EFCore</RootNamespace>
-    <TargetFramework>net10.0</TargetFramework>
-    <PackageId>JDMallen.Toolbox.EFCore</PackageId>
-    <Description>Entity Framework Core utilities including base context, filters, and entity models.</Description>
-  </PropertyGroup>
+    <PropertyGroup>
+        <AssemblyName>JDMallen.Toolbox.EFCore</AssemblyName>
+        <RootNamespace>JDMallen.Toolbox.EFCore</RootNamespace>
+        <TargetFramework>net10.0</TargetFramework>
+        <PackageId>JDMallen.Toolbox.EFCore</PackageId>
+        <Description>Entity Framework Core utilities including base context, filters, and entity models.</Description>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.2"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Utilities\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Utilities\"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj" />
-    <ProjectReference Include="..\JDMallen.Toolbox.Data.Abstractions\JDMallen.Toolbox.Data.Abstractions.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj"/>
+        <ProjectReference Include="..\JDMallen.Toolbox.Data.Abstractions\JDMallen.Toolbox.Data.Abstractions.csproj"/>
+    </ItemGroup>
 
 </Project>

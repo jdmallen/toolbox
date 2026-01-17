@@ -1,6 +1,5 @@
-﻿namespace JDMallen.Toolbox.Data.Abstractions.Interfaces
+﻿namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
+
+public interface IAggregateRoot : IEntityModel
 {
-	public interface IAggregateRoot : IEntityModel
-	{
-	}
 }

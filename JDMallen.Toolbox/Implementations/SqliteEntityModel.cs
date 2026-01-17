@@ -1,29 +1,28 @@
 ﻿using System.ComponentModel;
 
-namespace JDMallen.Toolbox.Implementations
-{
-	public abstract class SqliteEntityModel : EntityModel
-	{
-	}
+namespace JDMallen.Toolbox.Implementations;
 
-	public abstract class SqliteEntityModel<TId>
-		: EntityModel<TId>
-		where TId : struct
+public abstract class SqliteEntityModel : EntityModel
+{
+}
+
+public abstract class SqliteEntityModel<TId>
+	: EntityModel<TId>
+	where TId : struct
+{
+	public string IdText
 	{
-		public string IdText
+		get => Id.ToString();
+		set
 		{
-			get => Id.ToString();
-			set
+			try
 			{
-				try
-				{
-					var converter = TypeDescriptor.GetConverter(typeof(TId));
-					Id = (TId) converter.ConvertFromString(value);
-				}
-				catch
-				{
-					Id = default(TId);
-				}
+				var converter = TypeDescriptor.GetConverter(typeof(TId));
+				Id = (TId)converter.ConvertFromString(value);
+			}
+			catch
+			{
+				Id = default;
 			}
 		}
 	}

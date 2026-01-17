@@ -1,34 +1,33 @@
-﻿using JDMallen.Toolbox.Implementations;
-using JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿using JDMallen.Toolbox.Data.Abstractions.Interfaces;
+using JDMallen.Toolbox.Implementations;
 using Microsoft.EntityFrameworkCore;
 
-namespace JDMallen.Toolbox.EFCore.Models
+namespace JDMallen.Toolbox.EFCore.Models;
+
+/// <inheritdoc />
+/// <summary>
+///   This model, special for Entity Framework Core, assumes the entity requires additional
+///   configuration.
+/// </summary>
+public interface IComplexEntityModel : IEntityModel
 {
-	/// <inheritdoc />
-	/// <summary>
-	/// This model, special for Entity Framework Core, assumes the entity requires additional 
-	/// configuration.
-	/// </summary>
-	public interface IComplexEntityModel : IEntityModel
-	{
-		void OnModelCreating(ModelBuilder modelBuilder);
-	}
+	void OnModelCreating(ModelBuilder modelBuilder);
+}
 
-	/// <inheritdoc cref="IComplexEntityModel" />
-	/// <inheritdoc cref="IEntityModel{TId}"/>
-	/// <summary>
-	/// </summary>
-	/// <typeparam name="TId"></typeparam>
-	public interface IComplexEntityModel<out TId>
-		: IEntityModel<TId>, IComplexEntityModel
-		where TId : struct
-	{
-	}
+/// <inheritdoc cref="IComplexEntityModel" />
+/// <inheritdoc cref="IEntityModel{TId}" />
+/// <summary>
+/// </summary>
+/// <typeparam name="TId"></typeparam>
+public interface IComplexEntityModel<out TId>
+	: IEntityModel<TId>, IComplexEntityModel
+	where TId : struct
+{
+}
 
-	public abstract class ComplexEntityModel<TId>
-		: EntityModel<TId>, IComplexEntityModel<TId>
-		where TId : struct
-	{
-		public abstract void OnModelCreating(ModelBuilder modelBuilder);
-	}
+public abstract class ComplexEntityModel<TId>
+	: EntityModel<TId>, IComplexEntityModel<TId>
+	where TId : struct
+{
+	public abstract void OnModelCreating(ModelBuilder modelBuilder);
 }

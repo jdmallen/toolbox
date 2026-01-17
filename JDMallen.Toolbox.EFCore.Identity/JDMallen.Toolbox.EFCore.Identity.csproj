@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <AssemblyName>JDMallen.Toolbox.EFCore.Identity</AssemblyName>
-    <RootNamespace>JDMallen.Toolbox.EFCore.Identity</RootNamespace>
-    <TargetFramework>net10.0</TargetFramework>
-    <PackageId>JDMallen.Toolbox.EFCore.Identity</PackageId>
-    <Description>ASP.NET Core Identity integration with Entity Framework Core.</Description>
-  </PropertyGroup>
+    <PropertyGroup>
+        <AssemblyName>JDMallen.Toolbox.EFCore.Identity</AssemblyName>
+        <RootNamespace>JDMallen.Toolbox.EFCore.Identity</RootNamespace>
+        <TargetFramework>net10.0</TargetFramework>
+        <PackageId>JDMallen.Toolbox.EFCore.Identity</PackageId>
+        <Description>ASP.NET Core Identity integration with Entity Framework Core.</Description>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\JDMallen.Toolbox.AspNetCore\JDMallen.Toolbox.AspNetCore.csproj" />
-    <ProjectReference Include="..\JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\JDMallen.Toolbox.AspNetCore\JDMallen.Toolbox.AspNetCore.csproj"/>
+        <ProjectReference Include="..\JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2"/>
+    </ItemGroup>
 
 </Project>

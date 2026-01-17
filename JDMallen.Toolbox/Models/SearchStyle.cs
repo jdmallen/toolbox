@@ -1,9 +1,8 @@
-﻿namespace JDMallen.Toolbox.Models
+﻿namespace JDMallen.Toolbox.Models;
+
+public enum SearchStyle
 {
-	public enum SearchStyle
-	{
-		Exact,
-		Contains,
-		StartsWith
-	}
+	Exact,
+	Contains,
+	StartsWith
 }

@@ -3,210 +3,209 @@ using JDMallen.Toolbox.AspNetCore.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
-namespace JDMallen.Toolbox.AspNetCore.Utilities
+namespace JDMallen.Toolbox.AspNetCore.Utilities;
+
+public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 {
-	public class CustomIdentityErrorDescriber : IdentityErrorDescriber
+	private readonly IOptions<PasswordComplexityOptions> _options;
+
+	public CustomIdentityErrorDescriber(IOptions<PasswordComplexityOptions> options)
 	{
-		private readonly IOptions<PasswordComplexityOptions> _options;
+		_options = options;
+	}
 
-		public CustomIdentityErrorDescriber(IOptions<PasswordComplexityOptions> options)
+	public override IdentityError DefaultError()
+	{
+		return new IdentityError
 		{
-			_options = options;
-		}
+			Code = nameof(DefaultError),
+			Description = "An unknown failure has occurred."
+		};
+	}
 
-		public override IdentityError DefaultError()
+	public override IdentityError ConcurrencyFailure()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(DefaultError),
-				Description = "An unknown failure has occurred."
-			};
-		}
+			Code = nameof(ConcurrencyFailure),
+			Description = "Optimistic concurrency failure, object has been modified."
+		};
+	}
 
-		public override IdentityError ConcurrencyFailure()
+	public override IdentityError PasswordMismatch()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(ConcurrencyFailure),
-				Description = "Optimistic concurrency failure, object has been modified."
-			};
-		}
+			Code = nameof(PasswordMismatch),
+			Description = "Incorrect password."
+		};
+	}
 
-		public override IdentityError PasswordMismatch()
-		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordMismatch),
-				Description = "Incorrect password."
-			};
-		}
+	public override IdentityError InvalidToken()
+	{
+		return new IdentityError { Code = nameof(InvalidToken), Description = "Invalid token." };
+	}
 
-		public override IdentityError InvalidToken()
+	public override IdentityError LoginAlreadyAssociated()
+	{
+		return new IdentityError
 		{
-			return new IdentityError { Code = nameof(InvalidToken), Description = "Invalid token." };
-		}
+			Code = nameof(LoginAlreadyAssociated),
+			Description = "A user with this login already exists."
+		};
+	}
 
-		public override IdentityError LoginAlreadyAssociated()
+	public override IdentityError InvalidUserName(string userName)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(LoginAlreadyAssociated),
-				Description = "A user with this login already exists."
-			};
-		}
+			Code = nameof(InvalidUserName),
+			Description = $"User name '{userName}' is invalid, can only contain letters or digits."
+		};
+	}
 
-		public override IdentityError InvalidUserName(string userName)
+	public override IdentityError InvalidEmail(string email)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(InvalidUserName),
-				Description = $"User name '{userName}' is invalid, can only contain letters or digits."
-			};
-		}
+			Code = nameof(InvalidEmail),
+			Description = $"Email '{email}' is invalid."
+		};
+	}
 
-		public override IdentityError InvalidEmail(string email)
+	public override IdentityError DuplicateUserName(string userName)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(InvalidEmail),
-				Description = $"Email '{email}' is invalid."
-			};
-		}
+			Code = nameof(DuplicateUserName),
+			Description = $"User Name '{userName}' is already taken."
+		};
+	}
 
-		public override IdentityError DuplicateUserName(string userName)
+	public override IdentityError DuplicateEmail(string email)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(DuplicateUserName),
-				Description = $"User Name '{userName}' is already taken."
-			};
-		}
+			Code = nameof(DuplicateEmail),
+			Description = $"Email '{email}' is already taken."
+		};
+	}
 
-		public override IdentityError DuplicateEmail(string email)
+	public override IdentityError InvalidRoleName(string role)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(DuplicateEmail),
-				Description = $"Email '{email}' is already taken."
-			};
-		}
+			Code = nameof(InvalidRoleName),
+			Description = $"Role name '{role}' is invalid."
+		};
+	}
 
-		public override IdentityError InvalidRoleName(string role)
+	public override IdentityError DuplicateRoleName(string role)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(InvalidRoleName),
-				Description = $"Role name '{role}' is invalid."
-			};
-		}
+			Code = nameof(DuplicateRoleName),
+			Description = $"Role name '{role}' is already taken."
+		};
+	}
 
-		public override IdentityError DuplicateRoleName(string role)
+	public override IdentityError UserAlreadyHasPassword()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(DuplicateRoleName),
-				Description = $"Role name '{role}' is already taken."
-			};
-		}
+			Code = nameof(UserAlreadyHasPassword),
+			Description = "User already has a password set."
+		};
+	}
 
-		public override IdentityError UserAlreadyHasPassword()
+	public override IdentityError UserLockoutNotEnabled()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(UserAlreadyHasPassword),
-				Description = "User already has a password set."
-			};
-		}
+			Code = nameof(UserLockoutNotEnabled),
+			Description = "Lockout is not enabled for this user."
+		};
+	}
 
-		public override IdentityError UserLockoutNotEnabled()
+	public override IdentityError UserAlreadyInRole(string role)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(UserLockoutNotEnabled),
-				Description = "Lockout is not enabled for this user."
-			};
-		}
+			Code = nameof(UserAlreadyInRole),
+			Description = $"User already in role '{role}'."
+		};
+	}
 
-		public override IdentityError UserAlreadyInRole(string role)
+	public override IdentityError UserNotInRole(string role)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(UserAlreadyInRole),
-				Description = $"User already in role '{role}'."
-			};
-		}
+			Code = nameof(UserNotInRole),
+			Description = $"User is not in role '{role}'."
+		};
+	}
 
-		public override IdentityError UserNotInRole(string role)
+	public IdentityError PasswordNotComplexEnough(PasswordResult passwordResult)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(UserNotInRole),
-				Description = $"User is not in role '{role}'."
-			};
-		}
+			Code = nameof(PasswordNotComplexEnough),
+			Description =
+				$"Password complexity of {passwordResult.BitsOfEntropy} bits of entropy ({passwordResult.Strength:G}) does not meet goal of {_options.Value.BitsThreshold} bits. Try making it longer, or using multiple character sets like upper-case, lower-case, numbers, or symbols."
+		};
+	}
 
-		public IdentityError PasswordNotComplexEnough(PasswordResult passwordResult)
+	public IdentityError PasswordTooCommon()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordNotComplexEnough),
-				Description =
-					$"Password complexity of {passwordResult.BitsOfEntropy} bits of entropy ({passwordResult.Strength:G}) does not meet goal of {_options.Value.BitsThreshold} bits. Try making it longer, or using multiple character sets like upper-case, lower-case, numbers, or symbols."
-			};
-		}
+			Code = nameof(PasswordTooCommon),
+			Description = "Password is too common. Please choose a unique password."
+		};
+	}
 
-		public IdentityError PasswordTooCommon()
+	public override IdentityError PasswordTooShort(int length)
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordTooCommon),
-				Description = "Password is too common. Please choose a unique password."
-			};
-		}
+			Code = nameof(PasswordTooShort),
+			Description = $"Passwords must be at least {length} characters."
+		};
+	}
 
-		public override IdentityError PasswordTooShort(int length)
+	public override IdentityError PasswordRequiresNonAlphanumeric()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordTooShort),
-				Description = $"Passwords must be at least {length} characters."
-			};
-		}
+			Code = nameof(PasswordRequiresNonAlphanumeric),
+			Description = "Passwords must have at least one non alphanumeric character."
+		};
+	}
 
-		public override IdentityError PasswordRequiresNonAlphanumeric()
+	public override IdentityError PasswordRequiresDigit()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordRequiresNonAlphanumeric),
-				Description = "Passwords must have at least one non alphanumeric character."
-			};
-		}
+			Code = nameof(PasswordRequiresDigit),
+			Description = "Passwords must have at least one digit ('0'-'9')."
+		};
+	}
 
-		public override IdentityError PasswordRequiresDigit()
+	public override IdentityError PasswordRequiresLower()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordRequiresDigit),
-				Description = "Passwords must have at least one digit ('0'-'9')."
-			};
-		}
+			Code = nameof(PasswordRequiresLower),
+			Description = "Passwords must have at least one lowercase ('a'-'z')."
+		};
+	}
 
-		public override IdentityError PasswordRequiresLower()
+	public override IdentityError PasswordRequiresUpper()
+	{
+		return new IdentityError
 		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordRequiresLower),
-				Description = "Passwords must have at least one lowercase ('a'-'z')."
-			};
-		}
-
-		public override IdentityError PasswordRequiresUpper()
-		{
-			return new IdentityError
-			{
-				Code = nameof(PasswordRequiresUpper),
-				Description = "Passwords must have at least one uppercase ('A'-'Z')."
-			};
-		}
+			Code = nameof(PasswordRequiresUpper),
+			Description = "Passwords must have at least one uppercase ('A'-'Z')."
+		};
 	}
 }

@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <AssemblyName>JDMallen.Toolbox.Data.Abstractions</AssemblyName>
-    <RootNamespace>JDMallen.Toolbox.Data.Abstractions</RootNamespace>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <PackageId>JDMallen.Toolbox.Data.Abstractions</PackageId>
-    <Description>Data abstractions and interfaces for repository patterns, entity models, and query parameters.</Description>
-  </PropertyGroup>
+    <PropertyGroup>
+        <AssemblyName>JDMallen.Toolbox.Data.Abstractions</AssemblyName>
+        <RootNamespace>JDMallen.Toolbox.Data.Abstractions</RootNamespace>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <PackageId>JDMallen.Toolbox.Data.Abstractions</PackageId>
+        <Description>Data abstractions and interfaces for repository patterns, entity models, and query parameters.</Description>
+    </PropertyGroup>
 
 </Project>
