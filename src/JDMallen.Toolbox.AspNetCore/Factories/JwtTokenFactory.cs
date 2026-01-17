@@ -18,11 +18,16 @@ public class JwtTokenFactory : IJwtTokenFactory
 	/// </summary>
 	protected readonly JwtOptions JwtOptions;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="JwtTokenFactory"/> class.
+	/// </summary>
+	/// <param name="jwtOptions">The JWT configuration options.</param>
 	public JwtTokenFactory(IOptions<JwtOptions> jwtOptions)
 	{
 		JwtOptions = jwtOptions.Value;
 	}
 
+	/// <inheritdoc />
 	public ClaimsIdentity GenerateClaimsIdentity(string email, string id)
 	{
 		return new ClaimsIdentity(
@@ -35,11 +40,13 @@ public class JwtTokenFactory : IJwtTokenFactory
 			});
 	}
 
+	/// <inheritdoc />
 	public ClaimsIdentity GenerateClaimsIdentity(string email, Guid id)
 	{
 		return GenerateClaimsIdentity(email, id.ToString("D"));
 	}
 
+	/// <inheritdoc />
 	public string GenerateToken(ClaimsIdentity identity)
 	{
 		var userName =

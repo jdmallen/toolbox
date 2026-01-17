@@ -1,5 +1,8 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Options;
 
+/// <summary>
+/// Configuration settings for OAuth authentication providers.
+/// </summary>
 public class OAuthConfiguration
 {
 	public string FacebookClientId { get; set; }

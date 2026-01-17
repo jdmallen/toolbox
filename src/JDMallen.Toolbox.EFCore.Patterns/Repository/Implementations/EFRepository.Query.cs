@@ -66,6 +66,7 @@ public abstract partial class EFRepositoryBase<
 		_disposed = true;
 	}
 
+	/// <inheritdoc />
 	public void Dispose()
 	{
 		Dispose(true);

@@ -12,6 +12,10 @@ namespace JDMallen.Toolbox.EFCore.Models;
 /// </summary>
 public interface IComplexEntityModel : IEntityModel
 {
+	/// <summary>
+	/// Configures the entity model using the Entity Framework Core ModelBuilder.
+	/// </summary>
+	/// <param name="modelBuilder">The builder used to configure the entity in the database context.</param>
 	void OnModelCreating(ModelBuilder modelBuilder);
 }
 
@@ -26,9 +30,18 @@ public interface IComplexEntityModel<out TId>
 {
 }
 
+/// <summary>
+/// Base class for complex entity models with custom primary key type that require
+/// additional Entity Framework Core configuration.
+/// </summary>
+/// <typeparam name="TId">The type of the entity's primary key.</typeparam>
 public abstract class ComplexEntityModel<TId>
 	: EntityModel<TId>, IComplexEntityModel<TId>
 	where TId : struct
 {
+	/// <summary>
+	/// Configures the entity model using the Entity Framework Core ModelBuilder.
+	/// </summary>
+	/// <param name="modelBuilder">The builder used to configure the entity in the database context.</param>
 	public abstract void OnModelCreating(ModelBuilder modelBuilder);
 }

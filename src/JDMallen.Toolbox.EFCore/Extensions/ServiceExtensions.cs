@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 // ReSharper disable once CheckNamespace
 namespace JDMallen.Toolbox.EFCore.Extensions;
 
+/// <summary>
+/// Extension methods for Entity Framework Core database context operations.
+/// </summary>
 public static class ServiceExtensions
 {
 	/// <summary>

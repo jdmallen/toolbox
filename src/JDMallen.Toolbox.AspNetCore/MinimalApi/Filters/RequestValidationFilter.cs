@@ -11,6 +11,12 @@ namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Filters;
 public class RequestValidationFilter<TRequest> : IEndpointFilter
 	where TRequest : class
 {
+	/// <summary>
+	/// Invokes the filter to validate the request before processing.
+	/// </summary>
+	/// <param name="context">The endpoint filter invocation context.</param>
+	/// <param name="next">The next filter in the pipeline.</param>
+	/// <returns>A validation problem result if validation fails, otherwise the result of the next filter.</returns>
 	public async ValueTask<object> InvokeAsync(
 		EndpointFilterInvocationContext context,
 		EndpointFilterDelegate next)

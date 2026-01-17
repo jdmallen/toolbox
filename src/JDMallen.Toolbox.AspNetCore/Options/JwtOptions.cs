@@ -3,6 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace JDMallen.Toolbox.AspNetCore.Options;
 
+/// <summary>
+/// Configuration options for JSON Web Token (JWT) generation and validation.
+/// </summary>
 public class JwtOptions
 {
 	/// <summary>

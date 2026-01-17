@@ -5,16 +5,24 @@ using Microsoft.Extensions.Options;
 
 namespace JDMallen.Toolbox.AspNetCore.Utilities;
 
+/// <summary>
+/// Custom implementation of Identity error messages with enhanced password validation errors.
+/// </summary>
 public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 {
 	private readonly IOptions<PasswordComplexityOptions> _options;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CustomIdentityErrorDescriber"/> class.
+	/// </summary>
+	/// <param name="options">The password complexity options.</param>
 	public CustomIdentityErrorDescriber(
 		IOptions<PasswordComplexityOptions> options)
 	{
 		_options = options;
 	}
 
+	/// <inheritdoc />
 	public override IdentityError DefaultError()
 	{
 		return new IdentityError
@@ -24,6 +32,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError ConcurrencyFailure()
 	{
 		return new IdentityError
@@ -33,6 +42,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError PasswordMismatch()
 	{
 		return new IdentityError
@@ -42,12 +52,14 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError InvalidToken()
 	{
 		return new IdentityError
 			{ Code = nameof(InvalidToken), Description = "Invalid token." };
 	}
 
+	/// <inheritdoc />
 	public override IdentityError LoginAlreadyAssociated()
 	{
 		return new IdentityError
@@ -57,6 +69,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError InvalidUserName(string userName)
 	{
 		return new IdentityError
@@ -67,6 +80,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError InvalidEmail(string email)
 	{
 		return new IdentityError
@@ -76,6 +90,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError DuplicateUserName(string userName)
 	{
 		return new IdentityError
@@ -85,6 +100,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError DuplicateEmail(string email)
 	{
 		return new IdentityError
@@ -94,6 +110,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError InvalidRoleName(string role)
 	{
 		return new IdentityError
@@ -103,6 +120,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError DuplicateRoleName(string role)
 	{
 		return new IdentityError
@@ -112,6 +130,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError UserAlreadyHasPassword()
 	{
 		return new IdentityError
@@ -121,6 +140,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError UserLockoutNotEnabled()
 	{
 		return new IdentityError
@@ -130,6 +150,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError UserAlreadyInRole(string role)
 	{
 		return new IdentityError
@@ -139,6 +160,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError UserNotInRole(string role)
 	{
 		return new IdentityError
@@ -148,6 +170,11 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <summary>
+	/// Returns an error indicating that the password does not meet complexity requirements.
+	/// </summary>
+	/// <param name="passwordResult">The password analysis result.</param>
+	/// <returns>An <see cref="IdentityError"/> describing the complexity issue.</returns>
 	public IdentityError PasswordNotComplexEnough(PasswordResult passwordResult)
 	{
 		return new IdentityError
@@ -158,6 +185,10 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <summary>
+	/// Returns an error indicating that the password is too common.
+	/// </summary>
+	/// <returns>An <see cref="IdentityError"/> for common passwords.</returns>
 	public IdentityError PasswordTooCommon()
 	{
 		return new IdentityError
@@ -167,6 +198,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError PasswordTooShort(int length)
 	{
 		return new IdentityError
@@ -176,6 +208,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError PasswordRequiresNonAlphanumeric()
 	{
 		return new IdentityError
@@ -186,6 +219,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError PasswordRequiresDigit()
 	{
 		return new IdentityError
@@ -195,6 +229,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError PasswordRequiresLower()
 	{
 		return new IdentityError
@@ -204,6 +239,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 		};
 	}
 
+	/// <inheritdoc />
 	public override IdentityError PasswordRequiresUpper()
 	{
 		return new IdentityError

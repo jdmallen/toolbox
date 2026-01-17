@@ -7,5 +7,9 @@ namespace JDMallen.Toolbox.AspNetCore.MinimalApi;
 /// </summary>
 public interface IEndpoint
 {
+	/// <summary>
+	/// Maps the endpoint routes to the application's route builder.
+	/// </summary>
+	/// <param name="app">The endpoint route builder used to register routes.</param>
 	static abstract void Map(IEndpointRouteBuilder app);
 }
