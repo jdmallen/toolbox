@@ -33,10 +33,17 @@ public abstract class QueryParameters : IQueryParameters
 	public bool IsDeleted { get; set; } = false;
 }
 
+/// <summary>
+/// Base class for query parameters with generic identifier support.
+/// </summary>
+/// <typeparam name="TId">The type of the entity identifier.</typeparam>
 public abstract class QueryParameters<TId>
 	: QueryParameters, IQueryParameters<TId>
 	where TId : struct
 {
+	/// <summary>
+	/// Initializes a new instance of the <see cref="QueryParameters{TId}"/> class.
+	/// </summary>
 	protected QueryParameters()
 	{
 		Ids = new List<TId>();

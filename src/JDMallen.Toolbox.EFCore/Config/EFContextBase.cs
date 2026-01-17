@@ -23,6 +23,16 @@ public abstract class EFContextBase : DbContext, IContext
 	/// Fluent API code from within the DbContext class itself, rather
 	/// than in the individual entities.
 	/// </param>
+	/// <summary>
+	/// Initializes a new instance of the <see cref="EFContextBase"/> class.
+	/// </summary>
+	/// <param name="options">The Entity Framework Core context options.</param>
+	/// <param name="enableEntityLevelOnModelCreating">
+	/// If true, enables entity-level OnModelCreating configuration where each entity
+	/// implements its own model configuration via <see cref="IComplexEntityModel"/>.
+	/// If false, all configuration must be done in this DbContext's OnModelCreating method.
+	/// Default is true.
+	/// </param>
 	protected EFContextBase(
 		DbContextOptions options,
 		bool enableEntityLevelOnModelCreating = true) : base(options)
@@ -30,6 +40,14 @@ public abstract class EFContextBase : DbContext, IContext
 		EnableEntityLevelOnModelCreating = enableEntityLevelOnModelCreating;
 	}
 
+	/// <summary>
+	/// Gets or sets a value indicating whether entity-level OnModelCreating
+	/// configuration is enabled.
+	/// </summary>
+	/// <remarks>
+	/// When enabled, the framework automatically discovers and applies OnModelCreating
+	/// configuration from entities implementing <see cref="IComplexEntityModel"/>.
+	/// </remarks>
 	protected bool EnableEntityLevelOnModelCreating { get; set; }
 
 	public IDbConnection GetConnection()
