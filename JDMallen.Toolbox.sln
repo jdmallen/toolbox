@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Hosting.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.Data.Abstractions", "JDMallen.Toolbox.Data.Abstractions\JDMallen.Toolbox.Data.Abstractions.csproj", "{09C9ECDE-6795-4044-B7BA-AA6D7B4D726B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.EFCore.SqlServer", "JDMallen.Toolbox.EFCore.SqlServer\JDMallen.Toolbox.EFCore.SqlServer.csproj", "{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,18 @@ Global
 		{09C9ECDE-6795-4044-B7BA-AA6D7B4D726B}.Release|x64.Build.0 = Release|Any CPU
 		{09C9ECDE-6795-4044-B7BA-AA6D7B4D726B}.Release|x86.ActiveCfg = Release|Any CPU
 		{09C9ECDE-6795-4044-B7BA-AA6D7B4D726B}.Release|x86.Build.0 = Release|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Debug|x64.Build.0 = Debug|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Debug|x86.Build.0 = Debug|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|x64.ActiveCfg = Release|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|x64.Build.0 = Release|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|x86.ActiveCfg = Release|Any CPU
+		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
