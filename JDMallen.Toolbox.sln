@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox", "JDMallen.Toolbox\JDMallen.Toolbox.csproj", "{93CDEB1F-0FF3-4107-BBB1-11B929890462}"
+roject("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox", "src\JDMallen.Toolbox\JDMallen.Toolbox.csproj", "{93CDEB1F-0FF3-4107-BBB1-11B929890462}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore", "JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj", "{B1F0F948-4E07-45CC-9FAE-A43C5FA79E29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore", "src\JDMallen.Toolbox.EFCore\JDMallen.Toolbox.EFCore.csproj", "{B1F0F948-4E07-45CC-9FAE-A43C5FA79E29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Services", "JDMallen.Toolbox.EFCore.Services\JDMallen.Toolbox.EFCore.Services.csproj", "{03FC3C98-78AE-4E6A-9D02-BABD591DBF4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Services", "src\JDMallen.Toolbox.EFCore.Services\JDMallen.Toolbox.EFCore.Services.csproj", "{03FC3C98-78AE-4E6A-9D02-BABD591DBF4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Patterns", "JDMallen.Toolbox.EFCore.Patterns\JDMallen.Toolbox.EFCore.Patterns.csproj", "{BA4AA6F3-8B24-46B6-B477-978B77EB7364}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Patterns", "src\JDMallen.Toolbox.EFCore.Patterns\JDMallen.Toolbox.EFCore.Patterns.csproj", "{BA4AA6F3-8B24-46B6-B477-978B77EB7364}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Hosting", "JDMallen.Toolbox.Hosting\JDMallen.Toolbox.Hosting.csproj", "{32439307-BB83-4A38-A105-33913C67C744}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Hosting", "src\JDMallen.Toolbox.Hosting\JDMallen.Toolbox.Hosting.csproj", "{32439307-BB83-4A38-A105-33913C67C744}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.AspNetCore", "JDMallen.Toolbox.AspNetCore\JDMallen.Toolbox.AspNetCore.csproj", "{35E9FADA-AFA8-4544-BB36-189937E076BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.AspNetCore", "src\JDMallen.Toolbox.AspNetCore\JDMallen.Toolbox.AspNetCore.csproj", "{35E9FADA-AFA8-4544-BB36-189937E076BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Identity", "JDMallen.Toolbox.EFCore.Identity\JDMallen.Toolbox.EFCore.Identity.csproj", "{D65C075A-BC97-4D63-B0BD-05972A0C4DE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.EFCore.Identity", "src\JDMallen.Toolbox.EFCore.Identity\JDMallen.Toolbox.EFCore.Identity.csproj", "{D65C075A-BC97-4D63-B0BD-05972A0C4DE9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Hosting.TestWorker", "JDMallen.Toolbox.Hosting.TestWorker\JDMallen.Toolbox.Hosting.TestWorker.csproj", "{52D36AEB-D0FF-4A74-A782-61F7E56839B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JDMallen.Toolbox.Hosting.TestWorker", "src\JDMallen.Toolbox.Hosting.TestWorker\JDMallen.Toolbox.Hosting.TestWorker.csproj", "{52D36AEB-D0FF-4A74-A782-61F7E56839B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.Data.Abstractions", "JDMallen.Toolbox.Data.Abstractions\JDMallen.Toolbox.Data.Abstractions.csproj", "{09C9ECDE-6795-4044-B7BA-AA6D7B4D726B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.Data.Abstractions", "src\JDMallen.Toolbox.Data.Abstractions\JDMallen.Toolbox.Data.Abstractions.csproj", "{09C9ECDE-6795-4044-B7BA-AA6D7B4D726B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.EFCore.SqlServer", "JDMallen.Toolbox.EFCore.SqlServer\JDMallen.Toolbox.EFCore.SqlServer.csproj", "{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.EFCore.SqlServer", "src\JDMallen.Toolbox.EFCore.SqlServer\JDMallen.Toolbox.EFCore.SqlServer.csproj", "{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D8A1A78C-942C-468C-80B9-CEEC19AAA50F}"
 	ProjectSection(SolutionItems) = preProject
