@@ -23,6 +23,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.Data.Abstr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox.EFCore.SqlServer", "JDMallen.Toolbox.EFCore.SqlServer\JDMallen.Toolbox.EFCore.SqlServer.csproj", "{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D8A1A78C-942C-468C-80B9-CEEC19AAA50F}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		global.json = global.json
+		LICENSE = LICENSE
+		uploadToNexus.ps1 = uploadToNexus.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
