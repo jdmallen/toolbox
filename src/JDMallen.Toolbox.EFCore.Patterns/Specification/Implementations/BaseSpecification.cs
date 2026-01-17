@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using JDMallen.Toolbox.EFCore.Patterns.Specification.Interfaces;
 
 namespace JDMallen.Toolbox.EFCore.Patterns.Specification.Implementations;
 
 /// <summary>
-///   https://deviq.com/specification-pattern/
+/// https://deviq.com/specification-pattern/
 /// </summary>
 public class BaseSpecification<T> : ISpecification<T>
 {
@@ -30,7 +28,8 @@ public class BaseSpecification<T> : ISpecification<T>
 
 	public Expression<Func<T, bool>> Criteria { get; }
 
-	public IEnumerable<Expression<Func<T, object>>> Includes => _includes?.AsReadOnly();
+	public IEnumerable<Expression<Func<T, object>>> Includes =>
+		_includes?.AsReadOnly();
 
 	public IEnumerable<string> IncludeStrings => _includeStrings?.AsReadOnly();
 

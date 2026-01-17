@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 /// <summary>
-///   A set of parameters a user may set in order query a set of entities.
+/// A set of parameters a user may set in order query a set of entities.
 /// </summary>
 public interface IQueryParameters
 {
@@ -28,7 +25,7 @@ public interface IQueryParameters
 }
 
 /// <summary>
-///   A set of parameters a user may set in order query a set of entities.
+/// A set of parameters a user may set in order query a set of entities.
 /// </summary>
 public interface IQueryParameters<TId> : IQueryParameters
 	where TId : struct

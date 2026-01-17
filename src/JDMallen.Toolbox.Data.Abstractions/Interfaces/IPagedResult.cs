@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 /// <summary>
-///   Represents a result that has been divided into pages for ease of displaying to end users.
+/// Represents a result that has been divided into pages for ease of displaying
+/// to end users.
 /// </summary>
 /// <typeparam name="TModel"></typeparam>
 public interface IPagedResult<TModel> where TModel : IModel

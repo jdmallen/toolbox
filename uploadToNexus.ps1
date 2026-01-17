@@ -11,16 +11,16 @@ $headers = @{
 }
 
 $pkgs | % {
-    Write-Host "Uploading $($_.Name) to Nexus"
+    Write-Host "Uploading $( $_.Name ) to Nexus"
     $fileContent = [IO.File]::ReadAllBytes($_.FullName)
-    $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")	
+    $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")
     $fileEnc = $enc.GetString($fileContent)
     $bodyLines = (
-        "--$boundary",
-        "Content-Disposition: form-data; name=`"nuget.asset`"; filename=`"$($_.Name)`"",
-	    "Content-Type: application/octet-stream$lf",
-        $fileEnc,
-        "--$boundary--$lf"
+    "--$boundary",
+    "Content-Disposition: form-data; name=`"nuget.asset`"; filename=`"$( $_.Name )`"",
+    "Content-Type: application/octet-stream$lf",
+    $fileEnc,
+    "--$boundary--$lf"
     ) -join $lf
 
     Invoke-RestMethod -Method Post -Uri $endpoint -ContentType "multipart/form-data; boundary=`"$boundary`"" -Headers $headers -Body $bodyLines

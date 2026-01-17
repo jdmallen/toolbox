@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using JDMallen.Toolbox.Extensions;
 using JDMallen.Toolbox.Models;
@@ -54,7 +52,7 @@ public static class Filters
 	}
 
 	/// <summary>
-	///   https://stackoverflow.com/a/53622600/3986790
+	/// https://stackoverflow.com/a/53622600/3986790
 	/// </summary>
 	/// <typeparam name="TEntityModel"></typeparam>
 	/// <param name="query"></param>

@@ -1,5 +1,4 @@
-﻿using System;
-using JDMallen.Toolbox.AspNetCore.Utilities;
+﻿using JDMallen.Toolbox.AspNetCore.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -83,7 +82,8 @@ public static class ServiceExtensions
 		return services.AddCustomIdentity<TDbContext, TUser, TRole, TId, TUserStore,
 			TValidator, IdentityErrorDescriber, IdentityUserClaim<TId>,
 			IdentityUserRole<TId>, IdentityUserLogin<TId>,
-			IdentityUserToken<TId>, IdentityRoleClaim<TId>>(identityOptions,
+			IdentityUserToken<TId>, IdentityRoleClaim<TId>>(
+			identityOptions,
 			hasherOptions);
 	}
 
@@ -111,7 +111,8 @@ public static class ServiceExtensions
 				IdentityUserLogin<Guid>,
 				IdentityUserToken<Guid>,
 				IdentityRoleClaim<Guid>>,
-			CustomPasswordValidator<TUser>>(identityOptions,
+			CustomPasswordValidator<TUser>>(
+			identityOptions,
 			hasherOptions);
 	}
 }

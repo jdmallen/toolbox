@@ -1,6 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace JDMallen.Toolbox.Hosting.TestWorker;
 
 public class Program
@@ -13,6 +10,9 @@ public class Program
 	public static IHostBuilder CreateHostBuilder(string[] args)
 	{
 		return Host.CreateDefaultBuilder(args)
-			.ConfigureServices((hostContext, services) => { services.AddHostedService<Worker>(); });
+			.ConfigureServices((hostContext, services) =>
+			{
+				services.AddHostedService<Worker>();
+			});
 	}
 }

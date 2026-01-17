@@ -1,4 +1,3 @@
-using System;
 using System.Security.Claims;
 
 namespace JDMallen.Toolbox.AspNetCore.Factories;

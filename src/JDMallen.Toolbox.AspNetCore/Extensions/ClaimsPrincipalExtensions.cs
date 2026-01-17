@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace JDMallen.Toolbox.AspNetCore.Extensions;
@@ -14,7 +12,14 @@ public static class ClaimsPrincipalExtensions
 	/// </summary>
 	public static Guid GetUserIdAsGuid(this ClaimsPrincipal principal)
 	{
-		throw new NotImplementedException();
+		var claim = principal.FindFirst(ClaimTypes.NameIdentifier)
+		            ?? principal.FindFirst("userId");
+
+		if (claim is null || !Guid.TryParse(claim.Value, out var userId))
+			throw new InvalidOperationException(
+				"User ID claim not found or invalid.");
+
+		return userId;
 	}
 
 	/// <summary>
@@ -22,15 +27,23 @@ public static class ClaimsPrincipalExtensions
 	/// </summary>
 	public static string GetUserId(this ClaimsPrincipal principal)
 	{
-		throw new NotImplementedException();
+		return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value
+		       ?? principal.FindFirst("userId")?.Value
+		       ?? throw new InvalidOperationException("User ID claim not found.");
 	}
 
 	/// <summary>
 	/// Tries to get the user ID as a Guid from the ClaimsPrincipal.
 	/// </summary>
-	public static bool TryGetUserIdAsGuid(this ClaimsPrincipal principal, out Guid userId)
+	public static bool TryGetUserIdAsGuid(
+		this ClaimsPrincipal principal,
+		out Guid userId)
 	{
-		throw new NotImplementedException();
+		userId = Guid.Empty;
+		var claim = principal.FindFirst(ClaimTypes.NameIdentifier)
+		            ?? principal.FindFirst("userId");
+
+		return claim is not null && Guid.TryParse(claim.Value, out userId);
 	}
 
 	/// <summary>
@@ -38,7 +51,7 @@ public static class ClaimsPrincipalExtensions
 	/// </summary>
 	public static string? GetEmail(this ClaimsPrincipal principal)
 	{
-		throw new NotImplementedException();
+		return principal.FindFirst(ClaimTypes.Email)?.Value;
 	}
 
 	/// <summary>
@@ -46,6 +59,8 @@ public static class ClaimsPrincipalExtensions
 	/// </summary>
 	public static IEnumerable<string> GetRoles(this ClaimsPrincipal principal)
 	{
-		throw new NotImplementedException();
+		return principal.FindAll(ClaimTypes.Role)
+			.Select(c => c.Value)
+			.Where(v => !string.IsNullOrWhiteSpace(v));
 	}
 }

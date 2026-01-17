@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
@@ -25,13 +21,15 @@ namespace JDMallen.Toolbox.AspNetCore.Extensions;
 public static class StartupExtensions
 {
 	/// <summary>
-	///   https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
+	/// https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
 	/// </summary>
 	/// <param name="options"></param>
 	public static void ConfigureEndpoints(this KestrelServerOptions options)
 	{
-		var configuration = options.ApplicationServices.GetRequiredService<IConfiguration>();
-		var environment = options.ApplicationServices.GetRequiredService<IHostEnvironment>();
+		var configuration =
+			options.ApplicationServices.GetRequiredService<IConfiguration>();
+		var environment =
+			options.ApplicationServices.GetRequiredService<IHostEnvironment>();
 		var endpoints = configuration.GetSection("Endpoints")
 			.GetChildren()
 			.ToDictionary(
@@ -45,7 +43,9 @@ public static class StartupExtensions
 		foreach (var endpoint in endpoints)
 		{
 			var config = endpoint.Value;
-			bool.TryParse(configuration["Settings:ReverseProxy"], out var reverseProxy);
+			bool.TryParse(
+				configuration["Settings:ReverseProxy"],
+				out var reverseProxy);
 			if (config.Scheme == "https" && reverseProxy) continue;
 
 			var port = config.Port ?? (config.Scheme == "https" ? 443 : 80);
@@ -87,7 +87,7 @@ public static class StartupExtensions
 	}
 
 	/// <summary>
-	///   https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
+	/// https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
 	/// </summary>
 	/// <param name="config"></param>
 	/// <param name="environment"></param>
@@ -137,7 +137,8 @@ public static class StartupExtensions
 				options.ClientId = config.GitHubClientId;
 				options.ClientSecret = config.GitHubClientSecret;
 				options.CallbackPath = new PathString("/signin-github");
-				options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+				options.AuthorizationEndpoint =
+					"https://github.com/login/oauth/authorize";
 				options.TokenEndpoint = "https://github.com/login/oauth/access_token";
 				options.UserInformationEndpoint = "https://api.github.com/user";
 				config.GitHubScopes.ToList().ForEach(s => options.Scope.Add(s));
@@ -190,7 +191,9 @@ public static class StartupExtensions
 				options.ClaimActions.MapJsonKey("urn:google:login", "login");
 				options.ClaimActions.MapJsonKey("urn:google:url", "url");
 				options.ClaimActions.MapJsonKey("urn:google:avatar", "image.url");
-				options.ClaimActions.MapJsonKey("urn:google:displayName", "displayName");
+				options.ClaimActions.MapJsonKey(
+					"urn:google:displayName",
+					"displayName");
 				options.Events = new OAuthEvents
 				{
 					OnCreatingTicket = async context =>

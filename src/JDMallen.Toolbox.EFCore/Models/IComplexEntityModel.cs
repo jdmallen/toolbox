@@ -6,8 +6,9 @@ namespace JDMallen.Toolbox.EFCore.Models;
 
 /// <inheritdoc />
 /// <summary>
-///   This model, special for Entity Framework Core, assumes the entity requires additional
-///   configuration.
+/// This model, special for Entity Framework Core, assumes the entity requires
+/// additional
+/// configuration.
 /// </summary>
 public interface IComplexEntityModel : IEntityModel
 {

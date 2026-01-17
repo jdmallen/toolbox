@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Pagination;
 
@@ -23,11 +20,15 @@ public record PagedRequest(int? Page, int? PageSize) : IPagedRequest;
 /// <summary>
 /// Paginated result container.
 /// </summary>
-public record PagedList<T>(List<T> Items, int Page, int PageSize, int TotalItems)
+public record PagedList<T>(
+	List<T> Items,
+	int Page,
+	int PageSize,
+	int TotalItems)
 {
-	public bool HasNextPage { get; }
-	public bool HasPreviousPage { get; }
-	public int TotalPages { get; }
+	public bool HasNextPage => Page * PageSize < TotalItems;
+	public bool HasPreviousPage => Page > 1;
+	public int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
 }
 
 /// <summary>
@@ -40,6 +41,18 @@ public static class PaginationExtensions
 		IPagedRequest request,
 		CancellationToken cancellationToken = default)
 	{
-		throw new System.NotImplementedException();
+		var page = request.Page ?? 1;
+		var pageSize = Math.Min(request.PageSize ?? 10, IPagedRequest.MaxPageSize);
+
+		ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(page, 0);
+		ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(pageSize, 0);
+
+		var totalItems = await query.CountAsync(cancellationToken);
+		var items = await query
+			.Skip((page - 1) * pageSize)
+			.Take(pageSize)
+			.ToListAsync(cancellationToken);
+
+		return new PagedList<T>(items, page, pageSize, totalItems);
 	}
 }

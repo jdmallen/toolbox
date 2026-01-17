@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using JDMallen.Toolbox.AspNetCore.Constants;
+﻿using JDMallen.Toolbox.AspNetCore.Constants;
 using JDMallen.Toolbox.AspNetCore.Models;
 using JDMallen.Toolbox.AspNetCore.Options;
 using JDMallen.Toolbox.Resources;
@@ -30,15 +26,15 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		IOptions<PasswordComplexityOptions> options = null,
 		CustomIdentityErrorDescriber errors = null)
 	{
-		_options = options?.Value
-		           ?? new PasswordComplexityOptions();
+		_options = options?.Value ?? new PasswordComplexityOptions();
 		_errors = errors ?? new CustomIdentityErrorDescriber(options);
 	}
 
 	/// <summary>Validates a password as an asynchronous operation.</summary>
 	/// <param name="manager">
-	///   The <see cref="T:Microsoft.AspNetCore.Identity.UserManager`1" /> to retrieve the
-	///   <paramref name="user" /> properties from.
+	/// The <see cref="T:Microsoft.AspNetCore.Identity.UserManager`1" /> to retrieve
+	/// the
+	/// <paramref name="user" /> properties from.
 	/// </param>
 	/// <param name="user">The user whose password should be validated.</param>
 	/// <param name="password">The password supplied for validation</param>
@@ -56,7 +52,8 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		var checkPwdResult = CheckPassword(password);
 		if (checkPwdResult.IsError)
 		{
-			if (checkPwdResult.Error.HasFlag(PasswordError.TooCommon)) errors.Add(_errors.PasswordTooCommon());
+			if (checkPwdResult.Error.HasFlag(PasswordError.TooCommon))
+				errors.Add(_errors.PasswordTooCommon());
 
 			if (checkPwdResult.Error.HasFlag(PasswordError.NotComplexEnough))
 				errors.Add(_errors.PasswordNotComplexEnough(checkPwdResult));
@@ -71,7 +68,7 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 	}
 
 	/// <summary>
-	///   http://rumkin.com/tools/password/passchk.php
+	/// http://rumkin.com/tools/password/passchk.php
 	/// </summary>
 	/// <param name="password"></param>
 	/// <returns></returns>
@@ -96,7 +93,8 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		{
 			var bidx = GetIndex(plower[b]);
 			var parseOk =
-				float.TryParse(ResourceLoader.FrequencyTable.ToArray()[aidx * 27 + bidx],
+				float.TryParse(
+					ResourceLoader.FrequencyTable.ToArray()[aidx * 27 + bidx],
 					out var freq);
 			var c = 1.0F - (parseOk ? freq : 0);
 			bits += (float)Math.Log(GetCharacterSet(password), 2) * c * c;
@@ -106,7 +104,8 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		result.BitsOfEntropy = bits;
 		result.Strength = EvaluateStrength(bits);
 		if (isCommon) result.Error = PasswordError.TooCommon;
-		if (len < _options.MinimumLength) result.Error = result.Error | PasswordError.TooShort;
+		if (len < _options.MinimumLength)
+			result.Error = result.Error | PasswordError.TooShort;
 		if (bits < _options.BitsThreshold)
 			result.Error = result.Error | PasswordError.NotComplexEnough;
 		return result;

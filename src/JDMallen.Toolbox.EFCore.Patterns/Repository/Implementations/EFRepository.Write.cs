@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations;

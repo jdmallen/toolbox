@@ -1,15 +1,21 @@
 # JDMallen.Toolbox.Hosting
 
-Background service base classes with support for scoped services and cron-based scheduling.
+Background service base classes with support for scoped services and cron-based
+scheduling.
 
 ## Overview
 
-This library provides two abstract base classes that simplify the creation of background services in .NET applications:
+This library provides two abstract base classes that simplify the creation of
+background services in .NET applications:
 
-- **`ScopedBackgroundService<TService>`** - Execute work repeatedly at fixed intervals with automatic dependency injection scope management
-- **`ScheduledBackgroundService<TService>`** - Execute work on a cron schedule using the NCrontab library
+- **`ScopedBackgroundService<TService>`** - Execute work repeatedly at fixed
+  intervals with automatic dependency injection scope management
+- **`ScheduledBackgroundService<TService>`** - Execute work on a cron schedule
+  using the NCrontab library
 
-Both classes are built on top of `Microsoft.Extensions.Hosting.BackgroundService` and handle the complexity of scoped service lifetimes, error handling, and execution scheduling.
+Both classes are built on top of
+`Microsoft.Extensions.Hosting.BackgroundService` and handle the complexity of
+scoped service lifetimes, error handling, and execution scheduling.
 
 ## Installation
 
@@ -19,12 +25,18 @@ dotnet add package JDMallen.Toolbox.Hosting
 
 ## Key Features
 
-- **Automatic Scope Management** - Each execution runs in its own DI scope, perfect for Entity Framework DbContext and other scoped services
-- **Overlap Prevention** - Configure how to handle executions that take longer than the scheduled interval (skip, wait, or allow)
-- **Testable Time Operations** - `ITimeProvider` abstraction makes time-based logic unit testable
-- **Robust Error Handling** - Unhandled exceptions are logged but don't crash the service
-- **Cron Scheduling** - Full cron expression support with optional second-level precision
-- **Comprehensive Logging** - Built-in trace logging with session IDs for correlation
+- **Automatic Scope Management** - Each execution runs in its own DI scope,
+  perfect for Entity Framework DbContext and other scoped services
+- **Overlap Prevention** - Configure how to handle executions that take longer
+  than the scheduled interval (skip, wait, or allow)
+- **Testable Time Operations** - `ITimeProvider` abstraction makes time-based
+  logic unit testable
+- **Robust Error Handling** - Unhandled exceptions are logged but don't crash
+  the service
+- **Cron Scheduling** - Full cron expression support with optional second-level
+  precision
+- **Comprehensive Logging** - Built-in trace logging with session IDs for
+  correlation
 
 ## Quick Start
 
@@ -90,7 +102,8 @@ public class DailyCleanupService : ScheduledBackgroundService<DailyCleanupServic
 
 ### Preventing Overlapping Executions
 
-Use `OverlapBehavior` to control what happens when work takes longer than the `LoopDelay`:
+Use `OverlapBehavior` to control what happens when work takes longer than the
+`LoopDelay`:
 
 ```csharp
 public class DatabaseCleanupService : ScopedBackgroundService<DatabaseCleanupService>
@@ -119,12 +132,16 @@ public class DatabaseCleanupService : ScopedBackgroundService<DatabaseCleanupSer
 
 #### Overlap Behavior Options
 
-- **`AllowOverlap`** (default) - New executions start even if previous ones are still running
-	- Use when: Executions are independent and can run concurrently
-- **`SkipIfBusy`** - Skip new executions if a previous execution is still running
-	- Use when: You want to prevent resource exhaustion or concurrent executions might interfere
-- **`WaitForCompletion`** - Wait for previous execution to complete before starting next
-	- Use when: Executions must run sequentially and none should be skipped
+- **`AllowOverlap`** (default) - New executions start even if previous ones are
+  still running
+  - Use when: Executions are independent and can run concurrently
+- **`SkipIfBusy`** - Skip new executions if a previous execution is still
+  running
+  - Use when: You want to prevent resource exhaustion or concurrent executions
+    might interfere
+- **`WaitForCompletion`** - Wait for previous execution to complete before
+  starting next
+  - Use when: Executions must run sequentially and none should be skipped
 
 ### High-Frequency Cron Scheduling
 
@@ -269,31 +286,35 @@ public async Task Service_ExecutesAtScheduledTime()
 
 ### Common Examples
 
-| Schedule | Cron Expression | Description |
-|----------|----------------|-------------|
-| Every minute | `* * * * *` | Runs every minute |
-| Every 5 minutes | `*/5 * * * *` | Runs every 5 minutes |
-| Every hour | `0 * * * *` | Runs at minute 0 of every hour |
-| Every day at 2 AM | `0 2 * * *` | Runs daily at 2:00 AM |
-| Every Monday at 9 AM | `0 9 * * 1` | Runs every Monday at 9:00 AM |
-| Every 30 seconds | `*/30 * * * * *` | Runs every 30 seconds (requires `includeSeconds: true`) |
-| First day of month | `0 0 1 * *` | Runs at midnight on the 1st of each month |
-| Weekdays at 8 AM | `0 8 * * 1-5` | Runs Monday-Friday at 8:00 AM |
+| Schedule             | Cron Expression  | Description                                             |
+|----------------------|------------------|---------------------------------------------------------|
+| Every minute         | `* * * * *`      | Runs every minute                                       |
+| Every 5 minutes      | `*/5 * * * *`    | Runs every 5 minutes                                    |
+| Every hour           | `0 * * * *`      | Runs at minute 0 of every hour                          |
+| Every day at 2 AM    | `0 2 * * *`      | Runs daily at 2:00 AM                                   |
+| Every Monday at 9 AM | `0 9 * * 1`      | Runs every Monday at 9:00 AM                            |
+| Every 30 seconds     | `*/30 * * * * *` | Runs every 30 seconds (requires `includeSeconds: true`) |
+| First day of month   | `0 0 1 * *`      | Runs at midnight on the 1st of each month               |
+| Weekdays at 8 AM     | `0 8 * * 1-5`    | Runs Monday-Friday at 8:00 AM                           |
 
 ## Best Practices
 
 ### 1. Choose Appropriate LoopDelay
 
 For `ScopedBackgroundService`:
+
 - The delay represents wait time **between** executions
 - Shorter delays = more responsive but higher CPU usage
-- Match to your use case (seconds for high-frequency, minutes for periodic tasks)
+- Match to your use case (seconds for high-frequency, minutes for periodic
+  tasks)
 
 For `ScheduledBackgroundService`:
+
 - The delay controls schedule checking frequency, not execution frequency
 - Too short = unnecessary CPU cycles
 - Too long = imprecise scheduling
-- Recommendation: 1 minute for most cases, 1 second if you need second-level precision
+- Recommendation: 1 minute for most cases, 1 second if you need second-level
+  precision
 
 ### 2. Use Overlap Prevention Wisely
 
@@ -348,7 +369,8 @@ protected override async Task ExecuteInScopeAsync(
 
 ### 5. Log Appropriately
 
-The base class provides trace logging for execution start/end. Add your own logging for important events:
+The base class provides trace logging for execution start/end. Add your own
+logging for important events:
 
 ```csharp
 protected override async Task ExecuteInScopeAsync(
@@ -368,7 +390,8 @@ protected override async Task ExecuteInScopeAsync(
 
 ### 6. Handle Invalid Cron Schedules
 
-The library automatically falls back to `*/1 * * * *` (every minute) if the cron expression is invalid, but you should validate schedules at configuration time:
+The library automatically falls back to `*/1 * * * *` (every minute) if the cron
+expression is invalid, but you should validate schedules at configuration time:
 
 ```csharp
 // In Startup.cs or Program.cs
@@ -392,28 +415,39 @@ catch (Exception ex)
 
 ### Why Scoped Services?
 
-Many .NET services (like Entity Framework's `DbContext`) are registered as scoped, meaning they're designed to live for the duration of a single request or operation. Background services are singletons that run for the entire application lifetime, so they can't directly use scoped services.
+Many .NET services (like Entity Framework's `DbContext`) are registered as
+scoped, meaning they're designed to live for the duration of a single request or
+operation. Background services are singletons that run for the entire
+application lifetime, so they can't directly use scoped services.
 
-These base classes solve this by creating a new DI scope for each execution, allowing you to safely use scoped services in your background work.
+These base classes solve this by creating a new DI scope for each execution,
+allowing you to safely use scoped services in your background work.
 
 ### Thread Safety
 
-The overlap prevention mechanism uses `Interlocked.CompareExchange` for lock-free thread safety. This ensures efficient execution tracking without the overhead of locks.
+The overlap prevention mechanism uses `Interlocked.CompareExchange` for
+lock-free thread safety. This ensures efficient execution tracking without the
+overhead of locks.
 
 ### Performance Considerations
 
-- `ConfigureAwait(false)` is used throughout to avoid unnecessary synchronization context captures
+- `ConfigureAwait(false)` is used throughout to avoid unnecessary
+  synchronization context captures
 - The execution loop is optimized to minimize allocations
-- Scope creation is the primary overhead - match `LoopDelay` to your performance requirements
+- Scope creation is the primary overhead - match `LoopDelay` to your performance
+  requirements
 
 ## Dependencies
 
-- **Microsoft.Extensions.Hosting.Abstractions** (v10.0.2) - For `BackgroundService` and DI abstractions
-- **NCrontab** (v3.4.0) - For cron expression parsing (only needed if using `ScheduledBackgroundService`)
+- **Microsoft.Extensions.Hosting.Abstractions** (v10.0.2) - For
+  `BackgroundService` and DI abstractions
+- **NCrontab** (v3.4.0) - For cron expression parsing (only needed if using
+  `ScheduledBackgroundService`)
 
 ## Target Framework
 
-- **netstandard2.1** - Compatible with .NET Core 3.0+, .NET 5+, and .NET Framework 4.8+
+- **netstandard2.1** - Compatible with .NET Core 3.0+, .NET 5+, and .NET
+  Framework 4.8+
 
 ## License
 
@@ -421,7 +455,8 @@ See the repository root for license information.
 
 ## Contributing
 
-Contributions are welcome! Please follow the existing code style and include tests for new features.
+Contributions are welcome! Please follow the existing code style and include
+tests for new features.
 
 ## Related Resources
 

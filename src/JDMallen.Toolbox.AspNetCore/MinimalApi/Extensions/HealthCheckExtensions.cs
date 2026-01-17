@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Routing;
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions;
@@ -10,11 +12,25 @@ public static class HealthCheckExtensions
 	/// <summary>
 	/// Maps health check endpoints for liveness and readiness probes.
 	/// </summary>
-	public static IEndpointRouteBuilder MapHealthChecks(
+	public static IEndpointRouteBuilder MapHealthCheckEndpoints(
 		this IEndpointRouteBuilder app,
 		string livenessPath = "/health/live",
 		string readinessPath = "/health/ready")
 	{
-		throw new System.NotImplementedException();
+		app.MapHealthChecks(
+			livenessPath,
+			new HealthCheckOptions
+			{
+				Predicate = check => check.Tags.Contains("liveness")
+			});
+
+		app.MapHealthChecks(
+			readinessPath,
+			new HealthCheckOptions
+			{
+				Predicate = check => check.Tags.Contains("readiness")
+			});
+
+		return app;
 	}
 }
