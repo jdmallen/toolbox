@@ -1,17 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JDMallen.Toolbox.AspNetCore.Dtos
+namespace JDMallen.Toolbox.AspNetCore.Dtos;
+
+public class RegisterDto
 {
-	public class RegisterDto
-	{
-		[Required]
-		public string Email { get; set; }
+	[Required] public string Email { get; set; }
 
-		[Required]
-		
-		public string Password { get; set; }
+	[Required] public string Password { get; set; }
 
-		[Required]
-		public string DisplayName { get; set; }
-	}
+	[Required] public string DisplayName { get; set; }
 }

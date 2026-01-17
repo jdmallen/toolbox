@@ -1,11 +1,10 @@
-﻿namespace JDMallen.Toolbox.AspNetCore.Constants
+﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
+
+public enum PasswordStrength
 {
-	public enum PasswordStrength
-	{
-		Poor,
-		Fair,
-		Good,
-		Great,
-		Excellent
-	}
+	Poor,
+	Fair,
+	Good,
+	Great,
+	Excellent
 }

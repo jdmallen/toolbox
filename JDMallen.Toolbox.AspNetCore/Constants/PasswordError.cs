@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace JDMallen.Toolbox.AspNetCore.Constants
+namespace JDMallen.Toolbox.AspNetCore.Constants;
+
+[Flags]
+public enum PasswordError
 {
-	[Flags]
-	public enum PasswordError
-	{
-		None = 0,
-		TooShort = 1,
-		TooCommon = 2,
-		NotComplexEnough = 4
-	}
+	None = 0,
+	TooShort = 1,
+	TooCommon = 2,
+	NotComplexEnough = 4
 }

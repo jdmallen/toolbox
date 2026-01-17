@@ -4,7 +4,11 @@ SQL Server provider package for JDMallen.Toolbox.EFCore.
 
 ## Purpose
 
-This package exists solely to bring in the `Microsoft.EntityFrameworkCore.SqlServer` dependency for projects that need SQL Server support. By separating the provider into its own package, consumers can choose alternative database providers like PostgreSQL, SQLite, or Cosmos DB without being forced to reference SQL Server.
+This package exists solely to bring in the
+`Microsoft.EntityFrameworkCore.SqlServer` dependency for projects that need SQL
+Server support. By separating the provider into its own package, consumers can
+choose alternative database providers like PostgreSQL, SQLite, or Cosmos DB
+without being forced to reference SQL Server.
 
 ## Usage
 
@@ -21,4 +25,5 @@ For other databases, use the appropriate provider package:
 - **MySQL**: `Pomelo.EntityFrameworkCore.MySql`
 - **Cosmos DB**: `Microsoft.EntityFrameworkCore.Cosmos`
 
-All core EF functionality from `JDMallen.Toolbox.EFCore` works with any provider.
+All core EF functionality from `JDMallen.Toolbox.EFCore` works with any
+provider.

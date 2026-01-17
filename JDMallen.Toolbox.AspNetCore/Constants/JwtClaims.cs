@@ -1,9 +1,8 @@
-﻿namespace JDMallen.Toolbox.AspNetCore.Constants
-{
-	public class JwtClaims
-	{
-		public const string ApiUser = "ApiUser";
+﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
 
-		public const string ApiManager = "ApiManager";
-	}
+public class JwtClaims
+{
+	public const string ApiUser = "ApiUser";
+
+	public const string ApiManager = "ApiManager";
 }

@@ -1,10 +1,9 @@
-namespace JDMallen.Toolbox.Models
+namespace JDMallen.Toolbox.Models;
+
+public enum UnitOfWorkState
 {
-	public enum UnitOfWorkState
-	{
-		Open,
-		Committed,
-		RolledBack,
-		Disposed
-	}
+	Open,
+	Committed,
+	RolledBack,
+	Disposed
 }

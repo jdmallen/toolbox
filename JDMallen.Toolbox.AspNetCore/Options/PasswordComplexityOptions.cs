@@ -1,20 +1,19 @@
-﻿namespace JDMallen.Toolbox.AspNetCore.Options
+﻿namespace JDMallen.Toolbox.AspNetCore.Options;
+
+public class PasswordComplexityOptions
 {
-	public class PasswordComplexityOptions
+	private float _bitsThreshold;
+	private int _minimumLength;
+
+	public float BitsThreshold
 	{
-		private float _bitsThreshold;
-		private int _minimumLength;
+		get => _bitsThreshold <= 0 ? 50F : _bitsThreshold;
+		set => _bitsThreshold = value;
+	}
 
-		public float BitsThreshold
-		{
-			get => _bitsThreshold <= 0 ? 50F : _bitsThreshold;
-			set => _bitsThreshold = value;
-		}
-
-		public int MinimumLength
-		{
-			get => _minimumLength < 2 ? 8 : _minimumLength;
-			set => _minimumLength = value;
-		}
+	public int MinimumLength
+	{
+		get => _minimumLength < 2 ? 8 : _minimumLength;
+		set => _minimumLength = value;
 	}
 }
