@@ -1,9 +1,18 @@
 namespace JDMallen.Toolbox.Hosting.TestWorker;
 
+/// <summary>
+/// Test/sample implementation of <see cref="ScheduledBackgroundService{TService}"/>
+/// for demonstrating and testing background service execution.
+/// </summary>
 public class Worker : ScheduledBackgroundService<Worker>
 {
 	private readonly ILogger<Worker> _logger;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Worker"/> class.
+	/// </summary>
+	/// <param name="logger">The logger for this worker.</param>
+	/// <param name="scopeFactory">The service scope factory.</param>
 	public Worker(
 		ILogger<Worker> logger,
 		IServiceScopeFactory scopeFactory) : base(
@@ -14,8 +23,16 @@ public class Worker : ScheduledBackgroundService<Worker>
 		_logger = logger;
 	}
 
+	/// <summary>
+	/// Gets the delay between schedule checks (2 seconds).
+	/// </summary>
 	protected override TimeSpan LoopDelay => TimeSpan.FromSeconds(2);
 
+	/// <summary>
+	/// Executes the worker logic, logging the current time.
+	/// </summary>
+	/// <param name="scope">The dependency injection scope for this execution.</param>
+	/// <param name="stoppingToken">The cancellation token.</param>
 	protected override async Task ExecuteInScopeAsync(
 		IServiceScope scope,
 		CancellationToken stoppingToken)

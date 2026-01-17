@@ -8,8 +8,14 @@ using Microsoft.Extensions.Options;
 
 namespace JDMallen.Toolbox.AspNetCore.Factories;
 
+/// <summary>
+/// Factory for creating JWT tokens and claims identities for authentication.
+/// </summary>
 public class JwtTokenFactory : IJwtTokenFactory
 {
+	/// <summary>
+	/// Gets the JWT options used for token generation and validation.
+	/// </summary>
 	protected readonly JwtOptions JwtOptions;
 
 	public JwtTokenFactory(IOptions<JwtOptions> jwtOptions)
