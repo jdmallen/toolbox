@@ -21,7 +21,7 @@ public static class OpenApiExtensions
 	{
 		return services.AddOpenApi(options =>
 		{
-			options.AddDocumentTransformer((document, context, ct) =>
+			options.AddDocumentTransformer((document, _, _) =>
 			{
 				document.Info = new OpenApiInfo
 				{
@@ -54,9 +54,11 @@ public static class OpenApiExtensions
 		builder.Produces<ProblemDetails>(StatusCodes.Status500InternalServerError);
 
 		if (includeAuth)
+		{
 			builder
 				.Produces<ProblemDetails>(StatusCodes.Status401Unauthorized)
 				.Produces<ProblemDetails>(StatusCodes.Status403Forbidden);
+		}
 
 		return builder;
 	}

@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		uploadToNexus.ps1 = uploadToNexus.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox", "src\JDMallen.Toolbox\JDMallen.Toolbox.csproj", "{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,18 @@ Global
 		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|x64.Build.0 = Release|Any CPU
 		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|x86.ActiveCfg = Release|Any CPU
 		{D566FE04-D88C-4E34-99B5-EB0EA879A2E3}.Release|x86.Build.0 = Release|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Debug|x64.Build.0 = Debug|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Debug|x86.Build.0 = Debug|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Release|x64.ActiveCfg = Release|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Release|x64.Build.0 = Release|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Release|x86.ActiveCfg = Release|Any CPU
+		{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

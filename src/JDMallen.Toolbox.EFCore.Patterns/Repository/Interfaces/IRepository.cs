@@ -38,7 +38,7 @@ public interface IRepository<TModel, in TId> : IRepository, IDisposable
 	/// </summary>
 	/// <param name="id">The primary key value.</param>
 	/// <returns>The entity with the specified ID, or null if not found.</returns>
-	ValueTask<TModel> GetByIdAsync(TId id);
+	ValueTask<TModel?> GetByIdAsync(TId id);
 
 	/// <summary>
 	/// Determines whether an entity with the specified ID exists.

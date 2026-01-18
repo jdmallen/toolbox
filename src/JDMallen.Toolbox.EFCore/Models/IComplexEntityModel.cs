@@ -15,7 +15,10 @@ public interface IComplexEntityModel : IEntityModel
 	/// <summary>
 	/// Configures the entity model using the Entity Framework Core ModelBuilder.
 	/// </summary>
-	/// <param name="modelBuilder">The builder used to configure the entity in the database context.</param>
+	/// <param name="modelBuilder">
+	/// The builder used to configure the entity in the
+	/// database context.
+	/// </param>
 	void OnModelCreating(ModelBuilder modelBuilder);
 }
 
@@ -42,6 +45,9 @@ public abstract class ComplexEntityModel<TId>
 	/// <summary>
 	/// Configures the entity model using the Entity Framework Core ModelBuilder.
 	/// </summary>
-	/// <param name="modelBuilder">The builder used to configure the entity in the database context.</param>
+	/// <param name="modelBuilder">
+	/// The builder used to configure the entity in the
+	/// database context.
+	/// </param>
 	public abstract void OnModelCreating(ModelBuilder modelBuilder);
 }

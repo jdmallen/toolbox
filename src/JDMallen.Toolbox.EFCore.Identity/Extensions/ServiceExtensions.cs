@@ -7,12 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 namespace JDMallen.Toolbox.EFCore.Identity.Extensions;
 
 /// <summary>
-/// Extension methods for configuring ASP.NET Core Identity with Entity Framework Core.
+/// Extension methods for configuring ASP.NET Core Identity with Entity Framework
+/// Core.
 /// </summary>
 public static class ServiceExtensions
 {
 	/// <summary>
-	/// Adds custom Identity services with full configuration options for all Identity entities.
+	/// Adds custom Identity services with full configuration options for all Identity
+	/// entities.
 	/// </summary>
 	/// <typeparam name="TDbContext">The Entity Framework DbContext type.</typeparam>
 	/// <typeparam name="TUser">The user type.</typeparam>
@@ -29,7 +31,7 @@ public static class ServiceExtensions
 	/// <param name="services">The service collection.</param>
 	/// <param name="identityOptions">Optional Identity configuration.</param>
 	/// <param name="hasherOptions">Optional password hasher configuration.</param>
-	/// <returns>An <see cref="IdentityBuilder"/> for further configuration.</returns>
+	/// <returns>An <see cref="IdentityBuilder" /> for further configuration.</returns>
 	public static IdentityBuilder AddCustomIdentity<
 		TDbContext,
 		TUser,
@@ -44,8 +46,8 @@ public static class ServiceExtensions
 		TUserToken,
 		TRoleClaim>(
 		this IServiceCollection services,
-		Action<IdentityOptions> identityOptions = null,
-		Action<PasswordHasherOptions> hasherOptions = null)
+		Action<IdentityOptions>? identityOptions = null,
+		Action<PasswordHasherOptions>? hasherOptions = null)
 		where TDbContext : DbContext
 		where TUser : IdentityUser<TId>
 		where TRole : IdentityRole<TId>
@@ -68,9 +70,15 @@ public static class ServiceExtensions
 		where TUserToken : IdentityUserToken<TId>, new()
 		where TRoleClaim : IdentityRoleClaim<TId>, new()
 	{
-		if (identityOptions != null) services.Configure(identityOptions);
+		if (identityOptions != null)
+		{
+			services.Configure(identityOptions);
+		}
 
-		if (hasherOptions != null) services.Configure(hasherOptions);
+		if (hasherOptions != null)
+		{
+			services.Configure(hasherOptions);
+		}
 
 		return services.AddIdentity<TUser, TRole>()
 			.AddEntityFrameworkStores<TDbContext>()
@@ -92,12 +100,12 @@ public static class ServiceExtensions
 	/// <param name="services">The service collection.</param>
 	/// <param name="identityOptions">Optional Identity configuration.</param>
 	/// <param name="hasherOptions">Optional password hasher configuration.</param>
-	/// <returns>An <see cref="IdentityBuilder"/> for further configuration.</returns>
+	/// <returns>An <see cref="IdentityBuilder" /> for further configuration.</returns>
 	public static IdentityBuilder AddCustomIdentity<
 		TDbContext, TUser, TRole, TId, TUserStore, TValidator>(
 		this IServiceCollection services,
-		Action<IdentityOptions> identityOptions = null,
-		Action<PasswordHasherOptions> hasherOptions = null)
+		Action<IdentityOptions>? identityOptions = null,
+		Action<PasswordHasherOptions>? hasherOptions = null)
 		where TDbContext : DbContext
 		where TUser : IdentityUser<TId>
 		where TRole : IdentityRole<TId>
@@ -123,8 +131,10 @@ public static class ServiceExtensions
 	}
 
 	/// <summary>
-	/// Adds custom Identity services with GUID primary keys and default implementations.
-	/// This is the simplest overload using CustomPasswordValidator and all default Identity entity types.
+	/// Adds custom Identity services with GUID primary keys and default
+	/// implementations.
+	/// This is the simplest overload using CustomPasswordValidator and all default
+	/// Identity entity types.
 	/// </summary>
 	/// <typeparam name="TDbContext">The Entity Framework DbContext type.</typeparam>
 	/// <typeparam name="TUser">The user type.</typeparam>
@@ -132,12 +142,12 @@ public static class ServiceExtensions
 	/// <param name="services">The service collection.</param>
 	/// <param name="identityOptions">Optional Identity configuration.</param>
 	/// <param name="hasherOptions">Optional password hasher configuration.</param>
-	/// <returns>An <see cref="IdentityBuilder"/> for further configuration.</returns>
+	/// <returns>An <see cref="IdentityBuilder" /> for further configuration.</returns>
 	public static IdentityBuilder AddCustomIdentity<
 		TDbContext, TUser, TRole>(
 		this IServiceCollection services,
-		Action<IdentityOptions> identityOptions = null,
-		Action<PasswordHasherOptions> hasherOptions = null)
+		Action<IdentityOptions>? identityOptions = null,
+		Action<PasswordHasherOptions>? hasherOptions = null)
 		where TDbContext : DbContext
 		where TUser : IdentityUser<Guid>
 		where TRole : IdentityRole<Guid>

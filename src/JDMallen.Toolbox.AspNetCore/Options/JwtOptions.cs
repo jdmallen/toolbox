@@ -17,7 +17,7 @@ public class JwtOptions
 	/// The "iss" value is a case-sensitive string containing a StringOrURI
 	/// value.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public string Issuer { get; set; }
+	public required string Issuer { get; init; }
 
 	/// <summary>
 	/// RFC 7519 - 4.1.2.  "sub" (Subject) Claim
@@ -31,7 +31,7 @@ public class JwtOptions
 	/// "sub" value is a case-sensitive string containing a StringOrURI
 	/// value.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public string Subject { get; set; }
+	public required string Subject { get; init; }
 
 	/// <summary>
 	/// RFC 7519 - 4.1.3.  "aud" (Audience) Claim
@@ -49,7 +49,7 @@ public class JwtOptions
 	/// interpretation of audience values is generally application specific.
 	/// Use of this claim is OPTIONAL.
 	/// </remarks>
-	public string Audience { get; set; }
+	public required string Audience { get; init; }
 
 	/// <summary>
 	/// RFC 7519 - 4.1.4.  "exp" (Expiration Time) Claim
@@ -108,10 +108,10 @@ public class JwtOptions
 	/// <summary>
 	/// Timespan for which the token is valid.
 	/// </summary>
-	public TimeSpan ValidForSpan { get; set; } = TimeSpan.FromMinutes(30);
+	public TimeSpan ValidForSpan { get; init; } = TimeSpan.FromMinutes(30);
 
 	/// <summary>
 	/// The signing credentials to use when signing tokens.
 	/// </summary>
-	public SigningCredentials SigningCredentials { get; set; }
+	public required SigningCredentials SigningCredentials { get; init; }
 }

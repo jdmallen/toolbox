@@ -33,7 +33,7 @@ public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 	/// A forbidden or not found result if the user doesn't own the entity,
 	/// otherwise the result of the next filter.
 	/// </returns>
-	public async ValueTask<object> InvokeAsync(
+	public async ValueTask<object?> InvokeAsync(
 		EndpointFilterInvocationContext context,
 		EndpointFilterDelegate next)
 	{
@@ -44,7 +44,10 @@ public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 
 		// Extract entity ID from route or request
 		var entityId = ExtractEntityId(context);
-		if (!entityId.HasValue) return await next(context);
+		if (!entityId.HasValue)
+		{
+			return await next(context);
+		}
 
 		var entity = await dbContext.Set<TEntity>()
 			.AsNoTracking()
@@ -66,18 +69,27 @@ public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 		if (context.HttpContext.Request.RouteValues.TryGetValue(
 			    "id",
 			    out var routeId))
+		{
 			if (Guid.TryParse(routeId?.ToString(), out var guid))
+			{
 				return guid;
+			}
+		}
 
 		// Try request arguments with Id property
 		foreach (var arg in context.Arguments)
 		{
-			if (arg is null) continue;
+			if (arg is null)
+			{
+				continue;
+			}
 
 			var idProperty = arg.GetType()
 				.GetProperty("Id", BindingFlags.IgnoreCase | BindingFlags.Public);
 			if (idProperty?.PropertyType == typeof(Guid))
+			{
 				return (Guid?)idProperty.GetValue(arg);
+			}
 		}
 
 		return null;

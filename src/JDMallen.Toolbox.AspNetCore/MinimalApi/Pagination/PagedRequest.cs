@@ -32,6 +32,7 @@ public record PagedRequest(int? Page, int? PageSize) : IPagedRequest;
 /// Paginated result container.
 /// </summary>
 public record PagedList<T>(
+	// ReSharper disable once NotAccessedPositionalProperty.Global
 	List<T> Items,
 	int Page,
 	int PageSize,

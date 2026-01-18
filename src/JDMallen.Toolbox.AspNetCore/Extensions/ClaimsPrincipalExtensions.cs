@@ -16,8 +16,10 @@ public static class ClaimsPrincipalExtensions
 		            ?? principal.FindFirst("userId");
 
 		if (claim is null || !Guid.TryParse(claim.Value, out var userId))
+		{
 			throw new InvalidOperationException(
 				"User ID claim not found or invalid.");
+		}
 
 		return userId;
 	}

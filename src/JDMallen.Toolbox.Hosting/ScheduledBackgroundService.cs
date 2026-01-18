@@ -142,13 +142,15 @@ public abstract class
 		IServiceScopeFactory scopeFactory,
 		string cronSchedule,
 		bool includeSeconds = false,
-		ITimeProvider timeProvider = null)
+		ITimeProvider? timeProvider = null)
 		: base(logger, scopeFactory, timeProvider)
 	{
 		if (string.IsNullOrWhiteSpace(cronSchedule))
+		{
 			throw new ArgumentException(
 				"Cron schedule cannot be null or whitespace.",
 				nameof(cronSchedule));
+		}
 
 		// Try to parse passed schedule.
 		// If it fails, default to run once per minute and log the failure.
@@ -171,7 +173,7 @@ public abstract class
 				return _schedule = CrontabSchedule.Parse(DefaultCronSchedule);
 			});
 
-		NextRunTime = _schedule.GetNextOccurrence(TimeProvider.GetUtcNow());
+		NextRunTime = _schedule!.GetNextOccurrence(TimeProvider.GetUtcNow());
 	}
 
 	/// <summary>

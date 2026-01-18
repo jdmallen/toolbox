@@ -7,9 +7,21 @@ namespace JDMallen.Toolbox.AspNetCore.Dtos;
 /// </summary>
 public class RegisterDto
 {
-	[Required] public string Email { get; set; }
+	/// <summary>
+	/// Email address of the user to register.
+	/// </summary>
+	[Required]
+	public required string Email { get; set; }
 
-	[Required] public string Password { get; set; }
+	/// <summary>
+	/// Password for the new user account.
+	/// </summary>
+	[Required]
+	public required string Password { get; set; }
 
-	[Required] public string DisplayName { get; set; }
+	/// <summary>
+	/// Display name of the user.
+	/// </summary>
+	[Required]
+	public required string DisplayName { get; set; }
 }

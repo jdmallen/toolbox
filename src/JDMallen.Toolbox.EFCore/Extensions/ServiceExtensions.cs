@@ -17,50 +17,65 @@ public static class ServiceExtensions
 	public static async Task DropTablesAndEnsureCreated(
 		this DbContext dbContext,
 		bool dropTables = true,
-		IEnumerable<string> orderedTablesToDrop = null,
+		IEnumerable<string>? orderedTablesToDrop = null,
 		CancellationToken cancellationToken = default)
 	{
 		if (dropTables)
 		{
 			List<string> orderOfDroppage;
 			if (orderedTablesToDrop != null)
+			{
 				orderOfDroppage = orderedTablesToDrop.ToList();
+			}
 			else
+			{
 				orderOfDroppage = dbContext.Model.GetEntityTypes()
 					.Select(et => et.GetAnnotations()
 						              .FirstOrDefault(x => x.Name == "Relational:TableName")
-						              ?.Value.ToString()
-						              .ToLowerInvariant()
+						              ?.Value?.ToString()
+						              ?.ToLowerInvariant()
 					              ?? et.ClrType.Name.ToLowerInvariant())
 					.ToList();
+			}
 
 			var conn = dbContext.Database.GetDbConnection();
 			await conn.OpenAsync(cancellationToken);
-			orderOfDroppage.ForEach(async tableName =>
+			orderOfDroppage.ForEach(async void (tableName) =>
 			{
-				bool tableExists;
-				await using (var cmd = conn.CreateCommand())
+				try
 				{
-					cmd.CommandText = "SELECT COUNT(*) FROM information_schema.TABLES "
-					                  + "WHERE TABLE_CATALOG = "
-					                  + $"\'{dbContext.Database.GetDbConnection().Database}\' "
-					                  + $"AND TABLE_NAME = \'{tableName.ToLowerInvariant()}\';";
-					cmd.CommandType = CommandType.Text;
-					await using (var reader =
-					             await cmd.ExecuteReaderAsync(cancellationToken))
+					bool tableExists;
+					await using (var cmd = conn.CreateCommand())
 					{
-						await reader.ReadAsync(cancellationToken);
-						tableExists = reader.GetInt32(0) > 0;
-						await reader.CloseAsync();
+						cmd.CommandText = "SELECT COUNT(*) FROM information_schema.TABLES "
+						                  + "WHERE TABLE_CATALOG = "
+						                  + $"\'{dbContext.Database.GetDbConnection().Database}\' "
+						                  + $"AND TABLE_NAME = \'{tableName.ToLowerInvariant()}\';";
+						cmd.CommandType = CommandType.Text;
+						await using (var reader =
+						             await cmd.ExecuteReaderAsync(cancellationToken))
+						{
+							await reader.ReadAsync(cancellationToken);
+							tableExists = reader.GetInt32(0) > 0;
+							await reader.CloseAsync();
+						}
 					}
-				}
 
-				if (!tableExists)
-					return;
-				var dropTable = $"DROP TABLE {tableName.ToLowerInvariant()};";
-				await dbContext.Database.ExecuteSqlRawAsync(
-					dropTable,
-					cancellationToken);
+					if (!tableExists)
+					{
+						return;
+					}
+
+					var dropTable = $"DROP TABLE {tableName.ToLowerInvariant()};";
+					await dbContext.Database.ExecuteSqlRawAsync(
+						dropTable,
+						cancellationToken);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(
+						$"Error dropping table {tableName}: {e.Message}");
+				}
 			});
 			await conn.CloseAsync();
 		}

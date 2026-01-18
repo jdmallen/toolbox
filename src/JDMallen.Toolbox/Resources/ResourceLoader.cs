@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace JDMallen.Toolbox.Resources;
 
+/// <summary>
+/// Loads embedded resources from the assembly.
+/// </summary>
+[UsedImplicitly]
 public class ResourceLoader
 {
 	static ResourceLoader()
@@ -13,8 +15,15 @@ public class ResourceLoader
 		LoadResources();
 	}
 
-	public static IEnumerable<string> CommonPasswords { get; set; }
-	public static IEnumerable<string> FrequencyTable { get; set; }
+	/// <summary>
+	/// Gets the collection of common passwords loaded from the embedded resource.
+	/// </summary>
+	public static IEnumerable<string> CommonPasswords { get; set; } = [];
+
+	/// <summary>
+	/// Gets the character frequency table loaded from the embedded resource.
+	/// </summary>
+	public static IEnumerable<string> FrequencyTable { get; set; } = [];
 
 	private static void LoadResources()
 
@@ -27,14 +36,12 @@ public class ResourceLoader
 
 	private static IEnumerable<string> ReadResourceFile(string fileName)
 	{
-		using (var rs = Assembly.GetExecutingAssembly()
-			       .GetManifestResourceStream(typeof(ResourceLoader), fileName))
+		using var rs = Assembly.GetExecutingAssembly()
+			.GetManifestResourceStream(typeof(ResourceLoader), fileName);
+		using var sr = new StreamReader(rs!, Encoding.UTF8);
+		while ((sr.ReadLine() ?? string.Empty) is { } line)
 		{
-			using (var sr = new StreamReader(rs, Encoding.UTF8))
-			{
-				string line;
-				while ((line = sr.ReadLine()) != null) yield return line;
-			}
+			yield return line;
 		}
 	}
 }

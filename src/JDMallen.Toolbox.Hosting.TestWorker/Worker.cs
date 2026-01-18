@@ -1,7 +1,8 @@
 namespace JDMallen.Toolbox.Hosting.TestWorker;
 
 /// <summary>
-/// Test/sample implementation of <see cref="ScheduledBackgroundService{TService}"/>
+/// Test/sample implementation of
+/// <see cref="ScheduledBackgroundService{TService}" />
 /// for demonstrating and testing background service execution.
 /// </summary>
 public class Worker : ScheduledBackgroundService<Worker>
@@ -9,7 +10,7 @@ public class Worker : ScheduledBackgroundService<Worker>
 	private readonly ILogger<Worker> _logger;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="Worker"/> class.
+	/// Initializes a new instance of the <see cref="Worker" /> class.
 	/// </summary>
 	/// <param name="logger">The logger for this worker.</param>
 	/// <param name="scopeFactory">The service scope factory.</param>
@@ -33,7 +34,9 @@ public class Worker : ScheduledBackgroundService<Worker>
 	/// </summary>
 	/// <param name="scope">The dependency injection scope for this execution.</param>
 	/// <param name="stoppingToken">The cancellation token.</param>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 	protected override async Task ExecuteInScopeAsync(
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 		IServiceScope scope,
 		CancellationToken stoppingToken)
 	{

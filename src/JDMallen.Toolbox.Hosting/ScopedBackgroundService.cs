@@ -93,7 +93,7 @@ public abstract class ScopedBackgroundService<TService> : BackgroundService
 	protected ScopedBackgroundService(
 		ILogger<TService> logger,
 		IServiceScopeFactory scopeFactory,
-		ITimeProvider timeProvider = null)
+		ITimeProvider? timeProvider = null)
 	{
 		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		_scopeFactory = scopeFactory
@@ -200,6 +200,7 @@ public abstract class ScopedBackgroundService<TService> : BackgroundService
 			}
 
 			if (shouldExecute)
+			{
 				try
 				{
 					var sessionId = Guid.NewGuid();
@@ -219,8 +220,11 @@ public abstract class ScopedBackgroundService<TService> : BackgroundService
 				{
 					// Release the execution lock if overlap prevention is enabled
 					if (OverlapBehavior != OverlapBehavior.AllowOverlap)
+					{
 						Interlocked.Exchange(ref _isExecuting, 0);
+					}
 				}
+			}
 
 			// For WaitForCompletion, if we're waiting, use a shorter delay before retrying
 			var delayTime = needsWait

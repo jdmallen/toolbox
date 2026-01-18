@@ -6,40 +6,36 @@ namespace JDMallen.Toolbox.EFCore.Patterns.Specification.Implementations;
 /// <summary>
 /// https://deviq.com/specification-pattern/
 /// </summary>
-public class BaseSpecification<T> : ISpecification<T>
+public class BaseSpecification<T>(Expression<Func<T, bool>> criteria)
+	: ISpecification<T>
 {
-	private readonly List<Expression<Func<T, object>>> _includes = new();
-	private readonly List<string> _includeStrings = new();
-
-	public BaseSpecification(Expression<Func<T, bool>> criteria)
-	{
-		Criteria = criteria;
-	}
+	private readonly List<Expression<Func<T, object>>> _includes = [];
+	private readonly List<string> _includeStrings = [];
 
 	/// <inheritdoc />
-	public int Take { get; private set; }
+	public int? Take { get; private set; }
 
 	/// <inheritdoc />
-	public int Skip { get; private set; }
+	public int? Skip { get; private set; }
 
 	/// <inheritdoc />
 	public bool IsPagingEnabled { get; private set; }
 
 	/// <inheritdoc />
-	public Expression<Func<T, object>> OrderBy { get; private set; }
+	public Expression<Func<T, object>>? OrderBy { get; private set; }
 
 	/// <inheritdoc />
-	public Expression<Func<T, object>> OrderByDescending { get; private set; }
+	public Expression<Func<T, object>>? OrderByDescending { get; private set; }
 
 	/// <inheritdoc />
-	public Expression<Func<T, bool>> Criteria { get; }
+	public Expression<Func<T, bool>> Criteria { get; } = criteria;
 
 	/// <inheritdoc />
 	public IEnumerable<Expression<Func<T, object>>> Includes =>
-		_includes?.AsReadOnly();
+		_includes.AsReadOnly();
 
 	/// <inheritdoc />
-	public IEnumerable<string> IncludeStrings => _includeStrings?.AsReadOnly();
+	public IEnumerable<string> IncludeStrings => _includeStrings.AsReadOnly();
 
 	/// <summary>
 	/// Adds an include expression for eager-loading related entities.
@@ -64,7 +60,8 @@ public class BaseSpecification<T> : ISpecification<T>
 	/// <remarks>
 	/// String-based includes allow for including children of children,
 	/// e.g. "Orders.Items" or "Orders.Items.Product".
-	/// This is useful for complex navigation paths that cannot be easily expressed with lambda expressions.
+	/// This is useful for complex navigation paths that cannot be easily expressed
+	/// with lambda expressions.
 	/// </remarks>
 	/// <param name="includeString">
 	/// A dot-separated string path representing nested navigation properties.

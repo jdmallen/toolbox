@@ -11,8 +11,6 @@ public abstract partial class EFRepositoryBase<TContext, TEntityModel, TId>
 	/// <inheritdoc />
 	public async Task<TEntityModel> AddAsync(TEntityModel model)
 	{
-		if (model == null)
-			return null;
 		var result = await Context.Set<TEntityModel>().AddAsync(model);
 		await Context.SaveChangesAsync();
 		return result.Entity;
@@ -21,8 +19,6 @@ public abstract partial class EFRepositoryBase<TContext, TEntityModel, TId>
 	/// <inheritdoc />
 	public async Task<TEntityModel> UpdateAsync(TEntityModel model)
 	{
-		if (model == null)
-			return null;
 		var result = Context.Update(model);
 		await Context.SaveChangesAsync();
 		return result.Entity;

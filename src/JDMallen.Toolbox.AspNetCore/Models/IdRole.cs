@@ -13,14 +13,15 @@ public class IdRole : IdentityRole<Guid>
 	private Guid _id;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="IdRole"/> class.
+	/// Initializes a new instance of the <see cref="IdRole" /> class.
 	/// </summary>
 	public IdRole()
 	{
 	}
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="IdRole"/> class with the specified role name.
+	/// Initializes a new instance of the <see cref="IdRole" /> class with the
+	/// specified role name.
 	/// </summary>
 	/// <param name="roleName">The name of the role.</param>
 	public IdRole(string roleName) : base(roleName)

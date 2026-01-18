@@ -19,7 +19,9 @@ public static class QueryExtensions
 		bool ascending)
 	{
 		if (string.IsNullOrWhiteSpace(fieldName))
+		{
 			return query;
+		}
 
 		var lambda =
 			(dynamic)UtilityMethods.GetExpressionFromPropertyName(

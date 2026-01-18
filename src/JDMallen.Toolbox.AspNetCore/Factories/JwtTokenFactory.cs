@@ -19,7 +19,7 @@ public class JwtTokenFactory : IJwtTokenFactory
 	protected readonly JwtOptions JwtOptions;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="JwtTokenFactory"/> class.
+	/// Initializes a new instance of the <see cref="JwtTokenFactory" /> class.
 	/// </summary>
 	/// <param name="jwtOptions">The JWT configuration options.</param>
 	public JwtTokenFactory(IOptions<JwtOptions> jwtOptions)
@@ -55,7 +55,7 @@ public class JwtTokenFactory : IJwtTokenFactory
 				.SingleOrDefault(c => c.Type == ClaimTypes.Name)
 				?.Value;
 
-		var claims = new List<Claim>
+		var claims = new List<Claim?>
 		{
 			new(JwtClaimTypes.JwtId, JwtOptions.NewJti),
 			new(
@@ -65,7 +65,9 @@ public class JwtTokenFactory : IJwtTokenFactory
 		};
 
 		if (!string.IsNullOrWhiteSpace(userName))
+		{
 			claims.Add(new Claim(JwtClaimTypes.UserId, userName));
+		}
 
 		//			if (!string.IsNullOrWhiteSpace(email))
 //			{

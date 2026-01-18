@@ -17,7 +17,8 @@ public abstract class ServiceBase<TRepository, TModel, TId>
 	where TId : struct
 {
 	/// <summary>
-	/// Initializes a new instance of the <see cref="ServiceBase{TRepository, TModel, TId}"/> class.
+	/// Initializes a new instance of the
+	/// <see cref="ServiceBase{TRepository, TModel, TId}" /> class.
 	/// </summary>
 	/// <remarks>
 	/// This constructor is protected to ensure the base class is only instantiated
@@ -30,7 +31,7 @@ public abstract class ServiceBase<TRepository, TModel, TId>
 	}
 
 	/// <summary>
-	/// The <see cref="TRepository" /> used to perform all the CRUD actions
+	/// The repository used to perform all the CRUD actions
 	/// </summary>
 	public TRepository Repository { get; }
 }

@@ -38,7 +38,7 @@ public interface IQueryParameters
 	/// <summary>
 	/// Gets or sets the property name to sort by.
 	/// </summary>
-	string SortBy { get; set; }
+	string? SortBy { get; set; }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether to sort in ascending order.
@@ -53,7 +53,8 @@ public interface IQueryParameters
 }
 
 /// <summary>
-/// A set of parameters a user may set in order query a set of entities with typed primary keys.
+/// A set of parameters a user may set in order query a set of entities with typed
+/// primary keys.
 /// </summary>
 /// <typeparam name="TId">The primary key type.</typeparam>
 public interface IQueryParameters<TId> : IQueryParameters

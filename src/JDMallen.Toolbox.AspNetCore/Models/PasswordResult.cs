@@ -18,6 +18,7 @@ public class PasswordResult
 	/// <summary>
 	/// Gets or sets the length of the password.
 	/// </summary>
+	// ReSharper disable once UnusedAutoPropertyAccessor.Global
 	public int Length { get; set; }
 
 	/// <summary>

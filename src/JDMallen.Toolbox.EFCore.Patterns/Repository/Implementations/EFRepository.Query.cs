@@ -9,7 +9,10 @@ namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations;
 /// Base class for Entity Framework Core repository implementations.
 /// </summary>
 /// <typeparam name="TContext">The Entity Framework Core DbContext type.</typeparam>
-/// <typeparam name="TEntityModel">The entity model type managed by this repository.</typeparam>
+/// <typeparam name="TEntityModel">
+/// The entity model type managed by this
+/// repository.
+/// </typeparam>
 /// <typeparam name="TId">The primary key type of the entity.</typeparam>
 public abstract partial class EFRepositoryBase<
 	TContext,
@@ -20,7 +23,8 @@ public abstract partial class EFRepositoryBase<
 	where TId : struct
 {
 	/// <summary>
-	/// Initializes a new instance of the <see cref="EFRepositoryBase{TContext, TEntityModel, TId}"/> class.
+	/// Initializes a new instance of the
+	/// <see cref="EFRepositoryBase{TContext, TEntityModel, TId}" /> class.
 	/// </summary>
 	/// <param name="context">The Entity Framework Core context.</param>
 	protected EFRepositoryBase(TContext context)
@@ -60,8 +64,12 @@ public abstract partial class EFRepositoryBase<
 	protected virtual void Dispose(bool disposing)
 	{
 		if (!_disposed)
+		{
 			if (disposing)
+			{
 				Context.Dispose();
+			}
+		}
 
 		_disposed = true;
 	}

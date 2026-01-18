@@ -18,12 +18,17 @@ using Microsoft.Extensions.Hosting;
 
 namespace JDMallen.Toolbox.AspNetCore.Extensions;
 
+/// <summary>
+/// Extension methods for configuring ASP.NET Core startup and authentication.
+/// </summary>
 public static class StartupExtensions
 {
 	/// <summary>
-	/// https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
+	/// Configures Kestrel server endpoints based on configuration settings.
+	/// Supports HTTPS endpoint configuration with certificate loading from store or file.
+	/// See https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
 	/// </summary>
-	/// <param name="options"></param>
+	/// <param name="options">The Kestrel server options to configure.</param>
 	public static void ConfigureEndpoints(this KestrelServerOptions options)
 	{
 		var configuration =
@@ -46,7 +51,10 @@ public static class StartupExtensions
 			bool.TryParse(
 				configuration["Settings:ReverseProxy"],
 				out var reverseProxy);
-			if (config.Scheme == "https" && reverseProxy) continue;
+			if (config.Scheme == "https" && reverseProxy)
+			{
+				continue;
+			}
 
 			var port = config.Port ?? (config.Scheme == "https" ? 443 : 80);
 			var ipAddresses = new List<IPAddress>();
@@ -76,7 +84,10 @@ public static class StartupExtensions
 					port,
 					listenOptions =>
 					{
-						if (config.Scheme != "https" || reverseProxy) return;
+						if (config.Scheme != "https" || reverseProxy)
+						{
+							return;
+						}
 
 						var certificate = LoadCertificate(config, environment);
 						Debug.WriteLine($"  Certificate: {certificate.FriendlyName}");
@@ -87,55 +98,73 @@ public static class StartupExtensions
 	}
 
 	/// <summary>
-	/// https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
+	/// Loads an X.509 certificate based on the provided endpoint configuration.
+	/// Attempts to load from certificate store (if store and location are specified) or from file path.
+	/// See https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
 	/// </summary>
-	/// <param name="config"></param>
-	/// <param name="environment"></param>
-	/// <returns></returns>
+	/// <param name="config">The endpoint configuration containing certificate details.</param>
+	/// <param name="environment">The hosting environment.</param>
+	/// <returns>The loaded X.509 certificate.</returns>
+	/// <exception cref="InvalidOperationException">Thrown if the certificate cannot be found or no valid configuration is provided.</exception>
 	private static X509Certificate2 LoadCertificate(
 		EndpointConfiguration config,
 		IHostEnvironment environment)
 	{
-		if (config.StoreName != null && config.StoreLocation != null)
+		switch (config)
 		{
-			var parseSuccess = Enum.TryParse<StoreLocation>(
-				config.StoreLocation,
-				out var storeLocation);
-			var store = parseSuccess
-				? new X509Store(config.StoreName, storeLocation)
-				: new X509Store(config.StoreName);
-			using (store)
+			case { StoreName: not null, StoreLocation: not null, Thumbprint: not null }:
 			{
-				store.Open(OpenFlags.ReadOnly);
-				var certificate = store.Certificates.Find(
-					X509FindType.FindByThumbprint,
-					config.Thumbprint,
-					!environment.IsDevelopment());
-				if (certificate.Count == 0)
-					throw new InvalidOperationException(
-						$"Certificate not found for {config.Host}.");
+				var parseSuccess = Enum.TryParse<StoreLocation>(
+					config.StoreLocation,
+					out var storeLocation);
+				var store = parseSuccess
+					? new X509Store(config.StoreName, storeLocation)
+					: new X509Store(config.StoreName);
+				using (store)
+				{
+					store.Open(OpenFlags.ReadOnly);
+					var certificate = store.Certificates.Find(
+						X509FindType.FindByThumbprint,
+						config.Thumbprint,
+						!environment.IsDevelopment());
+					if (certificate.Count == 0)
+					{
+						throw new InvalidOperationException(
+							$"Certificate not found for {config.Host}.");
+					}
 
-				return certificate[0];
+					return certificate[0];
+				}
 			}
+			case { FilePath: not null, CertificatePassword: not null }:
+				return X509CertificateLoader.LoadPkcs12FromFile(
+					config.FilePath,
+					config.CertificatePassword);
+			default:
+				throw new InvalidOperationException(
+					"No valid certificate configuration found for the current endpoint.");
 		}
-
-		if (config.FilePath != null && config.CertificatePassword != null)
-			return new X509Certificate2(config.FilePath, config.CertificatePassword);
-
-		throw new InvalidOperationException(
-			"No valid certificate configuration found for the current endpoint.");
 	}
 
 	/// <summary>
 	/// Adds GitHub OAuth authentication to the application.
 	/// </summary>
 	/// <param name="builder">The authentication builder.</param>
-	/// <param name="config">The OAuth configuration containing GitHub client credentials.</param>
+	/// <param name="config">
+	/// The OAuth configuration containing GitHub client
+	/// credentials.
+	/// </param>
 	/// <returns>The authentication builder for method chaining.</returns>
 	public static AuthenticationBuilder AddOAuthGitHub(
 		this AuthenticationBuilder builder,
 		OAuthConfiguration config)
 	{
+		if (string.IsNullOrWhiteSpace(config.GitHubClientId) || string.IsNullOrWhiteSpace(config.GitHubClientSecret))
+		{
+			throw new InvalidOperationException(
+				"GitHub OAuth client ID and secret must be provided in configuration.");
+		}
+		
 		return builder.AddOAuth(
 			OAuthSchemes.GitHub,
 			options =>
@@ -184,12 +213,21 @@ public static class StartupExtensions
 	/// Adds Google OAuth authentication to the application.
 	/// </summary>
 	/// <param name="builder">The authentication builder.</param>
-	/// <param name="config">The OAuth configuration containing Google client credentials.</param>
+	/// <param name="config">
+	/// The OAuth configuration containing Google client
+	/// credentials.
+	/// </param>
 	/// <returns>The authentication builder for method chaining.</returns>
 	public static AuthenticationBuilder AddOAuthGoogle(
 		this AuthenticationBuilder builder,
 		OAuthConfiguration config)
 	{
+		if(string.IsNullOrWhiteSpace(config.GoogleClientId) || string.IsNullOrWhiteSpace(config.GoogleClientSecret))
+		{
+			throw new InvalidOperationException(
+				"Google OAuth client ID and secret must be provided in configuration.");
+		}
+		
 		return builder.AddGoogle(
 			OAuthSchemes.Google,
 			options =>

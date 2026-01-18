@@ -6,7 +6,8 @@ using JDMallen.Toolbox.Models;
 namespace JDMallen.Toolbox.EFCore.Filters;
 
 /// <summary>
-/// Extension methods for filtering IQueryable entity collections by date and other criteria.
+/// Extension methods for filtering IQueryable entity collections by date and other
+/// criteria.
 /// </summary>
 public static class Filters
 {
@@ -16,7 +17,10 @@ public static class Filters
 	/// <typeparam name="TEntityModel">The entity type.</typeparam>
 	/// <param name="query">The query to filter.</param>
 	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">If true, includes entities created exactly at the specified time.</param>
+	/// <param name="inclusive">
+	/// If true, includes entities created exactly at the
+	/// specified time.
+	/// </param>
 	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> CreatedBefore<TEntityModel>(
 		this IQueryable<TEntityModel> query,
@@ -35,7 +39,10 @@ public static class Filters
 	/// <typeparam name="TEntityModel">The entity type.</typeparam>
 	/// <param name="query">The query to filter.</param>
 	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">If true, includes entities created exactly at the specified time.</param>
+	/// <param name="inclusive">
+	/// If true, includes entities created exactly at the
+	/// specified time.
+	/// </param>
 	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> CreatedAfter<TEntityModel>(
 		this IQueryable<TEntityModel> query,
@@ -54,7 +61,10 @@ public static class Filters
 	/// <typeparam name="TEntityModel">The entity type.</typeparam>
 	/// <param name="query">The query to filter.</param>
 	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">If true, includes entities modified exactly at the specified time.</param>
+	/// <param name="inclusive">
+	/// If true, includes entities modified exactly at the
+	/// specified time.
+	/// </param>
 	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> ModifiedBefore<TEntityModel>(
 		this IQueryable<TEntityModel> query,
@@ -73,7 +83,10 @@ public static class Filters
 	/// <typeparam name="TEntityModel">The entity type.</typeparam>
 	/// <param name="query">The query to filter.</param>
 	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">If true, includes entities modified exactly at the specified time.</param>
+	/// <param name="inclusive">
+	/// If true, includes entities modified exactly at the
+	/// specified time.
+	/// </param>
 	/// <returns>A filtered queryable of entities.</returns>
 	public static IQueryable<TEntityModel> ModifiedAfter<TEntityModel>(
 		this IQueryable<TEntityModel> query,
@@ -102,28 +115,28 @@ public static class Filters
 		SearchStyle searchStyle = SearchStyle.Exact)
 	{
 		if (string.IsNullOrWhiteSpace(searchValue))
+		{
 			return query;
+		}
 
 		searchValue = searchValue.Trim();
 
-		switch (searchStyle)
+		return searchStyle switch
 		{
-			case SearchStyle.Exact:
-				return query.Where(
-					fieldExpression.Compose(field => field == searchValue));
-			case SearchStyle.Contains:
-				return query.Where(
-					fieldExpression.Compose(field => field.ToLower()
-						.Contains(searchValue.ToLower())));
-			case SearchStyle.StartsWith:
-				return query.Where(
-					fieldExpression.Compose(field => field.ToLower()
-						.StartsWith(searchValue.ToLower())));
-			default:
-				throw new ArgumentOutOfRangeException(
-					nameof(searchStyle),
-					searchStyle,
-					null);
-		}
+			SearchStyle.Exact => query.Where(
+				fieldExpression.Compose(field => field == searchValue)),
+			SearchStyle.Contains => query.Where(
+				fieldExpression.Compose(field => field.Contains(
+					searchValue,
+					StringComparison.CurrentCultureIgnoreCase))),
+			SearchStyle.StartsWith => query.Where(
+				fieldExpression.Compose(field => field.StartsWith(
+					searchValue,
+					StringComparison.CurrentCultureIgnoreCase))),
+			_ => throw new ArgumentOutOfRangeException(
+				nameof(searchStyle),
+				searchStyle,
+				null)
+		};
 	}
 }
