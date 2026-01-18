@@ -8,7 +8,8 @@ using Microsoft.Extensions.Options;
 namespace JDMallen.Toolbox.AspNetCore.Utilities;
 
 /// <summary>
-/// Custom password validator that evaluates password strength using entropy calculation
+/// Custom password validator that evaluates password strength using entropy
+/// calculation
 /// and checks against common password lists.
 /// </summary>
 /// <typeparam name="TUser">The user type.</typeparam>
@@ -39,20 +40,22 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 	/// Character set containing additional symbols.
 	/// </summary>
 	public const string SymbolSet2 = @"`~-_=+[{]}\|;:'"",<.>/?";
+
 	private readonly CustomIdentityErrorDescriber _errors;
 	private readonly PasswordComplexityOptions _options;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="CustomPasswordValidator{TUser}"/> class.
+	/// Initializes a new instance of the <see cref="CustomPasswordValidator{TUser}" />
+	/// class.
 	/// </summary>
 	/// <param name="options">The password complexity options.</param>
 	/// <param name="errors">The custom error describer.</param>
 	public CustomPasswordValidator(
-		IOptions<PasswordComplexityOptions> options = null,
-		CustomIdentityErrorDescriber errors = null)
+		IOptions<PasswordComplexityOptions>? options = null,
+		CustomIdentityErrorDescriber? errors = null)
 	{
 		_options = options?.Value ?? new PasswordComplexityOptions();
-		_errors = errors ?? new CustomIdentityErrorDescriber(options);
+		_errors = errors ?? new CustomIdentityErrorDescriber(options!);
 	}
 
 	/// <summary>Validates a password as an asynchronous operation.</summary>
@@ -67,29 +70,44 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 	public override async Task<IdentityResult> ValidateAsync(
 		UserManager<TUser> manager,
 		TUser user,
-		string password)
+		string? password)
 	{
 		var errors = new List<IdentityError>();
 
 		var result = await base.ValidateAsync(manager, user, password);
-		if (!result.Succeeded) errors.AddRange(result.Errors);
-
-		var checkPwdResult = CheckPassword(password);
-		if (checkPwdResult.IsError)
+		if (!result.Succeeded)
 		{
-			if (checkPwdResult.Error.HasFlag(PasswordError.TooCommon))
-				errors.Add(_errors.PasswordTooCommon());
-
-			if (checkPwdResult.Error.HasFlag(PasswordError.NotComplexEnough))
-				errors.Add(_errors.PasswordNotComplexEnough(checkPwdResult));
-
-			if (checkPwdResult.Error.HasFlag(PasswordError.TooShort))
-				errors.Add(_errors.PasswordTooShort(_options.MinimumLength));
-
-			return IdentityResult.Failed(errors.ToArray());
+			errors.AddRange(result.Errors);
 		}
 
-		return result;
+		if (password == null)
+		{
+			return result;
+		}
+
+		var checkPwdResult = CheckPassword(password);
+		if (!checkPwdResult.IsError)
+		{
+			return result;
+		}
+
+		if (checkPwdResult.Error.HasFlag(PasswordError.TooCommon))
+		{
+			errors.Add(_errors.PasswordTooCommon());
+		}
+
+		if (checkPwdResult.Error.HasFlag(PasswordError.NotComplexEnough))
+		{
+			errors.Add(_errors.PasswordNotComplexEnough(checkPwdResult));
+		}
+
+		if (checkPwdResult.Error.HasFlag(PasswordError.TooShort))
+		{
+			errors.Add(_errors.PasswordTooShort(_options.MinimumLength));
+		}
+
+		return IdentityResult.Failed(errors.ToArray());
+
 	}
 
 	/// <summary>
@@ -128,11 +146,21 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 
 		result.BitsOfEntropy = bits;
 		result.Strength = EvaluateStrength(bits);
-		if (isCommon) result.Error = PasswordError.TooCommon;
+		if (isCommon)
+		{
+			result.Error = PasswordError.TooCommon;
+		}
+
 		if (len < _options.MinimumLength)
+		{
 			result.Error = result.Error | PasswordError.TooShort;
+		}
+
 		if (bits < _options.BitsThreshold)
+		{
 			result.Error = result.Error | PasswordError.NotComplexEnough;
+		}
+
 		return result;
 	}
 
@@ -143,7 +171,11 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 
 	private static int GetIndex(char c)
 	{
-		if (c < 'a' || c > 'z') return 0;
+		if (c < 'a' || c > 'z')
+		{
+			return 0;
+		}
+
 		return c - 'a' + 1;
 	}
 

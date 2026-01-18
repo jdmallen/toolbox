@@ -12,7 +12,7 @@ public interface IJwtTokenFactory
 	/// </summary>
 	/// <param name="email">The user's email address.</param>
 	/// <param name="id">The user's ID as a string.</param>
-	/// <returns>A <see cref="ClaimsIdentity"/> containing the user's claims.</returns>
+	/// <returns>A <see cref="ClaimsIdentity" /> containing the user's claims.</returns>
 	ClaimsIdentity GenerateClaimsIdentity(string email, string id);
 
 	/// <summary>
@@ -20,7 +20,7 @@ public interface IJwtTokenFactory
 	/// </summary>
 	/// <param name="email">The user's email address.</param>
 	/// <param name="id">The user's ID as a GUID.</param>
-	/// <returns>A <see cref="ClaimsIdentity"/> containing the user's claims.</returns>
+	/// <returns>A <see cref="ClaimsIdentity" /> containing the user's claims.</returns>
 	ClaimsIdentity GenerateClaimsIdentity(string email, Guid id);
 
 	/// <summary>

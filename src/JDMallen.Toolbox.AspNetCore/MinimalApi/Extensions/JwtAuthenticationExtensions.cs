@@ -36,11 +36,11 @@ public static class JwtAuthenticationExtensions
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = jwtOptions.SigningCredentials.Key,
+					IssuerSigningKey = jwtOptions?.SigningCredentials.Key,
 					ValidateIssuer = true,
-					ValidIssuer = jwtOptions.Issuer,
+					ValidIssuer = jwtOptions?.Issuer,
 					ValidateAudience = true,
-					ValidAudience = jwtOptions.Audience,
+					ValidAudience = jwtOptions?.Audience,
 					ValidateLifetime = true,
 					ClockSkew = TimeSpan.FromMinutes(5)
 				};
@@ -51,6 +51,9 @@ public static class JwtAuthenticationExtensions
 	/// Adds a RouteHandlerBuilder extension to require JWT authentication with
 	/// proper OpenAPI metadata.
 	/// </summary>
+	[Obsolete(
+		"This uses `WithOpenApi` which is deprecated. "
+		+ "Consider using Swashbuckle or another OpenAPI library for better support.")]
 	public static RouteHandlerBuilder RequireJwtAuth(
 		this RouteHandlerBuilder builder)
 	{
@@ -63,8 +66,9 @@ public static class JwtAuthenticationExtensions
 				var securitySchemeReference = new OpenApiSecuritySchemeReference(
 					JwtBearerDefaults.AuthenticationScheme);
 
-				var securityRequirement = new OpenApiSecurityRequirement();
-				securityRequirement.Add(securitySchemeReference, new List<string>());
+				var securityRequirement = new OpenApiSecurityRequirement
+					{ { securitySchemeReference, [] } };
+
 
 				operation.Security = new List<OpenApiSecurityRequirement>
 					{ securityRequirement };

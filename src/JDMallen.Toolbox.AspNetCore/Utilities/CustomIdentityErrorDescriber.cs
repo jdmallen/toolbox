@@ -6,14 +6,16 @@ using Microsoft.Extensions.Options;
 namespace JDMallen.Toolbox.AspNetCore.Utilities;
 
 /// <summary>
-/// Custom implementation of Identity error messages with enhanced password validation errors.
+/// Custom implementation of Identity error messages with enhanced password
+/// validation errors.
 /// </summary>
 public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 {
 	private readonly IOptions<PasswordComplexityOptions> _options;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="CustomIdentityErrorDescriber"/> class.
+	/// Initializes a new instance of the <see cref="CustomIdentityErrorDescriber" />
+	/// class.
 	/// </summary>
 	/// <param name="options">The password complexity options.</param>
 	public CustomIdentityErrorDescriber(
@@ -70,7 +72,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 	}
 
 	/// <inheritdoc />
-	public override IdentityError InvalidUserName(string userName)
+	public override IdentityError InvalidUserName(string? userName)
 	{
 		return new IdentityError
 		{
@@ -81,7 +83,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 	}
 
 	/// <inheritdoc />
-	public override IdentityError InvalidEmail(string email)
+	public override IdentityError InvalidEmail(string? email)
 	{
 		return new IdentityError
 		{
@@ -111,7 +113,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 	}
 
 	/// <inheritdoc />
-	public override IdentityError InvalidRoleName(string role)
+	public override IdentityError InvalidRoleName(string? role)
 	{
 		return new IdentityError
 		{
@@ -171,10 +173,11 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 	}
 
 	/// <summary>
-	/// Returns an error indicating that the password does not meet complexity requirements.
+	/// Returns an error indicating that the password does not meet complexity
+	/// requirements.
 	/// </summary>
 	/// <param name="passwordResult">The password analysis result.</param>
-	/// <returns>An <see cref="IdentityError"/> describing the complexity issue.</returns>
+	/// <returns>An <see cref="IdentityError" /> describing the complexity issue.</returns>
 	public IdentityError PasswordNotComplexEnough(PasswordResult passwordResult)
 	{
 		return new IdentityError
@@ -188,7 +191,7 @@ public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 	/// <summary>
 	/// Returns an error indicating that the password is too common.
 	/// </summary>
-	/// <returns>An <see cref="IdentityError"/> for common passwords.</returns>
+	/// <returns>An <see cref="IdentityError" /> for common passwords.</returns>
 	public IdentityError PasswordTooCommon()
 	{
 		return new IdentityError

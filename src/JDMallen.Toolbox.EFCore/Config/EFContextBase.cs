@@ -17,7 +17,7 @@ namespace JDMallen.Toolbox.EFCore.Config;
 public abstract class EFContextBase : DbContext, IContext
 {
 	/// <summary>
-	/// Initializes a new instance of the <see cref="EFContextBase"/> class.
+	/// Initializes a new instance of the <see cref="EFContextBase" /> class.
 	/// </summary>
 	/// <param name="options">The Entity Framework Core context options.</param>
 	/// <param name="enableEntityLevelOnModelCreating">
@@ -38,7 +38,7 @@ public abstract class EFContextBase : DbContext, IContext
 	/// </summary>
 	/// <remarks>
 	/// When enabled, the framework automatically discovers and applies OnModelCreating
-	/// configuration from entities implementing <see cref="IComplexEntityModel"/>.
+	/// configuration from entities implementing <see cref="IComplexEntityModel" />.
 	/// </remarks>
 	protected bool EnableEntityLevelOnModelCreating { get; set; }
 
@@ -85,7 +85,10 @@ public abstract class EFContextBase : DbContext, IContext
 			{
 				// And add each one to the ModelBuilder.
 				if (modelBuilder.Model.FindEntityType(type) != null)
+				{
 					return;
+				}
+
 				// If it's already been added, skip it.
 				modelBuilder.Model.AddEntityType(type);
 			});

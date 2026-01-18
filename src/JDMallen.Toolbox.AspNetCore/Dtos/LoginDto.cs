@@ -7,7 +7,15 @@ namespace JDMallen.Toolbox.AspNetCore.Dtos;
 /// </summary>
 public class LoginDto
 {
-	[Required] public string Email { get; set; }
+	/// <summary>
+	/// Email address of the user attempting to log in.
+	/// </summary>
+	[Required]
+	public required string Email { get; set; }
 
-	[Required] public string Password { get; set; }
+	/// <summary>
+	/// Password for the user attempting to log in.
+	/// </summary>
+	[Required]
+	public required string Password { get; set; }
 }

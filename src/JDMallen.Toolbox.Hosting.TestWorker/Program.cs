@@ -18,11 +18,11 @@ public class Program
 	/// Creates and configures the host builder for the worker service.
 	/// </summary>
 	/// <param name="args">Command-line arguments.</param>
-	/// <returns>A configured <see cref="IHostBuilder"/>.</returns>
-	public static IHostBuilder CreateHostBuilder(string[] args)
+	/// <returns>A configured <see cref="IHostBuilder" />.</returns>
+	private static IHostBuilder CreateHostBuilder(string[] args)
 	{
 		return Host.CreateDefaultBuilder(args)
-			.ConfigureServices((hostContext, services) =>
+			.ConfigureServices((_, services) =>
 			{
 				services.AddHostedService<Worker>();
 			});

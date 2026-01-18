@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 namespace JDMallen.Toolbox.EFCore.Patterns.Repository.Implementations;
 
 /// <summary>
-/// Builds Entity Framework Core queries by applying specifications to queryable entities.
+/// Builds Entity Framework Core queries by applying specifications to queryable
+/// entities.
 /// </summary>
 /// <typeparam name="TEntityModel">The entity model type.</typeparam>
 public class QueryBuilder<TEntityModel>
@@ -24,9 +25,7 @@ public class QueryBuilder<TEntityModel>
 	{
 		var query = inputQuery;
 
-		if (specification.Criteria != null)
-			// soooo much better than a sea of if (... HasValue) { } blocks
-			query = query.Where(specification.Criteria);
+		query = query.Where(specification.Criteria);
 
 		query = specification.Includes.Aggregate(
 			query,
@@ -37,12 +36,19 @@ public class QueryBuilder<TEntityModel>
 			(entities, includeString) => entities.Include(includeString));
 
 		if (specification.OrderBy != null)
+		{
 			query = query.OrderBy(specification.OrderBy);
+		}
 		else if (specification.OrderByDescending != null)
+		{
 			query = query.OrderByDescending(specification.OrderByDescending);
+		}
 
 		if (specification.IsPagingEnabled)
-			query = query.Skip(specification.Skip).Take(specification.Take);
+		{
+			query = query.Skip(specification.Skip ?? 0)
+				.Take(specification.Take ?? 10);
+		}
 
 		return query;
 	}

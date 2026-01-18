@@ -10,15 +10,14 @@ public interface IService
 }
 
 /// <summary>
-/// Defines a service used to implement business logic using a given
-/// <see cref="TRepository" />
+/// Defines a service used to implement business logic using a given repository
 /// </summary>
 /// <typeparam name="TRepository">The type of repository to use</typeparam>
 public interface IService<out TRepository> : IService
 	where TRepository : IRepository
 {
 	/// <summary>
-	/// The <see cref="TRepository" /> used to perform all the CRUD actions
+	/// The repository used to perform all the CRUD actions
 	/// </summary>
 	TRepository Repository { get; }
 }

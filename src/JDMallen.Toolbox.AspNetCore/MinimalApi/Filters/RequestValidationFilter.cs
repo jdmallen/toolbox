@@ -16,26 +16,33 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 	/// </summary>
 	/// <param name="context">The endpoint filter invocation context.</param>
 	/// <param name="next">The next filter in the pipeline.</param>
-	/// <returns>A validation problem result if validation fails, otherwise the result of the next filter.</returns>
-	public async ValueTask<object> InvokeAsync(
+	/// <returns>
+	/// A validation problem result if validation fails, otherwise the result
+	/// of the next filter.
+	/// </returns>
+	public async ValueTask<object?> InvokeAsync(
 		EndpointFilterInvocationContext context,
 		EndpointFilterDelegate next)
 	{
 		var request = context.Arguments.OfType<TRequest>().FirstOrDefault();
-		if (request is null) return await next(context);
+		if (request is null)
+		{
+			return await next(context);
+		}
 
 		// Try FluentValidation first
-		var validator = context.HttpContext.RequestServices
-			.GetService(typeof(IValidator<TRequest>)) as IValidator<TRequest>;
 
-		if (validator is not null)
+		if (context.HttpContext.RequestServices
+			    .GetService(typeof(IValidator<TRequest>)) is IValidator<TRequest> validator)
 		{
 			var validationResult = await validator.ValidateAsync(
 				request,
 				context.HttpContext.RequestAborted);
 
 			if (!validationResult.IsValid)
+			{
 				return TypedResults.ValidationProblem(validationResult.ToDictionary());
+			}
 		}
 		else
 		{
@@ -43,20 +50,22 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 			var validationResults = new List<ValidationResult>();
 			var validationContext = new ValidationContext(request);
 
-			if (!Validator.TryValidateObject(
+			if (Validator.TryValidateObject(
 				    request,
 				    validationContext,
 				    validationResults,
 				    true))
 			{
-				var errors = validationResults
-					.GroupBy(x => x.MemberNames.FirstOrDefault() ?? string.Empty)
-					.ToDictionary(
-						g => g.Key,
-						g => g.Select(e => e.ErrorMessage ?? string.Empty).ToArray());
-
-				return TypedResults.ValidationProblem(errors);
+				return await next(context);
 			}
+
+			var errors = validationResults
+				.GroupBy(x => x.MemberNames.FirstOrDefault() ?? string.Empty)
+				.ToDictionary(
+					g => g.Key,
+					g => g.Select(e => e.ErrorMessage ?? string.Empty).ToArray());
+
+			return TypedResults.ValidationProblem(errors);
 		}
 
 		return await next(context);

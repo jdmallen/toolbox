@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using JetBrains.Annotations;
 using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using Newtonsoft.Json;
 
@@ -9,6 +10,7 @@ namespace JDMallen.Toolbox.Implementations;
 /// <summary>
 /// Base class for MySQL entity models with automatic timestamp tracking.
 /// </summary>
+[UsedImplicitly]
 public abstract class MySqlEntityModel : EntityModel
 {
 }
@@ -18,6 +20,7 @@ public abstract class MySqlEntityModel : EntityModel
 /// Provides a string representation of the ID for REST API usage.
 /// </summary>
 /// <typeparam name="TId">The type of the entity identifier.</typeparam>
+[UsedImplicitly]
 public abstract class MySqlEntityModel<TId>
 	: EntityModel<TId>, IEntityModel<TId>
 	where TId : struct
@@ -34,9 +37,6 @@ public abstract class MySqlEntityModel<TId>
 	public string IdText
 	{
 		get => Id.ToString();
-		/// <summary>
-		/// Sets the identifier from a string value with type conversion.
-		/// </summary>
 		protected set
 		{
 			try
@@ -51,6 +51,9 @@ public abstract class MySqlEntityModel<TId>
 		}
 	}
 
+	/// <summary>
+	/// Gets or sets the entity identifier.
+	/// </summary>
 	[Key]
 	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 	public new TId Id { get; set; }

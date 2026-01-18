@@ -13,14 +13,15 @@ public class IdUser : IdentityUser<Guid>
 	private Guid _id;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="IdUser"/> class.
+	/// Initializes a new instance of the <see cref="IdUser" /> class.
 	/// </summary>
 	public IdUser()
 	{
 	}
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="IdUser"/> class with the specified username.
+	/// Initializes a new instance of the <see cref="IdUser" /> class with the
+	/// specified username.
 	/// </summary>
 	/// <param name="userName">The username for the user.</param>
 	public IdUser(string userName) : base(userName)

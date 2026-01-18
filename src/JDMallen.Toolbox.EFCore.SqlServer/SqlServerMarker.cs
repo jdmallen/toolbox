@@ -11,5 +11,5 @@ public static class SqlServerMarker
 	/// Gets the assembly name.
 	/// </summary>
 	public static string AssemblyName =>
-		typeof(SqlServerMarker).Assembly.GetName().Name;
+		typeof(SqlServerMarker).Assembly.GetName().Name ?? string.Empty;
 }

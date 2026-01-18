@@ -22,7 +22,7 @@ public abstract partial class EFRepositoryBase<TContext, TEntityModel, TId>
 	}
 
 	/// <inheritdoc />
-	public ValueTask<TEntityModel> GetByIdAsync(TId id)
+	public ValueTask<TEntityModel?> GetByIdAsync(TId id)
 	{
 		return Context.FindAsync<TEntityModel>(id);
 	}
