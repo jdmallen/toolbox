@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <!-- Common package metadata -->
-        <Version>3.0.0</Version>
+        <Version>3.0.1</Version>
         <Authors>J.D. Mallen</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
@@ -15,8 +15,9 @@
 
         <!-- Package settings -->
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-        <!-- GitHub Packages has no symbol server and ignores .snupkg, so embed
-             the PDBs in the assemblies to keep stack traces debuggable. -->
+        <!-- Embed the PDBs in the assemblies (rather than shipping separate
+             .snupkg symbol packages) so stack traces stay debuggable without a
+             symbol-server round trip. -->
         <DebugType>embedded</DebugType>
         <!-- Source Link: let debuggers fetch the exact source from GitHub for
              the embedded symbols. The .NET SDK supplies the GitHub provider, so

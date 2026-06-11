@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Packs and publishes the JDMallen.Toolbox NuGet packages to the private
-# GitHub Packages feed. It only packs and pushes — it does not bump the
-# version, commit, or tag.
+# Packs and publishes the JDMallen.Toolbox NuGet packages to nuget.org. It only
+# packs and pushes — it does not bump the version, commit, or tag.
 #
 # Versioning/release flow: bump the single global <Version> in
 # Directory.Build.props in your PR. When the PR merges to main,
@@ -18,20 +17,22 @@
 #   ./scripts/publish-nuget.sh -v 3.1.0     # pack/push an explicit version
 #
 # Authentication:
-#   Pushing needs a GitHub PAT (classic) with the write:packages scope, or in
-#   CI the automatic GITHUB_TOKEN with `packages: write` permission. Provide it
-#   via --token, via $GITHUB_PACKAGES_TOKEN / $GITHUB_TOKEN, or by setting
-#   GITHUB_PACKAGES_TOKEN in a local .env file (auto-loaded; managed with
-#   direnv here). The feed inherits visibility from the repo named in
-#   <RepositoryUrl>, so packages published from this private repo are private.
+#   Pushing needs a nuget.org API key with push rights for the JDMallen.Toolbox
+#   package IDs, passed via $NUGET_ORG_API_KEY or --api-key.
+#   In CI, .github/workflows/release.yml uses nuget.org trusted publishing: it
+#   exchanges the job's OIDC token for a short-lived key (no stored secret) and
+#   hands it to this script as $NUGET_ORG_API_KEY.
+#   For a manual local push you can supply your own nuget.org API key via
+#   --api-key or NUGET_ORG_API_KEY (e.g. in a direnv-managed .env). Re-pushing an
+#   already-published version is skipped (--skip-duplicate), since nuget.org
+#   versions are immutable.
 
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-# Load local secrets (e.g. GITHUB_PACKAGES_TOKEN) if present, exporting them so
-# dotnet also sees them for nuget.config %GITHUB_PACKAGES_TOKEN% substitution.
+# Load local secrets (e.g. NUGET_ORG_API_KEY) if present.
 if [[ -f "$repo_root/.env" ]]; then
 	set -a
 	# shellcheck source=/dev/null
@@ -41,8 +42,8 @@ fi
 
 props="Directory.Build.props"
 output_dir="nupkgs"
-source_url="https://nuget.pkg.github.com/jdmallen/index.json"
-token="${GITHUB_PACKAGES_TOKEN:-${GITHUB_TOKEN:-}}"
+source_url="https://api.nuget.org/v3/index.json"
+api_key="${NUGET_ORG_API_KEY:-}"
 
 version=""     # explicit version from -v; otherwise read from $props
 do_push="yes"
@@ -58,7 +59,7 @@ while [[ $# -gt 0 ]]; do
 		-v|--version) version="${2:?--version requires a value}"; shift 2 ;;
 		--no-push)    do_push="no"; shift ;;
 		--source)     source_url="${2:?--source requires a value}"; shift 2 ;;
-		--token)      token="${2:?--token requires a value}"; shift 2 ;;
+		--api-key)    api_key="${2:?--api-key requires a value}"; shift 2 ;;
 		--output)     output_dir="${2:?--output requires a value}"; shift 2 ;;
 		*) echo "Error: unknown argument '$1'." >&2; exit 1 ;;
 	esac
@@ -73,9 +74,9 @@ if [[ -z "$version" ]]; then
 	exit 1
 fi
 
-if [[ "$do_push" == "yes" && -z "$token" ]]; then
-	echo "Error: no push token. Set \$GITHUB_PACKAGES_TOKEN / \$GITHUB_TOKEN or" >&2
-	echo "       pass --token, or rerun with --no-push to pack only." >&2
+if [[ "$do_push" == "yes" && -z "$api_key" ]]; then
+	echo "Error: no push API key. Set \$NUGET_ORG_API_KEY or pass --api-key," >&2
+	echo "       or rerun with --no-push to pack only." >&2
 	exit 1
 fi
 
@@ -110,7 +111,7 @@ if [[ "$do_push" == "yes" ]]; then
 	for package in "$output_dir"/*.nupkg; do
 		echo "    - $(basename "$package")"
 		dotnet nuget push "$package" \
-			--api-key "$token" \
+			--api-key "$api_key" \
 			--source "$source_url" \
 			--skip-duplicate
 	done

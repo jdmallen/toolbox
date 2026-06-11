@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1]
+
+Distribution-only change — no library code or public API changes. The packages
+now publish to the public **nuget.org** feed instead of a private **GitHub
+Packages** feed, and CI authenticates with nuget.org **trusted publishing**
+(OIDC) rather than a stored token.
+
+### Changed
+
+- **Publishing moved to nuget.org.** `scripts/publish-nuget.sh` and the release
+  workflow now pack and push to `https://api.nuget.org/v3/index.json` (public,
+  anonymous restore) instead of the private GitHub Packages feed. The script's
+  auth switched from a GitHub token (`--token` / `$GITHUB_PACKAGES_TOKEN`) to a
+  nuget.org API key (`--api-key` / `$NUGET_ORG_API_KEY`).
+- **CI uses trusted publishing (OIDC).** `.github/workflows/release.yml` mints a
+  short-lived nuget.org API key from the job's OIDC token via `NuGet/login`
+  (`id-token: write`), so no long-lived `GITHUB_TOKEN`, PAT, or stored secret is
+  needed; the `packages: write` permission is dropped.
+- **`nuget.config`** trimmed to the single nuget.org source; the GitHub Packages
+  source and its `%GITHUB_PACKAGES_TOKEN%` credentials are removed.
+
 ## [3.0.0]
 
 A major modernization of the toolbox. The libraries are retargeted to **.NET 10**
@@ -81,4 +102,5 @@ framework retarget.
 - **`JDMallen.Toolbox.EFCore.Services`** package — likewise removed during the
   EF Core refactor.
 
+[3.0.1]: https://github.com/jdmallen/toolbox/releases/tag/3.0.1
 [3.0.0]: https://github.com/jdmallen/toolbox/releases/tag/3.0.0

@@ -1,9 +1,9 @@
 # Publishes the NuGet packages whenever a commit lands on main (e.g. a merged
 # PR) with a <Version> in Directory.Build.props that hasn't been tagged yet:
-#   1. packs + pushes every package to GitHub Packages via scripts/publish-nuget.sh,
+#   1. packs + pushes every package to nuget.org via scripts/publish-nuget.sh,
 #   2. tags the pushed commit with the raw semver (no 'v' prefix), and
-#   3. creates a GitHub release with auto-generated notes and the .nupkg files
-#      attached.
+#   3. creates a GitHub release with the CHANGELOG section as notes and the
+#      .nupkg files attached.
 # (Tagging and release creation are one atomic gh call, ordered after the
 # publish so a failed push never leaves a dangling tag.)
 # If the version's tag already exists, the run is a no-op, so routine merges
@@ -17,7 +17,7 @@ on:
 
 permissions:
   contents: write   # create the tag + release
-  packages: write   # push to GitHub Packages
+  id-token: write   # OIDC token for nuget.org trusted publishing
 
 jobs:
   release:
@@ -55,13 +55,23 @@ jobs:
         with:
           global-json-file: global.json
 
-      # The automatic GITHUB_TOKEN (packages: write) authenticates to the
-      # same-owner feed; publish-nuget.sh reads it as GITHUB_PACKAGES_TOKEN and
-      # nuget.config also expands it into its %GITHUB_PACKAGES_TOKEN% placeholder.
+      # Trusted publishing: exchange the job's OIDC token for a short-lived
+      # nuget.org API key (valid ~1h). No long-lived secret is stored; the
+      # nuget.org trusted-publishing policy must name this repo + release.yml.
+      # `user` is the nuget.org profile name (not an email).
+      - name: Get short-lived nuget.org API key (OIDC)
+        id: nuget_login
+        if: steps.tag_check.outputs.exists == 'false'
+        uses: NuGet/login@v1
+        with:
+          user: jdmallen
+
+      # publish-nuget.sh reads the API key from $NUGET_ORG_API_KEY; here it's the
+      # temporary key minted by the trusted-publishing exchange above.
       - name: Pack and publish NuGet packages
         if: steps.tag_check.outputs.exists == 'false'
         env:
-          GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_ORG_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
         run: scripts/publish-nuget.sh
 
       - name: Extract changelog section for this version
