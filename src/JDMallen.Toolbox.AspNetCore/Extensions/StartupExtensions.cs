@@ -1,20 +1,13 @@
 ﻿using System.Diagnostics;
-using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using JDMallen.Toolbox.AspNetCore.Constants;
 using JDMallen.Toolbox.AspNetCore.Options;
-using JDMallen.Toolbox.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace JDMallen.Toolbox.AspNetCore.Extensions;
 
@@ -23,129 +16,6 @@ namespace JDMallen.Toolbox.AspNetCore.Extensions;
 /// </summary>
 public static class StartupExtensions
 {
-	/// <summary>
-	/// Configures Kestrel server endpoints based on configuration settings.
-	/// Supports HTTPS endpoint configuration with certificate loading from store or file.
-	/// See https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
-	/// </summary>
-	/// <param name="options">The Kestrel server options to configure.</param>
-	public static void ConfigureEndpoints(this KestrelServerOptions options)
-	{
-		var configuration =
-			options.ApplicationServices.GetRequiredService<IConfiguration>();
-		var environment =
-			options.ApplicationServices.GetRequiredService<IHostEnvironment>();
-		var endpoints = configuration.GetSection("Endpoints")
-			.GetChildren()
-			.ToDictionary(
-				section => section.Key,
-				section =>
-				{
-					var endpoint = new EndpointConfiguration();
-					section.Bind(endpoint);
-					return endpoint;
-				});
-		foreach (var endpoint in endpoints)
-		{
-			var config = endpoint.Value;
-			bool.TryParse(
-				configuration["Settings:ReverseProxy"],
-				out var reverseProxy);
-			if (config.Scheme == "https" && reverseProxy)
-			{
-				continue;
-			}
-
-			var port = config.Port ?? (config.Scheme == "https" ? 443 : 80);
-			var ipAddresses = new List<IPAddress>();
-			if (config.Host == "localhost")
-			{
-				ipAddresses.Add(IPAddress.IPv6Loopback);
-				ipAddresses.Add(IPAddress.Loopback);
-			}
-			else if (IPAddress.TryParse(config.Host, out var address))
-			{
-				ipAddresses.Add(address);
-			}
-			else
-			{
-				ipAddresses.Add(IPAddress.IPv6Any);
-			}
-
-			foreach (var address in ipAddresses)
-			{
-				Debug.WriteLine(
-					$"Adding option:{Environment.NewLine}"
-					+ $"  Address: {address}{Environment.NewLine}"
-					+ $"  Port: {port}{Environment.NewLine}"
-					+ $"  Scheme: {config.Scheme}");
-				options.Listen(
-					address,
-					port,
-					listenOptions =>
-					{
-						if (config.Scheme != "https" || reverseProxy)
-						{
-							return;
-						}
-
-						var certificate = LoadCertificate(config, environment);
-						Debug.WriteLine($"  Certificate: {certificate.FriendlyName}");
-						listenOptions.UseHttps(certificate);
-					});
-			}
-		}
-	}
-
-	/// <summary>
-	/// Loads an X.509 certificate based on the provided endpoint configuration.
-	/// Attempts to load from certificate store (if store and location are specified) or from file path.
-	/// See https://blogs.msdn.microsoft.com/webdev/2017/11/29/configuring-https-in-asp-net-core-across-different-platforms/
-	/// </summary>
-	/// <param name="config">The endpoint configuration containing certificate details.</param>
-	/// <param name="environment">The hosting environment.</param>
-	/// <returns>The loaded X.509 certificate.</returns>
-	/// <exception cref="InvalidOperationException">Thrown if the certificate cannot be found or no valid configuration is provided.</exception>
-	private static X509Certificate2 LoadCertificate(
-		EndpointConfiguration config,
-		IHostEnvironment environment)
-	{
-		switch (config)
-		{
-			case { StoreName: not null, StoreLocation: not null, Thumbprint: not null }:
-			{
-				var parseSuccess = Enum.TryParse<StoreLocation>(
-					config.StoreLocation,
-					out var storeLocation);
-				var store = parseSuccess
-					? new X509Store(config.StoreName, storeLocation)
-					: new X509Store(config.StoreName);
-				using (store)
-				{
-					store.Open(OpenFlags.ReadOnly);
-					var certificate = store.Certificates.Find(
-						X509FindType.FindByThumbprint,
-						config.Thumbprint,
-						!environment.IsDevelopment());
-					if (certificate.Count == 0)
-					{
-						throw new InvalidOperationException(
-							$"Certificate not found for {config.Host}.");
-					}
-
-					return certificate[0];
-				}
-			}
-			case { FilePath: not null, CertificatePassword: not null }:
-				return X509CertificateLoader.LoadPkcs12FromFile(
-					config.FilePath,
-					config.CertificatePassword);
-			default:
-				throw new InvalidOperationException(
-					"No valid certificate configuration found for the current endpoint.");
-		}
-	}
-
 	/// <summary>
 	/// Adds GitHub OAuth authentication to the application.
 	/// </summary>
