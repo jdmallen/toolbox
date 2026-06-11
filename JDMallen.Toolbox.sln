@@ -24,6 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		uploadToNexus.ps1 = uploadToNexus.ps1
 		JDMallen.Toolbox.sln.DotSettings = JDMallen.Toolbox.sln.DotSettings
+		nuget.config = nuget.config
+		scripts\publish-nuget.sh = scripts\publish-nuget.sh
+		scripts\publish-dotnet.sh = scripts\publish-dotnet.sh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JDMallen.Toolbox", "src\JDMallen.Toolbox\JDMallen.Toolbox.csproj", "{ECEAB1CA-34E7-4B8F-8302-526B1057F2E3}"
