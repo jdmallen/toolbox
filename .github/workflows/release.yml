@@ -1,0 +1,97 @@
+# Publishes the NuGet packages whenever a commit lands on main (e.g. a merged
+# PR) with a <Version> in Directory.Build.props that hasn't been tagged yet:
+#   1. packs + pushes every package to GitHub Packages via scripts/publish-nuget.sh,
+#   2. tags the pushed commit with the raw semver (no 'v' prefix), and
+#   3. creates a GitHub release with auto-generated notes and the .nupkg files
+#      attached.
+# (Tagging and release creation are one atomic gh call, ordered after the
+# publish so a failed push never leaves a dangling tag.)
+# If the version's tag already exists, the run is a no-op, so routine merges
+# that don't bump <Version> never re-release.
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write   # create the tag + release
+  packages: write   # push to GitHub Packages
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Read version from Directory.Build.props
+        id: version
+        run: |
+          version="$(grep -oP '(?<=<Version>)[^<]+' Directory.Build.props | head -n1)"
+          if [[ -z "$version" ]]; then
+            echo "::error::No <Version> found in Directory.Build.props." >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Version: $version"
+
+      - name: Skip if tag already exists
+        id: tag_check
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" > /dev/null; then
+            echo "Tag $VERSION already exists; skipping release."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up .NET SDK
+        if: steps.tag_check.outputs.exists == 'false'
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      # The automatic GITHUB_TOKEN (packages: write) authenticates to the
+      # same-owner feed; publish-nuget.sh reads it as GITHUB_PACKAGES_TOKEN and
+      # nuget.config also expands it into its %GITHUB_PACKAGES_TOKEN% placeholder.
+      - name: Pack and publish NuGet packages
+        if: steps.tag_check.outputs.exists == 'false'
+        env:
+          GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: scripts/publish-nuget.sh
+
+      - name: Extract changelog section for this version
+        if: steps.tag_check.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { in_section = 1; next }
+            in_section && (/^## \[/ || /^\[/)  { in_section = 0 }
+            in_section { print }
+          ' CHANGELOG.md > release_notes.md
+          if [[ ! -s release_notes.md ]]; then
+            echo "::error::No section for version $VERSION found in CHANGELOG.md." >&2
+            exit 1
+          fi
+          echo "--- Release notes ---"
+          cat release_notes.md
+
+      # Creating the release also creates the tag (raw semver, no 'v' prefix)
+      # on the pushed commit. Tagging happens here, after a successful publish,
+      # so a failed push never leaves a tag without a release.
+      - name: Create GitHub release and tag
+        if: steps.tag_check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "$VERSION" \
+            --notes-file release_notes.md \
+            nupkgs/*.nupkg

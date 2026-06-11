@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <!-- Common package metadata -->
-        <Version>2.4.0</Version>
+        <Version>3.0.0</Version>
         <Authors>J.D. Mallen</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
@@ -15,7 +15,17 @@
 
         <!-- Package settings -->
         <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <!-- GitHub Packages has no symbol server and ignores .snupkg, so embed
+             the PDBs in the assemblies to keep stack traces debuggable. -->
+        <DebugType>embedded</DebugType>
+        <!-- Source Link: let debuggers fetch the exact source from GitHub for
+             the embedded symbols. The .NET SDK supplies the GitHub provider, so
+             no PackageReference is needed. Tracked sources are fetched on demand
+             (not embedded), so packages stay lean; EmbedUntrackedSources covers
+             generated files. CI builds get deterministic, repo-relative source
+             paths so the Source Link URLs resolve to the right commit. -->
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     </PropertyGroup>
 </Project>
