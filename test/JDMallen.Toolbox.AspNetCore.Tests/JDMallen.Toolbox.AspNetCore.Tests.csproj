@@ -17,6 +17,9 @@
 
         <!-- Exercising the FluentValidation path of RequestValidationFilter -->
         <PackageReference Include="FluentValidation" Version="12.1.1"/>
+
+        <!-- Async query provider for exercising ToPagedListAsync -->
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2"/>
     </ItemGroup>
 
     <!-- WebApplication / minimal API host for the sample endpoints under test -->
