@@ -31,13 +31,13 @@ public abstract class SqliteEntityModel<TId>
 	/// </remarks>
 	public string IdText
 	{
-		get => Id.ToString();
+		get => Id.ToString() ?? string.Empty;
 		set
 		{
 			try
 			{
 				var converter = TypeDescriptor.GetConverter(typeof(TId));
-				Id = (TId)converter.ConvertFromString(value);
+				Id = (TId)converter.ConvertFromString(value)!;
 			}
 			catch
 			{

@@ -28,8 +28,8 @@ public class ReplaceVisitor : ExpressionVisitor
 	/// </summary>
 	/// <param name="ex">The expression node to visit.</param>
 	/// <returns>The replacement expression if it matches, otherwise the result of visiting the expression normally.</returns>
-	public override Expression Visit(Expression ex)
+	public override Expression? Visit(Expression? ex)
 	{
-		return ex == _from ? _to : base.Visit(ex)!;
+		return ex == _from ? _to : base.Visit(ex);
 	}
 }

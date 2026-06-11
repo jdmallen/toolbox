@@ -36,13 +36,13 @@ public abstract class MySqlEntityModel<TId>
 	[JsonIgnore]
 	public string IdText
 	{
-		get => Id.ToString();
+		get => Id.ToString() ?? string.Empty;
 		protected set
 		{
 			try
 			{
 				var converter = TypeDescriptor.GetConverter(typeof(TId));
-				Id = (TId)converter.ConvertFromString(value);
+				Id = (TId)converter.ConvertFromString(value)!;
 			}
 			catch
 			{

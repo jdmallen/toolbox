@@ -176,7 +176,7 @@ public struct MiniGuid
 	/// <param name="obj">The object to compare to.</param>
 	/// <returns>A signed integer indicating the relative values of this instance and obj.</returns>
 	/// <exception cref="ArgumentException">Thrown if obj is not a MiniGuid, Guid, or string.</exception>
-	public int CompareTo(object obj)
+	public int CompareTo(object? obj)
 	{
 		switch (obj)
 		{
