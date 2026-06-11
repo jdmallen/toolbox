@@ -18,15 +18,44 @@ namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions;
 public static class JwtAuthenticationExtensions
 {
 	/// <summary>
-	/// Configures JWT Bearer authentication for Minimal APIs and MVC.
+	/// Configures JWT Bearer authentication for Minimal APIs and MVC. The issuer,
+	/// audience, and other string claims are bound from the named configuration
+	/// section, while the signing credentials must be supplied via
+	/// <paramref name="signingCredentials"/> because a <see cref="SecurityKey"/>
+	/// cannot be bound from configuration.
 	/// </summary>
+	/// <exception cref="InvalidOperationException">
+	/// Thrown when the configuration section is missing, or when no signing
+	/// credentials are available from either the argument or the bound options.
+	/// </exception>
 	public static AuthenticationBuilder AddJwtAuthentication(
 		this IServiceCollection services,
 		IConfiguration configuration,
-		string jwtSectionName = "Jwt")
+		string jwtSectionName = "Jwt",
+		SigningCredentials? signingCredentials = null)
 	{
-		var jwtOptions = configuration.GetSection(jwtSectionName).Get<JwtOptions>();
-		services.Configure<JwtOptions>(configuration.GetSection(jwtSectionName));
+		var jwtSection = configuration.GetSection(jwtSectionName);
+		var jwtOptions = jwtSection.Get<JwtOptions>()
+			?? throw new InvalidOperationException(
+				$"JWT configuration section '{jwtSectionName}' is missing or empty.");
+
+		services.Configure<JwtOptions>(jwtSection);
+
+		// SigningCredentials cannot be bound from configuration (its SecurityKey
+		// is abstract), so prefer the explicitly supplied value and fall back to
+		// anything assembled on the bound options. The property is non-nullable,
+		// but reflection-based binding can still leave it null at runtime, hence
+		// the nullable local and the explicit guard below.
+		SigningCredentials? resolvedSigningCredentials =
+			signingCredentials ?? jwtOptions.SigningCredentials;
+
+		if (resolvedSigningCredentials is null)
+		{
+			throw new InvalidOperationException(
+				"JWT signing credentials were not supplied. Pass them via the "
+				+ $"'{nameof(signingCredentials)}' parameter; they cannot be bound "
+				+ "from configuration.");
+		}
 
 		return services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			.AddJwtBearer(options =>
@@ -36,11 +65,11 @@ public static class JwtAuthenticationExtensions
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = jwtOptions?.SigningCredentials.Key,
+					IssuerSigningKey = resolvedSigningCredentials.Key,
 					ValidateIssuer = true,
-					ValidIssuer = jwtOptions?.Issuer,
+					ValidIssuer = jwtOptions.Issuer,
 					ValidateAudience = true,
-					ValidAudience = jwtOptions?.Audience,
+					ValidAudience = jwtOptions.Audience,
 					ValidateLifetime = true,
 					ClockSkew = TimeSpan.FromMinutes(5)
 				};
