@@ -1,8 +1,10 @@
+#if !NET8_0_OR_GREATER
 namespace JDMallen.Toolbox.Hosting;
 
 /// <summary>
 /// Default implementation of <see cref="ITimeProvider" /> that uses
-/// <see cref="DateTime.UtcNow" />.
+/// <see cref="DateTime.UtcNow" />. Compiled only for targets that lack the
+/// built-in <c>System.TimeProvider</c> (i.e., netstandard2.0).
 /// </summary>
 public sealed class SystemTimeProvider : ITimeProvider
 {
@@ -17,3 +19,4 @@ public sealed class SystemTimeProvider : ITimeProvider
 		return DateTime.UtcNow;
 	}
 }
+#endif

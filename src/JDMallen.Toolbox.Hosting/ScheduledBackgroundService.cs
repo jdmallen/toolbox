@@ -102,8 +102,8 @@ public abstract class
 	/// If false, uses standard 5-field cron format. Default is false.
 	/// </param>
 	/// <param name="timeProvider">
-	/// Optional time provider for testability. If null, uses
-	/// <see cref="SystemTimeProvider.Instance" />.
+	/// Optional time provider for testability. If null, defaults to the system
+	/// clock.
 	/// </param>
 	/// <remarks>
 	///   <para>
@@ -142,7 +142,11 @@ public abstract class
 		IServiceScopeFactory scopeFactory,
 		string cronSchedule,
 		bool includeSeconds = false,
+#if NET8_0_OR_GREATER
+		TimeProvider? timeProvider = null)
+#else
 		ITimeProvider? timeProvider = null)
+#endif
 		: base(logger, scopeFactory, timeProvider)
 	{
 		if (string.IsNullOrWhiteSpace(cronSchedule))
@@ -173,7 +177,7 @@ public abstract class
 				return _schedule = CrontabSchedule.Parse(DefaultCronSchedule);
 			});
 
-		NextRunTime = _schedule!.GetNextOccurrence(TimeProvider.GetUtcNow());
+		NextRunTime = _schedule!.GetNextOccurrence(GetCurrentUtc());
 	}
 
 	/// <summary>
@@ -203,12 +207,25 @@ public abstract class
 	protected override async Task ExecuteInScopeAsync(
 		CancellationToken stoppingToken)
 	{
-		var currentTime = TimeProvider.GetUtcNow();
+		var currentTime = GetCurrentUtc();
 
 		if (currentTime >= NextRunTime)
 		{
 			await base.ExecuteInScopeAsync(stoppingToken).ConfigureAwait(false);
-			NextRunTime = _schedule.GetNextOccurrence(TimeProvider.GetUtcNow());
+			NextRunTime = _schedule.GetNextOccurrence(GetCurrentUtc());
 		}
 	}
+
+	/// <summary>
+	/// Gets the current UTC time as a <see cref="DateTime" /> from the configured
+	/// time provider, bridging the built-in <c>TimeProvider</c> on .NET 8+ (whose
+	/// <see cref="DateTimeOffset" />-returning clock is converted to UTC) and the
+	/// netstandard2.0 <c>ITimeProvider</c>.
+	/// </summary>
+	private DateTime GetCurrentUtc() =>
+#if NET8_0_OR_GREATER
+		TimeProvider.GetUtcNow().UtcDateTime;
+#else
+		TimeProvider.GetUtcNow();
+#endif
 }

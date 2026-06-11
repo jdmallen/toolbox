@@ -42,6 +42,7 @@ public static class ExpressionExtensions
 		Expression from,
 		Expression to)
 	{
-		return new ReplaceVisitor(from, to).Visit(ex);
+		// Visit only returns null for null input; ex is non-null here.
+		return new ReplaceVisitor(from, to).Visit(ex)!;
 	}
 }

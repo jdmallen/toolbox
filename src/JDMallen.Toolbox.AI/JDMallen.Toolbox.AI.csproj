@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>JDMallen.Toolbox.AI</AssemblyName>
+        <RootNamespace>JDMallen.Toolbox.AI</RootNamespace>
+        <TargetFramework>net10.0</TargetFramework>
+        <PackageId>JDMallen.Toolbox.AI</PackageId>
+        <Description>Minimal, trim-safe chat completion clients for Anthropic and Azure OpenAI over raw HTTP with source-generated JSON.</Description>
+        <IsTrimmable>true</IsTrimmable>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+</Project>
