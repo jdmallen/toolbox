@@ -3,15 +3,15 @@
 /// <summary>
 /// Data transfer object for GitHub OAuth callback parameters.
 /// </summary>
-public class GitHubCallbackDto
+public record GitHubCallbackDto
 {
 	/// <summary>
-	/// Gets or sets the authorization code returned by GitHub.
+	/// Gets the authorization code returned by GitHub.
 	/// </summary>
-	public required string Code { get; set; }
+	public required string Code { get; init; }
 
 	/// <summary>
-	/// Gets or sets the state parameter to prevent CSRF attacks.
+	/// Gets the state parameter to prevent CSRF attacks.
 	/// </summary>
-	public required string State { get; set; }
+	public required string State { get; init; }
 }

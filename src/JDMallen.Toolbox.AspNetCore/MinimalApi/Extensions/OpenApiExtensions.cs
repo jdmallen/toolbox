@@ -30,7 +30,13 @@ public static class OpenApiExtensions
 				};
 
 				document.Components ??= new OpenApiComponents();
-				document.Components.SecuritySchemes?["Bearer"] =
+
+				// SecuritySchemes is null until first assigned, so the dictionary
+				// must be created before indexing into it; a null-conditional
+				// indexer assignment would silently drop the scheme.
+				document.Components.SecuritySchemes ??=
+					new Dictionary<string, IOpenApiSecurityScheme>();
+				document.Components.SecuritySchemes["Bearer"] =
 					new OpenApiSecurityScheme
 					{
 						Type = SecuritySchemeType.Http,
