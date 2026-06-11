@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,19 +8,28 @@ namespace JDMallen.Toolbox.AspNetCore.Tests.Infrastructure;
 
 /// <summary>
 /// Spins up an in-process minimal API "sample project" backed by
-/// <see cref="TestServer"/>. This is the sample Minimal API project the
+/// <see cref="TestServer" />. This is the sample Minimal API project the
 /// modernization plan calls for in its Phase 1 testing step: each test maps the
 /// endpoint helpers under test and drives them with a real
-/// <see cref="HttpClient"/>.
+/// <see cref="HttpClient" />.
 /// </summary>
 internal sealed class MinimalApiTestHost : IAsyncDisposable
 {
 	private readonly WebApplication _app;
 
-	private MinimalApiTestHost(WebApplication app) => _app = app;
+	private MinimalApiTestHost(WebApplication app)
+	{
+		_app = app;
+	}
 
-	/// <summary>An <see cref="HttpClient"/> bound to the test server.</summary>
+	/// <summary>An <see cref="HttpClient" /> bound to the test server.</summary>
 	public HttpClient Client { get; private init; } = null!;
+
+	public async ValueTask DisposeAsync()
+	{
+		Client.Dispose();
+		await _app.DisposeAsync();
+	}
 
 	/// <summary>
 	/// Builds and starts a test host, registering the test authentication
@@ -37,7 +45,7 @@ internal sealed class MinimalApiTestHost : IAsyncDisposable
 		Action<IServiceCollection>? configureServices,
 		Action<IEndpointRouteBuilder> configureEndpoints)
 	{
-		var builder = WebApplication.CreateSlimBuilder();
+		WebApplicationBuilder builder = WebApplication.CreateSlimBuilder();
 		builder.WebHost.UseTestServer();
 
 		builder.Services
@@ -49,7 +57,7 @@ internal sealed class MinimalApiTestHost : IAsyncDisposable
 
 		configureServices?.Invoke(builder.Services);
 
-		var app = builder.Build();
+		WebApplication app = builder.Build();
 		app.UseAuthentication();
 		app.UseAuthorization();
 
@@ -61,11 +69,5 @@ internal sealed class MinimalApiTestHost : IAsyncDisposable
 		{
 			Client = app.GetTestClient(),
 		};
-	}
-
-	public async ValueTask DisposeAsync()
-	{
-		Client.Dispose();
-		await _app.DisposeAsync();
 	}
 }

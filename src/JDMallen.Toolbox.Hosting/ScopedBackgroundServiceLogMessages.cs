@@ -3,18 +3,12 @@ using Microsoft.Extensions.Logging;
 namespace JDMallen.Toolbox.Hosting;
 
 /// <summary>
-///     High-performance logging messages for
-///     <see cref="ScopedBackgroundService{TService}" /> using LoggerMessage source
-///     generators.
+/// High-performance logging messages for
+/// <see cref="ScopedBackgroundService{TService}" /> using LoggerMessage source
+/// generators.
 /// </summary>
 internal static partial class ScopedBackgroundServiceLogMessages
 {
-	[LoggerMessage(
-		EventId = 400,
-		Level = LogLevel.Debug,
-		Message = "Skipping execution iteration because previous iteration is still running")]
-	public static partial void LogSkippingBusyIteration(this ILogger logger);
-
 	[LoggerMessage(
 		EventId = 401,
 		Level = LogLevel.Trace,
@@ -26,6 +20,12 @@ internal static partial class ScopedBackgroundServiceLogMessages
 		Level = LogLevel.Trace,
 		Message = "End service execution iteration")]
 	public static partial void LogEndIteration(this ILogger logger);
+
+	[LoggerMessage(
+		EventId = 400,
+		Level = LogLevel.Debug,
+		Message = "Skipping execution iteration because previous iteration is still running")]
+	public static partial void LogSkippingBusyIteration(this ILogger logger);
 
 	[LoggerMessage(
 		EventId = 403,

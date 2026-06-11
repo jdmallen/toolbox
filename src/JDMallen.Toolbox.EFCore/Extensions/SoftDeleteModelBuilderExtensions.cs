@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace JDMallen.Toolbox.EFCore.Extensions;
 
@@ -14,7 +15,8 @@ public static class SoftDeleteModelBuilderExtensions
 	/// Adds a global query filter of <c>e =&gt; !e.IsDeleted</c> to every mapped
 	/// entity type implementing <see cref="IEntityModel" />, so soft-deleted rows
 	/// are excluded from queries by default. Use
-	/// <see cref="EntityFrameworkQueryableExtensions.IgnoreQueryFilters{TEntity}(System.Linq.IQueryable{TEntity})" />
+	/// <see
+	///   cref="EntityFrameworkQueryableExtensions.IgnoreQueryFilters{TEntity}(System.Linq.IQueryable{TEntity})" />
 	/// to opt back into seeing them.
 	/// </summary>
 	/// <param name="modelBuilder">The model builder to configure.</param>
@@ -23,7 +25,7 @@ public static class SoftDeleteModelBuilderExtensions
 	/// </returns>
 	public static ModelBuilder AddSoftDeleteQueryFilter(this ModelBuilder modelBuilder)
 	{
-		foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+		foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
 		{
 			// A query filter may only be defined on the root of an inheritance
 			// hierarchy, so derived types are skipped to avoid EF throwing.
@@ -34,11 +36,11 @@ public static class SoftDeleteModelBuilderExtensions
 			}
 
 			// Build "e => !e.IsDeleted" for this specific entity CLR type.
-			var parameter = Expression.Parameter(entityType.ClrType, "e");
-			var isDeletedProperty = Expression.Property(
+			ParameterExpression parameter = Expression.Parameter(entityType.ClrType, "e");
+			MemberExpression isDeletedProperty = Expression.Property(
 				parameter,
 				nameof(IEntityModel.IsDeleted));
-			var notDeleted = Expression.Lambda(
+			LambdaExpression notDeleted = Expression.Lambda(
 				Expression.Not(isDeletedProperty),
 				parameter);
 

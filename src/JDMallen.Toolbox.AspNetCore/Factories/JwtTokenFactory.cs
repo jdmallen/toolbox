@@ -14,11 +14,6 @@ namespace JDMallen.Toolbox.AspNetCore.Factories;
 public class JwtTokenFactory : IJwtTokenFactory
 {
 	/// <summary>
-	/// Gets the JWT options used for token generation and validation.
-	/// </summary>
-	protected readonly JwtOptions JwtOptions;
-
-	/// <summary>
 	/// Initializes a new instance of the <see cref="JwtTokenFactory" /> class.
 	/// </summary>
 	/// <param name="jwtOptions">The JWT configuration options.</param>
@@ -27,29 +22,28 @@ public class JwtTokenFactory : IJwtTokenFactory
 		JwtOptions = jwtOptions.Value;
 	}
 
+	/// <summary>
+	/// Gets the JWT options used for token generation and validation.
+	/// </summary>
+	protected JwtOptions JwtOptions { get; }
+
 	/// <inheritdoc />
-	public ClaimsIdentity GenerateClaimsIdentity(string email, string id)
-	{
-		return new ClaimsIdentity(
-			new GenericIdentity(email, "token"),
-			new[]
-			{
-				new Claim(JwtClaimTypes.UserId, id),
-				new Claim(ClaimTypes.Name, email),
-				new Claim(ClaimTypes.Email, email)
-			});
-	}
+	public ClaimsIdentity GenerateClaimsIdentity(string email, string id) => new(
+		new GenericIdentity(email, "token"),
+		[
+			new Claim(JwtClaimTypes.UserId, id),
+			new Claim(ClaimTypes.Name, email),
+			new Claim(ClaimTypes.Email, email),
+		]);
 
 	/// <inheritdoc />
 	public ClaimsIdentity GenerateClaimsIdentity(string email, Guid id)
-	{
-		return GenerateClaimsIdentity(email, id.ToString("D"));
-	}
+		=> GenerateClaimsIdentity(email, id.ToString("D"));
 
 	/// <inheritdoc />
 	public string GenerateToken(ClaimsIdentity identity)
 	{
-		var userName =
+		string? userName =
 			identity
 				.Claims
 				.SingleOrDefault(c => c.Type == ClaimTypes.Name)
@@ -61,7 +55,7 @@ public class JwtTokenFactory : IJwtTokenFactory
 			new(
 				JwtClaimTypes.IssuedAt,
 				"" + JwtOptions.IssuedAt.ToUnixTimestamp(),
-				ClaimValueTypes.Integer64)
+				ClaimValueTypes.Integer64),
 		};
 
 		if (!string.IsNullOrWhiteSpace(userName))
@@ -70,9 +64,9 @@ public class JwtTokenFactory : IJwtTokenFactory
 		}
 
 		//			if (!string.IsNullOrWhiteSpace(email))
-//			{
-//				claims.Add(new Claim(JwtClaimTypes.Subject, email));
-//			}
+		//			{
+		//				claims.Add(new Claim(JwtClaimTypes.Subject, email));
+		//			}
 
 		claims.Add(
 			identity.FindAll(ClaimTypes.PrimarySid)

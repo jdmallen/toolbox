@@ -4,13 +4,13 @@ using System.Text.Json.Serialization;
 namespace JDMallen.Toolbox.AI;
 
 /// <summary>
-///     Azure OpenAI implementation of <see cref="IChatCompletionClient" />. Owns only
-///     the Azure wire format: deployment-in-path URL, <c>api-key</c> header, request
-///     body, and the <c>choices[0].message.content</c> response shape.
+/// Azure OpenAI implementation of <see cref="IChatCompletionClient" />. Owns only
+/// the Azure wire format: deployment-in-path URL, <c>api-key</c> header, request
+/// body, and the <c>choices[0].message.content</c> response shape.
 /// </summary>
 /// <param name="httpClient">
-///     The HTTP client used for requests. The caller owns its lifetime; requests use
-///     absolute URIs, so no base address is required.
+/// The HTTP client used for requests. The caller owns its lifetime; requests use
+/// absolute URIs, so no base address is required.
 /// </param>
 /// <param name="options">The API key, endpoint, and deployment to use.</param>
 public sealed class AzureOpenAIChatClient(
@@ -38,7 +38,7 @@ public sealed class AzureOpenAIChatClient(
 		using var message = new HttpRequestMessage(HttpMethod.Post, url);
 		message.Content = JsonContent.Create(
 			body,
-			AiJsonContext.Default.AzureOpenAIRequest);
+			AIJsonContext.Default.AzureOpenAIRequest);
 		message.Headers.Add("api-key", options.ApiKey);
 
 		HttpResponseMessage response = await httpClient
@@ -55,10 +55,15 @@ public sealed class AzureOpenAIChatClient(
 		}
 
 		AzureOpenAIResponse? result = await response.Content
-			.ReadFromJsonAsync(AiJsonContext.Default.AzureOpenAIResponse, cancellationToken)
+			.ReadFromJsonAsync(AIJsonContext.Default.AzureOpenAIResponse, cancellationToken)
 			.ConfigureAwait(false);
 
-		return result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
+		if (result?.Choices is not { Count: > 0 } choices)
+		{
+			return string.Empty;
+		}
+
+		return choices[0].Message?.Content ?? string.Empty;
 	}
 }
 

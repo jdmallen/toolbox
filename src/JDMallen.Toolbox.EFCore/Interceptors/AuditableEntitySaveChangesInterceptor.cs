@@ -1,5 +1,6 @@
 using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace JDMallen.Toolbox.EFCore.Interceptors;
@@ -20,7 +21,7 @@ namespace JDMallen.Toolbox.EFCore.Interceptors;
 /// </remarks>
 public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
-	private readonly TimeProvider timeProvider;
+	private readonly TimeProvider _timeProvider;
 
 	/// <summary>
 	/// Initializes a new instance of the
@@ -33,7 +34,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 	/// </param>
 	public AuditableEntitySaveChangesInterceptor(TimeProvider? timeProvider = null)
 	{
-		this.timeProvider = timeProvider ?? TimeProvider.System;
+		_timeProvider = timeProvider ?? TimeProvider.System;
 	}
 
 	/// <inheritdoc />
@@ -42,6 +43,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 		InterceptionResult<int> result)
 	{
 		StampAuditTimestamps(eventData.Context);
+
 		return base.SavingChanges(eventData, result);
 	}
 
@@ -52,6 +54,7 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 		CancellationToken cancellationToken = default)
 	{
 		StampAuditTimestamps(eventData.Context);
+
 		return base.SavingChangesAsync(eventData, result, cancellationToken);
 	}
 
@@ -64,9 +67,9 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 
 		// UtcDateTime keeps the stored value clock-agnostic regardless of the
 		// supplied TimeProvider's local offset.
-		var nowUtc = timeProvider.GetUtcNow().UtcDateTime;
+		DateTime nowUtc = _timeProvider.GetUtcNow().UtcDateTime;
 
-		foreach (var entry in context.ChangeTracker.Entries<IEntityModel>())
+		foreach (EntityEntry<IEntityModel> entry in context.ChangeTracker.Entries<IEntityModel>())
 		{
 			// IEntityModel exposes the timestamps as read-only, so the change
 			// tracker's metadata is used to set them rather than the CLR setters.
@@ -77,11 +80,25 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 						nowUtc;
 					entry.Property(nameof(IEntityModel.DateModified)).CurrentValue =
 						nowUtc;
+
 					break;
 				case EntityState.Modified:
 					entry.Property(nameof(IEntityModel.DateModified)).CurrentValue =
 						nowUtc;
+
 					break;
+				case EntityState.Detached:
+				case EntityState.Unchanged:
+				case EntityState.Deleted:
+					// No-op.
+					break;
+				default:
+#pragma warning disable CA2208 // Roslyn's angry because it's not a method param
+					throw new ArgumentOutOfRangeException(
+#pragma warning restore CA2208
+						nameof(entry.State),
+						entry.State,
+						"Unexpected entity state encountered when stamping audit timestamps.");
 			}
 		}
 	}

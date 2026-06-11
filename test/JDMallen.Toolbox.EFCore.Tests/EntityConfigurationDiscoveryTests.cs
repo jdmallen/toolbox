@@ -1,4 +1,5 @@
 using JDMallen.Toolbox.EFCore.Tests.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Time.Testing;
 
 namespace JDMallen.Toolbox.EFCore.Tests;
@@ -14,10 +15,10 @@ public class EntityConfigurationDiscoveryTests
 	[Fact]
 	public void ApplyConfigurationsFromAssembly_AppliesEntityConfiguration()
 	{
-		using var context = GadgetContextFactory.Create(
+		using GadgetContext context = GadgetContextFactory.Create(
 			new FakeTimeProvider());
 
-		var nameProperty = context.Model
+		IProperty nameProperty = context.Model
 			.FindEntityType(typeof(Gadget))!
 			.FindProperty(nameof(Gadget.Name))!;
 

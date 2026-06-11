@@ -18,7 +18,8 @@ public sealed class Gadget : EntityModel<Guid>
 /// <summary>
 /// An <see cref="IEntityTypeConfiguration{TEntity}" /> for <see cref="Gadget" />,
 /// present purely so the tests can prove
-/// <see cref="ModelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly,System.Func{System.Type,bool})" />
+/// <see
+///   cref="ModelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly,System.Func{System.Type,bool})" />
 /// discovered and applied it.
 /// </summary>
 public sealed class GadgetConfiguration : IEntityTypeConfiguration<Gadget>
@@ -38,17 +39,10 @@ public sealed class GadgetConfiguration : IEntityTypeConfiguration<Gadget>
 /// <see cref="EFContextBase.TimeProvider" /> so the auto-registered audit
 /// interceptor stamps a controllable clock.
 /// </summary>
-public sealed class GadgetContext : EFContextBase
+public sealed class GadgetContext(DbContextOptions options, TimeProvider clock)
+	: EFContextBase(options)
 {
-	private readonly TimeProvider clock;
-
-	public GadgetContext(DbContextOptions options, TimeProvider clock)
-		: base(options)
-	{
-		this.clock = clock;
-	}
-
-	protected override TimeProvider TimeProvider => clock;
-
 	public DbSet<Gadget> Gadgets => Set<Gadget>();
+
+	protected override TimeProvider TimeProvider { get; } = clock;
 }

@@ -21,7 +21,7 @@ public static class JwtAuthenticationExtensions
 	/// Configures JWT Bearer authentication for Minimal APIs and MVC. The issuer,
 	/// audience, and other string claims are bound from the named configuration
 	/// section, while the signing credentials must be supplied via
-	/// <paramref name="signingCredentials"/> because a <see cref="SecurityKey"/>
+	/// <paramref name="signingCredentials" /> because a <see cref="SecurityKey" />
 	/// cannot be bound from configuration.
 	/// </summary>
 	/// <exception cref="InvalidOperationException">
@@ -34,8 +34,8 @@ public static class JwtAuthenticationExtensions
 		string jwtSectionName = "Jwt",
 		SigningCredentials? signingCredentials = null)
 	{
-		var jwtSection = configuration.GetSection(jwtSectionName);
-		var jwtOptions = jwtSection.Get<JwtOptions>()
+		IConfigurationSection jwtSection = configuration.GetSection(jwtSectionName);
+		JwtOptions jwtOptions = jwtSection.Get<JwtOptions>()
 			?? throw new InvalidOperationException(
 				$"JWT configuration section '{jwtSectionName}' is missing or empty.");
 
@@ -71,7 +71,7 @@ public static class JwtAuthenticationExtensions
 					ValidateAudience = true,
 					ValidAudience = jwtOptions.Audience,
 					ValidateLifetime = true,
-					ClockSkew = TimeSpan.FromMinutes(5)
+					ClockSkew = TimeSpan.FromMinutes(5),
 				};
 			});
 	}
@@ -83,8 +83,7 @@ public static class JwtAuthenticationExtensions
 	[Obsolete(
 		"This uses `WithOpenApi` which is deprecated. "
 		+ "Consider using Swashbuckle or another OpenAPI library for better support.")]
-	public static RouteHandlerBuilder RequireJwtAuth(
-		this RouteHandlerBuilder builder)
+	public static RouteHandlerBuilder RequireJwtAuth(this RouteHandlerBuilder builder)
 	{
 		return builder
 			.RequireAuthorization()
@@ -96,11 +95,12 @@ public static class JwtAuthenticationExtensions
 					JwtBearerDefaults.AuthenticationScheme);
 
 				var securityRequirement = new OpenApiSecurityRequirement
-					{ { securitySchemeReference, [] } };
+				{
+					{ securitySchemeReference, [] },
+				};
 
+				operation.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
 
-				operation.Security = new List<OpenApiSecurityRequirement>
-					{ securityRequirement };
 				return operation;
 			});
 	}

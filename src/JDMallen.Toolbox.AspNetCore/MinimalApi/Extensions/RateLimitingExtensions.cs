@@ -35,9 +35,6 @@ public static class RateLimitingExtensions
 	/// <summary>
 	/// Applies the authentication rate limiter to an endpoint.
 	/// </summary>
-	public static RouteHandlerBuilder WithAuthRateLimit(
-		this RouteHandlerBuilder builder)
-	{
-		return builder.RequireRateLimiting("auth");
-	}
+	public static RouteHandlerBuilder WithAuthRateLimit(this RouteHandlerBuilder builder)
+		=> builder.RequireRateLimiting("auth");
 }

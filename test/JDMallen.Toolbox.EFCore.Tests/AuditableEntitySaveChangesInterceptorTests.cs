@@ -13,13 +13,20 @@ namespace JDMallen.Toolbox.EFCore.Tests;
 public class AuditableEntitySaveChangesInterceptorTests
 {
 	private static readonly DateTimeOffset StartInstant =
-		new(2026, 1, 1, 12, 0, 0, TimeSpan.Zero);
+		new(
+			2026,
+			1,
+			1,
+			12,
+			0,
+			0,
+			TimeSpan.Zero);
 
 	[Fact]
 	public async Task AddedEntity_StampsCreatedAndModifiedFromTheClock()
 	{
 		var clock = new FakeTimeProvider(StartInstant);
-		await using var context = GadgetContextFactory.Create(clock);
+		await using GadgetContext context = GadgetContextFactory.Create(clock);
 
 		var gadget = new Gadget { Name = "Widget" };
 		context.Gadgets.Add(gadget);
@@ -33,7 +40,7 @@ public class AuditableEntitySaveChangesInterceptorTests
 	public async Task ModifiedEntity_AdvancesModifiedButPreservesCreated()
 	{
 		var clock = new FakeTimeProvider(StartInstant);
-		await using var context = GadgetContextFactory.Create(clock);
+		await using GadgetContext context = GadgetContextFactory.Create(clock);
 
 		var gadget = new Gadget { Name = "Widget" };
 		context.Gadgets.Add(gadget);
@@ -44,8 +51,9 @@ public class AuditableEntitySaveChangesInterceptorTests
 		gadget.Name = "Widget Mk II";
 		await context.SaveChangesAsync();
 
-		var expectedModified = StartInstant.UtcDateTime.AddHours(1);
+		DateTime expectedModified = StartInstant.UtcDateTime.AddHours(1);
 		Assert.Equal(expectedModified, gadget.DateModified);
+
 		// DateCreated must remain the original creation instant.
 		Assert.Equal(StartInstant.UtcDateTime, gadget.DateCreated);
 	}

@@ -5,8 +5,8 @@ namespace JDMallen.Toolbox.AspNetCore.Tests;
 
 /// <summary>
 /// Verifies the pagination helpers: the computed navigation properties on
-/// <see cref="PagedList{T}"/> and the EF Core-backed
-/// <see cref="PaginationExtensions.ToPagedListAsync{T}"/> projection.
+/// <see cref="PagedList{T}" /> and the EF Core-backed
+/// <see cref="PaginationExtensions.ToPagedListAsync{T}" /> projection.
 /// </summary>
 public class PaginationTests
 {
@@ -24,7 +24,7 @@ public class PaginationTests
 	// A fresh in-memory store seeded with the requested number of gadgets.
 	private static GadgetContext SeededContext(int gadgetCount)
 	{
-		var options = new DbContextOptionsBuilder<GadgetContext>()
+		DbContextOptions<GadgetContext> options = new DbContextOptionsBuilder<GadgetContext>()
 			.UseInMemoryDatabase(Guid.NewGuid().ToString())
 			.Options;
 
@@ -37,39 +37,66 @@ public class PaginationTests
 	}
 
 	[Fact]
-	public void HasNextPage_TrueWhenMoreItemsRemain()
-	{
-		var page = new PagedList<int>([1, 2], Page: 1, PageSize: 2, TotalItems: 5);
-
-		Assert.True(page.HasNextPage);
-		Assert.False(page.HasPreviousPage);
-	}
-
-	[Fact]
 	public void HasNextPage_FalseOnLastPage()
 	{
-		var page = new PagedList<int>([5], Page: 3, PageSize: 2, TotalItems: 5);
+		var page = new PagedList<int>(
+			[5],
+			3,
+			2,
+			5);
 
 		Assert.False(page.HasNextPage);
 		Assert.True(page.HasPreviousPage);
 	}
 
 	[Fact]
-	public void TotalPages_RoundsUpForPartialFinalPage()
+	public void HasNextPage_TrueWhenMoreItemsRemain()
 	{
-		var page = new PagedList<int>([], Page: 1, PageSize: 2, TotalItems: 5);
+		var page = new PagedList<int>(
+			[1, 2],
+			1,
+			2,
+			5);
 
-		Assert.Equal(3, page.TotalPages);
+		Assert.True(page.HasNextPage);
+		Assert.False(page.HasPreviousPage);
+	}
+
+	[Fact]
+	public async Task ToPagedListAsync_ClampsPageSizeToMaximum()
+	{
+		await using GadgetContext context = SeededContext(150);
+
+		PagedList<Gadget> page = await context.Gadgets
+			.OrderBy(gadget => gadget.Id)
+			.ToPagedListAsync(new PagedRequest(1, 500));
+
+		Assert.Equal(IPagedRequest.MaxPageSize, page.PageSize);
+		Assert.Equal(IPagedRequest.MaxPageSize, page.Items.Count);
+	}
+
+	[Fact]
+	public async Task ToPagedListAsync_DefaultsToFirstPageOfTen()
+	{
+		await using GadgetContext context = SeededContext(25);
+
+		PagedList<Gadget> page = await context.Gadgets
+			.OrderBy(gadget => gadget.Id)
+			.ToPagedListAsync(new PagedRequest(null, null));
+
+		Assert.Equal(1, page.Page);
+		Assert.Equal(10, page.PageSize);
+		Assert.Equal(10, page.Items.Count);
 	}
 
 	[Fact]
 	public async Task ToPagedListAsync_ReturnsRequestedPageSlice()
 	{
-		await using var context = SeededContext(gadgetCount: 25);
+		await using GadgetContext context = SeededContext(25);
 
-		var page = await context.Gadgets
+		PagedList<Gadget> page = await context.Gadgets
 			.OrderBy(gadget => gadget.Id)
-			.ToPagedListAsync(new PagedRequest(Page: 2, PageSize: 10));
+			.ToPagedListAsync(new PagedRequest(2, 10));
 
 		Assert.Equal(2, page.Page);
 		Assert.Equal(10, page.PageSize);
@@ -78,29 +105,14 @@ public class PaginationTests
 	}
 
 	[Fact]
-	public async Task ToPagedListAsync_DefaultsToFirstPageOfTen()
+	public void TotalPages_RoundsUpForPartialFinalPage()
 	{
-		await using var context = SeededContext(gadgetCount: 25);
+		var page = new PagedList<int>(
+			[],
+			1,
+			2,
+			5);
 
-		var page = await context.Gadgets
-			.OrderBy(gadget => gadget.Id)
-			.ToPagedListAsync(new PagedRequest(Page: null, PageSize: null));
-
-		Assert.Equal(1, page.Page);
-		Assert.Equal(10, page.PageSize);
-		Assert.Equal(10, page.Items.Count);
-	}
-
-	[Fact]
-	public async Task ToPagedListAsync_ClampsPageSizeToMaximum()
-	{
-		await using var context = SeededContext(gadgetCount: 150);
-
-		var page = await context.Gadgets
-			.OrderBy(gadget => gadget.Id)
-			.ToPagedListAsync(new PagedRequest(Page: 1, PageSize: 500));
-
-		Assert.Equal(IPagedRequest.MaxPageSize, page.PageSize);
-		Assert.Equal(IPagedRequest.MaxPageSize, page.Items.Count);
+		Assert.Equal(3, page.TotalPages);
 	}
 }

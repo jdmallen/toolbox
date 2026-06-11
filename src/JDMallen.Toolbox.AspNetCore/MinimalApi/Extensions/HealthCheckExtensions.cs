@@ -21,14 +21,14 @@ public static class HealthCheckExtensions
 			livenessPath,
 			new HealthCheckOptions
 			{
-				Predicate = check => check.Tags.Contains("liveness")
+				Predicate = check => check.Tags.Contains("liveness"),
 			});
 
 		app.MapHealthChecks(
 			readinessPath,
 			new HealthCheckOptions
 			{
-				Predicate = check => check.Tags.Contains("readiness")
+				Predicate = check => check.Tags.Contains("readiness"),
 			});
 
 		return app;

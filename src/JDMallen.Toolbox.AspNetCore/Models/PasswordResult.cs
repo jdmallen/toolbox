@@ -16,15 +16,10 @@ public class PasswordResult
 	public float BitsOfEntropy { get; set; }
 
 	/// <summary>
-	/// Gets or sets the length of the password.
+	/// Gets or sets any validation errors associated with the password.
 	/// </summary>
-	// ReSharper disable once UnusedAutoPropertyAccessor.Global
-	public int Length { get; set; }
-
-	/// <summary>
-	/// Gets or sets the overall strength rating of the password.
-	/// </summary>
-	public PasswordStrength Strength { get; set; }
+	[JsonConverter(typeof(StringEnumConverter))]
+	public PasswordError Error { get; set; } = PasswordError.None;
 
 	/// <summary>
 	/// Gets a value indicating whether the password validation resulted in an error.
@@ -32,8 +27,12 @@ public class PasswordResult
 	public bool IsError => Error != PasswordError.None;
 
 	/// <summary>
-	/// Gets or sets any validation errors associated with the password.
+	/// Gets or sets the length of the password.
 	/// </summary>
-	[JsonConverter(typeof(StringEnumConverter))]
-	public PasswordError Error { get; set; } = PasswordError.None;
+	public int Length { get; set; }
+
+	/// <summary>
+	/// Gets or sets the overall strength rating of the password.
+	/// </summary>
+	public PasswordStrength Strength { get; set; }
 }

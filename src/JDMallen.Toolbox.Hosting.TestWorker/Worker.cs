@@ -33,13 +33,15 @@ public class Worker : ScheduledBackgroundService<Worker>
 	/// Executes the worker logic, logging the current time.
 	/// </summary>
 	/// <param name="scope">The dependency injection scope for this execution.</param>
-	/// <param name="stoppingToken">The cancellation token.</param>
+	/// <param name="cancellationToken">The cancellation token.</param>
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+
+	// ReSharper disable once AsyncMethodWithoutAwait
 	protected override async Task ExecuteInScopeAsync(
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 		IServiceScope scope,
-		CancellationToken stoppingToken)
+		CancellationToken cancellationToken)
 	{
-		_logger.LogInformation("Worker running at: {time}", DateTime.Now);
+		_logger.LogWorkerRunning(DateTime.Now);
 	}
 }

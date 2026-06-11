@@ -12,94 +12,6 @@ namespace JDMallen.Toolbox.EFCore.Filters;
 public static class Filters
 {
 	/// <summary>
-	/// Filters entities created before a specified date and time.
-	/// </summary>
-	/// <typeparam name="TEntityModel">The entity type.</typeparam>
-	/// <param name="query">The query to filter.</param>
-	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">
-	/// If true, includes entities created exactly at the
-	/// specified time.
-	/// </param>
-	/// <returns>A filtered queryable of entities.</returns>
-	public static IQueryable<TEntityModel> CreatedBefore<TEntityModel>(
-		this IQueryable<TEntityModel> query,
-		DateTime dateTime,
-		bool inclusive = false)
-		where TEntityModel : IEntityModel
-	{
-		return query.Where(e => inclusive
-			? e.DateCreated <= dateTime
-			: e.DateCreated < dateTime);
-	}
-
-	/// <summary>
-	/// Filters entities created after a specified date and time.
-	/// </summary>
-	/// <typeparam name="TEntityModel">The entity type.</typeparam>
-	/// <param name="query">The query to filter.</param>
-	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">
-	/// If true, includes entities created exactly at the
-	/// specified time.
-	/// </param>
-	/// <returns>A filtered queryable of entities.</returns>
-	public static IQueryable<TEntityModel> CreatedAfter<TEntityModel>(
-		this IQueryable<TEntityModel> query,
-		DateTime dateTime,
-		bool inclusive = false)
-		where TEntityModel : IEntityModel
-	{
-		return query.Where(e => inclusive
-			? e.DateCreated >= dateTime
-			: e.DateCreated > dateTime);
-	}
-
-	/// <summary>
-	/// Filters entities modified before a specified date and time.
-	/// </summary>
-	/// <typeparam name="TEntityModel">The entity type.</typeparam>
-	/// <param name="query">The query to filter.</param>
-	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">
-	/// If true, includes entities modified exactly at the
-	/// specified time.
-	/// </param>
-	/// <returns>A filtered queryable of entities.</returns>
-	public static IQueryable<TEntityModel> ModifiedBefore<TEntityModel>(
-		this IQueryable<TEntityModel> query,
-		DateTime dateTime,
-		bool inclusive = false)
-		where TEntityModel : IEntityModel
-	{
-		return query.Where(e => inclusive
-			? e.DateModified <= dateTime
-			: e.DateModified < dateTime);
-	}
-
-	/// <summary>
-	/// Filters entities modified after a specified date and time.
-	/// </summary>
-	/// <typeparam name="TEntityModel">The entity type.</typeparam>
-	/// <param name="query">The query to filter.</param>
-	/// <param name="dateTime">The date and time to compare against.</param>
-	/// <param name="inclusive">
-	/// If true, includes entities modified exactly at the
-	/// specified time.
-	/// </param>
-	/// <returns>A filtered queryable of entities.</returns>
-	public static IQueryable<TEntityModel> ModifiedAfter<TEntityModel>(
-		this IQueryable<TEntityModel> query,
-		DateTime dateTime,
-		bool inclusive = false)
-		where TEntityModel : IEntityModel
-	{
-		return query.Where(e => inclusive
-			? e.DateModified >= dateTime
-			: e.DateModified > dateTime);
-	}
-
-	/// <summary>
 	/// https://stackoverflow.com/a/53622600/3986790
 	/// </summary>
 	/// <typeparam name="TEntityModel"></typeparam>
@@ -136,7 +48,85 @@ public static class Filters
 			_ => throw new ArgumentOutOfRangeException(
 				nameof(searchStyle),
 				searchStyle,
-				null)
+				null),
 		};
+	}
+
+	/// <param name="query">The query to filter.</param>
+	/// <typeparam name="TEntityModel">The entity type.</typeparam>
+	extension<TEntityModel>(IQueryable<TEntityModel> query)
+		where TEntityModel : IEntityModel
+	{
+		/// <summary>
+		/// Filters entities created after a specified date and time.
+		/// </summary>
+		/// <param name="dateTime">The date and time to compare against.</param>
+		/// <param name="inclusive">
+		/// If true, includes entities created exactly at the
+		/// specified time.
+		/// </param>
+		/// <returns>A filtered queryable of entities.</returns>
+		public IQueryable<TEntityModel> CreatedAfter(
+			DateTime dateTime,
+			bool inclusive = false)
+		{
+			return query.Where(e => inclusive
+				? e.DateCreated >= dateTime
+				: e.DateCreated > dateTime);
+		}
+
+		/// <summary>
+		/// Filters entities created before a specified date and time.
+		/// </summary>
+		/// <param name="dateTime">The date and time to compare against.</param>
+		/// <param name="inclusive">
+		/// If true, includes entities created exactly at the
+		/// specified time.
+		/// </param>
+		/// <returns>A filtered queryable of entities.</returns>
+		public IQueryable<TEntityModel> CreatedBefore(
+			DateTime dateTime,
+			bool inclusive = false)
+		{
+			return query.Where(e => inclusive
+				? e.DateCreated <= dateTime
+				: e.DateCreated < dateTime);
+		}
+
+		/// <summary>
+		/// Filters entities modified after a specified date and time.
+		/// </summary>
+		/// <param name="dateTime">The date and time to compare against.</param>
+		/// <param name="inclusive">
+		/// If true, includes entities modified exactly at the
+		/// specified time.
+		/// </param>
+		/// <returns>A filtered queryable of entities.</returns>
+		public IQueryable<TEntityModel> ModifiedAfter(
+			DateTime dateTime,
+			bool inclusive = false)
+		{
+			return query.Where(e => inclusive
+				? e.DateModified >= dateTime
+				: e.DateModified > dateTime);
+		}
+
+		/// <summary>
+		/// Filters entities modified before a specified date and time.
+		/// </summary>
+		/// <param name="dateTime">The date and time to compare against.</param>
+		/// <param name="inclusive">
+		/// If true, includes entities modified exactly at the
+		/// specified time.
+		/// </param>
+		/// <returns>A filtered queryable of entities.</returns>
+		public IQueryable<TEntityModel> ModifiedBefore(
+			DateTime dateTime,
+			bool inclusive = false)
+		{
+			return query.Where(e => inclusive
+				? e.DateModified <= dateTime
+				: e.DateModified < dateTime);
+		}
 	}
 }

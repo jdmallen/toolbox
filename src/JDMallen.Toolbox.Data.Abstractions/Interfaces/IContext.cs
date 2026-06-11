@@ -11,6 +11,5 @@ public interface IContext : IDisposable
 	/// </summary>
 	/// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
 	/// <returns>The number of state entries written to the database.</returns>
-	Task<int> SaveChangesAsync(
-		CancellationToken cancellationToken = default);
+	Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

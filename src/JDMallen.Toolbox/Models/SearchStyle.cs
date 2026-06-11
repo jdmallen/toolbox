@@ -1,11 +1,8 @@
-﻿using JetBrains.Annotations;
-
-namespace JDMallen.Toolbox.Models;
+﻿namespace JDMallen.Toolbox.Models;
 
 /// <summary>
 /// Defines the search strategy for string matching operations.
 /// </summary>
-[UsedImplicitly]
 public enum SearchStyle
 {
 	/// <summary>
@@ -21,5 +18,5 @@ public enum SearchStyle
 	/// <summary>
 	/// Match at the beginning of the string.
 	/// </summary>
-	StartsWith
+	StartsWith,
 }

@@ -24,5 +24,5 @@ public enum PasswordError
 	/// <summary>
 	/// Password does not meet the minimum complexity threshold (bits of entropy).
 	/// </summary>
-	NotComplexEnough = 4
+	NotComplexEnough = 4,
 }

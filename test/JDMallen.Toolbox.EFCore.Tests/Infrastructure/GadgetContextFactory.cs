@@ -12,7 +12,8 @@ internal static class GadgetContextFactory
 {
 	public static GadgetContext Create(FakeTimeProvider clock)
 	{
-		var options = new DbContextOptionsBuilder<GadgetContext>()
+		DbContextOptions<GadgetContext> options = new DbContextOptionsBuilder<GadgetContext>()
+
 			// A unique database name per call keeps tests isolated from each other.
 			.UseInMemoryDatabase($"gadgets-{Guid.NewGuid()}")
 			.Options;
