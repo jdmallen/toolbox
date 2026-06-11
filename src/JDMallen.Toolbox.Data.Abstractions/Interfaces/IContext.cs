@@ -1,19 +1,11 @@
-﻿using System.Data;
-
-namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿namespace JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 /// <summary>
-/// Represents a context from and to which the repository or service can
-/// create, read, update, and delete data.
+/// Represents a context from and to which data can be created, read, updated,
+/// and deleted.
 /// </summary>
 public interface IContext : IDisposable
 {
-	/// <summary>
-	/// Gets the underlying database connection for this context.
-	/// </summary>
-	/// <returns>The database connection.</returns>
-	IDbConnection GetConnection();
-
 	/// <summary>
 	/// Asynchronously saves all changes made in this context to the database.
 	/// </summary>
