@@ -9,31 +9,6 @@ namespace JDMallen.Toolbox.AspNetCore.Options;
 public class JwtOptions
 {
 	/// <summary>
-	/// RFC 7519 - 4.1.1.  "iss" (Issuer) Claim
-	/// </summary>
-	/// <remarks>
-	/// The "iss" (issuer) claim identifies the principal that issued the
-	/// JWT.  The processing of this claim is generally application specific.
-	/// The "iss" value is a case-sensitive string containing a StringOrURI
-	/// value.  Use of this claim is OPTIONAL.
-	/// </remarks>
-	public required string Issuer { get; init; }
-
-	/// <summary>
-	/// RFC 7519 - 4.1.2.  "sub" (Subject) Claim
-	/// </summary>
-	/// <remarks>
-	/// The "sub" (subject) claim identifies the principal that is the
-	/// subject of the JWT.  The claims in a JWT are normally statements
-	/// about the subject.  The subject value MUST either be scoped to be
-	/// locally unique in the context of the issuer or be globally unique.
-	/// The processing of this claim is generally application specific.  The
-	/// "sub" value is a case-sensitive string containing a StringOrURI
-	/// value.  Use of this claim is OPTIONAL.
-	/// </remarks>
-	public required string Subject { get; init; }
-
-	/// <summary>
 	/// RFC 7519 - 4.1.3.  "aud" (Audience) Claim
 	/// </summary>
 	/// <remarks>
@@ -66,20 +41,6 @@ public class JwtOptions
 	public DateTime Expiration => IssuedAt.Add(ValidForSpan);
 
 	/// <summary>
-	/// RFC 7519 - 4.1.5.  "nbf" (Not Before) Claim
-	/// </summary>
-	/// <remarks>
-	/// The "nbf" (not before) claim identifies the time before which the JWT
-	/// MUST NOT be accepted for processing.  The processing of the "nbf"
-	/// claim requires that the current date/time MUST be after or equal to
-	/// the not-before date/time listed in the "nbf" claim.  Implementers MAY
-	/// provide for some small leeway, usually no more than a few minutes, to
-	/// account for clock skew.  Its value MUST be a number containing a
-	/// NumericDate value.  Use of this claim is OPTIONAL.
-	/// </remarks>
-	public DateTime NotBefore => DateTime.UtcNow;
-
-	/// <summary>
 	/// RFC 7519 - 4.1.6.  "iat" (Issued At) Claim
 	/// </summary>
 	/// <remarks>
@@ -88,7 +49,18 @@ public class JwtOptions
 	/// value MUST be a number containing a NumericDate value.  Use of this
 	/// claim is OPTIONAL.
 	/// </remarks>
-	public DateTime IssuedAt => DateTime.UtcNow;
+	public static DateTime IssuedAt => DateTime.UtcNow;
+
+	/// <summary>
+	/// RFC 7519 - 4.1.1.  "iss" (Issuer) Claim
+	/// </summary>
+	/// <remarks>
+	/// The "iss" (issuer) claim identifies the principal that issued the
+	/// JWT.  The processing of this claim is generally application specific.
+	/// The "iss" value is a case-sensitive string containing a StringOrURI
+	/// value.  Use of this claim is OPTIONAL.
+	/// </remarks>
+	public required string Issuer { get; init; }
 
 	/// <summary>
 	/// RFC 7519 - 4.1.7.  "jti" (JWT ID) Claim
@@ -103,15 +75,43 @@ public class JwtOptions
 	/// to prevent the JWT from being replayed.  The "jti" value is a case-
 	/// sensitive string.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public string NewJti => MiniGuid.NewGuid().ToString();
+	public static string NewJti => MiniGuid.NewGuid().ToString();
 
 	/// <summary>
-	/// Timespan for which the token is valid.
+	/// RFC 7519 - 4.1.5.  "nbf" (Not Before) Claim
 	/// </summary>
-	public TimeSpan ValidForSpan { get; init; } = TimeSpan.FromMinutes(30);
+	/// <remarks>
+	/// The "nbf" (not before) claim identifies the time before which the JWT
+	/// MUST NOT be accepted for processing.  The processing of the "nbf"
+	/// claim requires that the current date/time MUST be after or equal to
+	/// the not-before date/time listed in the "nbf" claim.  Implementers MAY
+	/// provide for some small leeway, usually no more than a few minutes, to
+	/// account for clock skew.  Its value MUST be a number containing a
+	/// NumericDate value.  Use of this claim is OPTIONAL.
+	/// </remarks>
+	public static DateTime NotBefore => DateTime.UtcNow;
 
 	/// <summary>
 	/// The signing credentials to use when signing tokens.
 	/// </summary>
 	public required SigningCredentials SigningCredentials { get; init; }
+
+	/// <summary>
+	/// RFC 7519 - 4.1.2.  "sub" (Subject) Claim
+	/// </summary>
+	/// <remarks>
+	/// The "sub" (subject) claim identifies the principal that is the
+	/// subject of the JWT.  The claims in a JWT are normally statements
+	/// about the subject.  The subject value MUST either be scoped to be
+	/// locally unique in the context of the issuer or be globally unique.
+	/// The processing of this claim is generally application specific.  The
+	/// "sub" value is a case-sensitive string containing a StringOrURI
+	/// value.  Use of this claim is OPTIONAL.
+	/// </remarks>
+	public required string Subject { get; init; }
+
+	/// <summary>
+	/// Timespan for which the token is valid.
+	/// </summary>
+	public TimeSpan ValidForSpan { get; init; } = TimeSpan.FromMinutes(30);
 }

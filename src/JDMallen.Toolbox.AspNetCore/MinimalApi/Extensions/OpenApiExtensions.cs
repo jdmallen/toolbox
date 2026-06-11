@@ -26,7 +26,7 @@ public static class OpenApiExtensions
 				document.Info = new OpenApiInfo
 				{
 					Title = title,
-					Version = version
+					Version = version,
 				};
 
 				document.Components ??= new OpenApiComponents();
@@ -42,7 +42,7 @@ public static class OpenApiExtensions
 						Type = SecuritySchemeType.Http,
 						Scheme = "bearer",
 						BearerFormat = "JWT",
-						Description = "Enter your JWT token"
+						Description = "Enter your JWT token",
 					};
 
 				return Task.CompletedTask;

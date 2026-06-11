@@ -6,8 +6,8 @@ namespace JDMallen.Toolbox.AI.Tests;
 public class AnthropicChatClientTests
 {
 	private static readonly AnthropicClientOptions Options = new(
-		ApiKey: "test-anthropic-key",
-		Model: "claude-haiku-4-5-20251001");
+		"test-anthropic-key",
+		"claude-haiku-4-5-20251001");
 
 	private static readonly CompletionRequest Request = new("system", "user prompt", 500);
 

@@ -1,0 +1,47 @@
+# EditorConfig — analyzer severities only.
+#
+# This file intentionally configures *only* Roslyn analyzer (CAxxxx) severities,
+# not code formatting. Formatting is governed by the Rider/ReSharper settings in
+# JDMallen.Toolbox.sln.DotSettings, so nothing here should fight tab/alignment
+# preferences.
+#
+# These overrides reflect deliberate decisions when building under the strict
+# `-p:AnalysisMode=All` rule set. Genuine, localized exceptions are handled with
+# justified `#pragma warning disable` at the call site instead (e.g. CA1031,
+# CA1308); the rules below are blanket policy and belong here, not scattered
+# through the code.
+root = true
+
+[*.cs]
+
+# CA1707: Identifiers should not contain underscores.
+# Intentional: SCREAMING_CASE private constants and Method_Scenario_Expected test
+# names. This is a naming convention, not a defect.
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1062: Validate arguments of public methods.
+# Redundant with nullable reference types (enabled solution-wide): a non-nullable
+# reference parameter already expresses the non-null contract.
+dotnet_diagnostic.CA1062.severity = none
+
+# CA2007: Consider calling ConfigureAwait on the awaited task.
+# Target frameworks are net10 (ASP.NET, EF) where there is no SynchronizationContext
+# to capture, so ConfigureAwait(false) buys nothing. Not worth the call-site noise.
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1515: Consider making public types internal.
+# This is a library: a broad public surface is the point. The rule targets apps.
+dotnet_diagnostic.CA1515.severity = none
+
+# Test projects: relax rules that only make sense for shipped product code.
+[test/**/*.cs]
+
+# CA2000: Dispose objects before losing scope.
+# Test fixtures (HttpClient, HttpMessageHandler, HttpResponseMessage) are short-lived
+# and torn down with the test process; they are not owned by the SUT. Hand-plumbing
+# `using` everywhere adds churn without preventing any real leak.
+dotnet_diagnostic.CA2000.severity = none
+
+# CA1307: Specify StringComparison for clarity.
+# Fires on assertion helpers over ASCII literals; no product logic depends on culture.
+dotnet_diagnostic.CA1307.severity = none

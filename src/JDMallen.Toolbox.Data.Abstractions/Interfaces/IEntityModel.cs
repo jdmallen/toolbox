@@ -4,6 +4,7 @@
 /// Represents a database entity, typically referred to by its respective SQL
 /// table.
 /// </summary>
+
 // ReSharper disable once InheritdocConsiderUsage
 public interface IEntityModel : IModel
 {
@@ -26,14 +27,14 @@ public interface IEntityModel : IModel
 /// <inheritdoc />
 /// <summary>
 /// This interface assumes the existence of a primary key of type
-/// <see cref="!:TId" />
+/// <typeparamref name="TId" />
 /// and two additional fields in the database entity:
-/// <see cref="P:JDMallen.Toolbox.Models.IEntityModel`1.DateCreated" /> and
-/// <see cref="P:JDMallen.Toolbox.Models.IEntityModel`1.DateModified" />.
+/// <see cref="IEntityModel.DateCreated" /> and
+/// <see cref="IEntityModel.DateModified" />.
 /// </summary>
 /// <typeparam name="TId">
 /// The type representing the data type for the primary key. This cannot be
-/// <see cref="T:System.String" /> or any reference types. Only value types are
+/// <see cref="System.String" /> or any reference types. Only value types are
 /// allowed.
 /// </typeparam>
 public interface IEntityModel<out TId> : IEntityModel

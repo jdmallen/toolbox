@@ -15,9 +15,7 @@ public static class ValidationExtensions
 	public static RouteHandlerBuilder WithRequestValidation<TRequest>(
 		this RouteHandlerBuilder builder)
 		where TRequest : class
-	{
-		return builder
+		=> builder
 			.AddEndpointFilter<RequestValidationFilter<TRequest>>()
 			.ProducesValidationProblem();
-	}
 }

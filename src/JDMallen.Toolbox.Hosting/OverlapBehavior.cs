@@ -50,5 +50,5 @@ public enum OverlapBehavior
 	/// Example: A service that updates a database where each execution must complete
 	/// before the next begins to maintain data consistency.
 	/// </remarks>
-	WaitForCompletion = 2
+	WaitForCompletion = 2,
 }

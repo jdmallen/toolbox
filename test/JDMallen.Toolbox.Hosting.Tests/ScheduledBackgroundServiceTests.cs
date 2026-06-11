@@ -16,7 +16,14 @@ public class ScheduledBackgroundServiceTests
 {
 	// A clean minute boundary keeps the expected cron occurrences obvious.
 	private static readonly DateTimeOffset StartInstant =
-		new(2026, 6, 10, 8, 0, 0, TimeSpan.Zero);
+		new(
+			2026,
+			6,
+			10,
+			8,
+			0,
+			0,
+			TimeSpan.Zero);
 
 	/// <summary>
 	/// Concrete service scheduled to run every minute. It counts executions and
@@ -30,7 +37,7 @@ public class ScheduledBackgroundServiceTests
 			NullLogger<CountingScheduledService>.Instance,
 			scopeFactory,
 			"* * * * *",
-			includeSeconds: false,
+			false,
 			timeProvider)
 	{
 		private int _executionCount;
@@ -42,7 +49,7 @@ public class ScheduledBackgroundServiceTests
 
 		protected override Task ExecuteInScopeAsync(
 			IServiceScope scope,
-			CancellationToken stoppingToken)
+			CancellationToken cancellationToken)
 		{
 			Interlocked.Increment(ref _executionCount);
 
@@ -53,14 +60,33 @@ public class ScheduledBackgroundServiceTests
 		/// Runs a single schedule-check iteration (the work fires only if the
 		/// clock has reached the next occurrence).
 		/// </summary>
-		public Task RunScheduleCheckAsync(CancellationToken stoppingToken = default) =>
-			ExecuteInScopeAsync(stoppingToken);
+		public Task RunScheduleCheckAsync(CancellationToken cancellationToken = default) =>
+			ExecuteInScopeAsync(cancellationToken);
 	}
 
 	private static IServiceScopeFactory CreateScopeFactory() =>
 		new ServiceCollection()
 			.BuildServiceProvider()
 			.GetRequiredService<IServiceScopeFactory>();
+
+	private static async Task WaitForAsync(
+		Func<bool> condition,
+		int timeoutMilliseconds = 5000)
+	{
+		DateTime deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
+		while (DateTime.UtcNow < deadline)
+		{
+			if (condition())
+			{
+				return;
+			}
+
+			await Task.Delay(20);
+		}
+
+		throw new TimeoutException(
+			"Condition was not satisfied within the allotted time.");
+	}
 
 	[Fact]
 	public async Task DoesNotExecuteBeforeScheduledTimeIsReached()
@@ -140,24 +166,5 @@ public class ScheduledBackgroundServiceTests
 		{
 			await hostedService.StopAsync(CancellationToken.None);
 		}
-	}
-
-	private static async Task WaitForAsync(
-		Func<bool> condition,
-		int timeoutMilliseconds = 5000)
-	{
-		var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
-		while (DateTime.UtcNow < deadline)
-		{
-			if (condition())
-			{
-				return;
-			}
-
-			await Task.Delay(20);
-		}
-
-		throw new TimeoutException(
-			"Condition was not satisfied within the allotted time.");
 	}
 }

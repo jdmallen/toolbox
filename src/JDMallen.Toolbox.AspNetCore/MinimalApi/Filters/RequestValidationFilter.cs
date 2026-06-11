@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Filters;
 
@@ -24,7 +25,7 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 		EndpointFilterInvocationContext context,
 		EndpointFilterDelegate next)
 	{
-		var request = context.Arguments.OfType<TRequest>().FirstOrDefault();
+		TRequest? request = context.Arguments.OfType<TRequest>().FirstOrDefault();
 		if (request is null)
 		{
 			return await next(context);
@@ -35,7 +36,7 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 		if (context.HttpContext.RequestServices
 			    .GetService(typeof(IValidator<TRequest>)) is IValidator<TRequest> validator)
 		{
-			var validationResult = await validator.ValidateAsync(
+			ValidationResult? validationResult = await validator.ValidateAsync(
 				request,
 				context.HttpContext.RequestAborted);
 
@@ -47,7 +48,7 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 		else
 		{
 			// Fallback to DataAnnotations
-			var validationResults = new List<ValidationResult>();
+			var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
 			var validationContext = new ValidationContext(request);
 
 			if (Validator.TryValidateObject(
@@ -59,7 +60,7 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 				return await next(context);
 			}
 
-			var errors = validationResults
+			Dictionary<string, string[]> errors = validationResults
 				.GroupBy(x => x.MemberNames.FirstOrDefault() ?? string.Empty)
 				.ToDictionary(
 					g => g.Key,

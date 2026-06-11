@@ -23,8 +23,8 @@ public static class QueryExtensions
 			return query;
 		}
 
-		var lambda =
-			(dynamic)UtilityMethods.GetExpressionFromPropertyName(
+		dynamic lambda =
+			UtilityMethods.GetExpressionFromPropertyName(
 				typeof(TSource),
 				fieldName);
 

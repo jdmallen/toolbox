@@ -1,7 +1,4 @@
-﻿
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-
-namespace JDMallen.Toolbox.AspNetCore.Options;
+﻿namespace JDMallen.Toolbox.AspNetCore.Options;
 
 /// <summary>
 /// Configuration settings for OAuth authentication providers.

@@ -9,58 +9,51 @@ namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions;
 /// </summary>
 public static class IdentityResultExtensions
 {
-	/// <summary>
-	/// Converts IdentityResult errors to a ValidationProblem response.
-	/// </summary>
-	public static ValidationProblem ToValidationProblem(
-		this IdentityResult result)
+	extension(IdentityResult result)
 	{
-		var errors = result.Errors
-			.GroupBy(e => e.Code)
-			.ToDictionary(
-				g => g.Key,
-				g => g.Select(e => e.Description).ToArray());
+		/// <summary>
+		/// Executes an action if IdentityResult succeeded, otherwise returns a
+		/// validation problem.
+		/// </summary>
+		public async Task<IResult> Match(Func<Task<IResult>> onSuccess)
+			=> result.Succeeded
+				? await onSuccess()
+				: result.ToValidationProblem();
 
-		return TypedResults.ValidationProblem(errors);
-	}
+		/// <summary>
+		/// Executes an action if IdentityResult succeeded, otherwise returns a
+		/// validation problem.
+		/// </summary>
+		public IResult Match(Func<IResult> onSuccess)
+			=> result.Succeeded
+				? onSuccess()
+				: result.ToValidationProblem();
 
-	/// <summary>
-	/// Converts IdentityResult errors to a dictionary suitable for validation
-	/// responses.
-	/// </summary>
-	public static Dictionary<string, string[]> ToErrorDictionary(
-		this IdentityResult result)
-	{
-		return result.Errors
-			.GroupBy(e => e.Code)
-			.ToDictionary(
-				g => g.Key,
-				g => g.Select(e => e.Description).ToArray());
-	}
+		/// <summary>
+		/// Converts IdentityResult errors to a dictionary suitable for validation
+		/// responses.
+		/// </summary>
+		public Dictionary<string, string[]> ToErrorDictionary()
+		{
+			return result.Errors
+				.GroupBy(e => e.Code)
+				.ToDictionary(
+					g => g.Key,
+					g => g.Select(e => e.Description).ToArray());
+		}
 
-	/// <summary>
-	/// Executes an action if IdentityResult succeeded, otherwise returns a
-	/// validation problem.
-	/// </summary>
-	public static async Task<IResult> Match(
-		this IdentityResult result,
-		Func<Task<IResult>> onSuccess)
-	{
-		return result.Succeeded
-			? await onSuccess()
-			: result.ToValidationProblem();
-	}
+		/// <summary>
+		/// Converts IdentityResult errors to a ValidationProblem response.
+		/// </summary>
+		public ValidationProblem ToValidationProblem()
+		{
+			Dictionary<string, string[]> errors = result.Errors
+				.GroupBy(e => e.Code)
+				.ToDictionary(
+					g => g.Key,
+					g => g.Select(e => e.Description).ToArray());
 
-	/// <summary>
-	/// Executes an action if IdentityResult succeeded, otherwise returns a
-	/// validation problem.
-	/// </summary>
-	public static IResult Match(
-		this IdentityResult result,
-		Func<IResult> onSuccess)
-	{
-		return result.Succeeded
-			? onSuccess()
-			: result.ToValidationProblem();
+			return TypedResults.ValidationProblem(errors);
+		}
 	}
 }

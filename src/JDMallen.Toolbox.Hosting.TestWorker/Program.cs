@@ -6,15 +6,6 @@ namespace JDMallen.Toolbox.Hosting.TestWorker;
 public class Program
 {
 	/// <summary>
-	/// The application entry point that creates and runs the host.
-	/// </summary>
-	/// <param name="args">Command-line arguments.</param>
-	public static void Main(string[] args)
-	{
-		CreateHostBuilder(args).Build().Run();
-	}
-
-	/// <summary>
 	/// Creates and configures the host builder for the worker service.
 	/// </summary>
 	/// <param name="args">Command-line arguments.</param>
@@ -22,9 +13,15 @@ public class Program
 	private static IHostBuilder CreateHostBuilder(string[] args)
 	{
 		return Host.CreateDefaultBuilder(args)
-			.ConfigureServices((_, services) =>
-			{
-				services.AddHostedService<Worker>();
-			});
+			.ConfigureServices((_, services) => { services.AddHostedService<Worker>(); });
+	}
+
+	/// <summary>
+	/// The application entry point that creates and runs the host.
+	/// </summary>
+	/// <param name="args">Command-line arguments.</param>
+	public static void Main(string[] args)
+	{
+		CreateHostBuilder(args).Build().Run();
 	}
 }

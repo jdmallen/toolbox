@@ -9,16 +9,16 @@ internal sealed class StubHttpMessageHandler(
 	Func<HttpRequestMessage, Task<HttpResponseMessage>> responder)
 	: HttpMessageHandler
 {
-	public Uri? RequestUri { get; private set; }
+	public StubHttpMessageHandler(HttpResponseMessage response)
+		: this(_ => Task.FromResult(response))
+	{
+	}
 
 	public string? RequestBody { get; private set; }
 
 	public Dictionary<string, string> RequestHeaders { get; } = [];
 
-	public StubHttpMessageHandler(HttpResponseMessage response)
-		: this(_ => Task.FromResult(response))
-	{
-	}
+	public Uri? RequestUri { get; private set; }
 
 	public HttpClient CreateClient() => new(this);
 

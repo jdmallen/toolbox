@@ -46,10 +46,10 @@ namespace JDMallen.Toolbox.Hosting;
 /// 
 ///       protected override async Task ExecuteInScopeAsync(
 ///           IServiceScope scope,
-///           CancellationToken stoppingToken)
+///           CancellationToken cancellationToken)
 ///       {
 ///           var cleanupService = scope.ServiceProvider.GetRequiredService&lt;ICleanupService&gt;();
-///           await cleanupService.PerformDailyCleanupAsync(stoppingToken);
+///           await cleanupService.PerformDailyCleanupAsync(cancellationToken);
 ///       }
 ///   }
 ///   </code>
@@ -80,7 +80,7 @@ namespace JDMallen.Toolbox.Hosting;
 public abstract class
 	ScheduledBackgroundService<TService> : ScopedBackgroundService<TService>
 {
-	private const string DefaultCronSchedule = "*/1 * * * *";
+	private const string DEFAULT_CRON_SCHEDULE = "*/1 * * * *";
 	private CrontabSchedule _schedule;
 
 	/// <summary>
@@ -160,7 +160,7 @@ public abstract class
 		// If it fails, default to run once per minute and log the failure.
 		var options = new CrontabSchedule.ParseOptions
 		{
-			IncludingSeconds = includeSeconds
+			IncludingSeconds = includeSeconds,
 		};
 
 		CrontabSchedule.TryParse(
@@ -169,12 +169,14 @@ public abstract class
 			schedule => _schedule = schedule,
 			provider =>
 			{
-				logger.LogError(
-					provider.Invoke(),
-					"Unable to parse cron schedule; defaulting to \"{DefaultCronSchedule}\"",
-					DefaultCronSchedule);
+				if (logger.IsEnabled(LogLevel.Error))
+				{
+					logger.LogUnableToParseCronSchedule(
+						provider.Invoke(),
+						DEFAULT_CRON_SCHEDULE);
+				}
 
-				return _schedule = CrontabSchedule.Parse(DefaultCronSchedule);
+				return _schedule = CrontabSchedule.Parse(DEFAULT_CRON_SCHEDULE);
 			});
 
 		NextRunTime = _schedule!.GetNextOccurrence(GetCurrentUtc());
@@ -204,10 +206,9 @@ public abstract class
 	/// Work only executes when the current time matches or exceeds
 	/// <see cref="NextRunTime" />.
 	/// </remarks>
-	protected override async Task ExecuteInScopeAsync(
-		CancellationToken stoppingToken)
+	protected override async Task ExecuteInScopeAsync(CancellationToken stoppingToken)
 	{
-		var currentTime = GetCurrentUtc();
+		DateTime currentTime = GetCurrentUtc();
 
 		if (currentTime >= NextRunTime)
 		{

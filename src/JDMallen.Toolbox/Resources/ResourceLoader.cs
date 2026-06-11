@@ -31,12 +31,15 @@ public class ResourceLoader
 		typeof(ResourceLoader)
 			.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static)
 			.ToList()
-			.ForEach(prop => { prop.SetValue(typeof(ResourceLoader), ReadResourceFile(prop.Name + ".txt")); });
+			.ForEach(prop =>
+			{
+				prop.SetValue(typeof(ResourceLoader), ReadResourceFile(prop.Name + ".txt"));
+			});
 	}
 
 	private static IEnumerable<string> ReadResourceFile(string fileName)
 	{
-		using var rs = Assembly.GetExecutingAssembly()
+		using Stream? rs = Assembly.GetExecutingAssembly()
 			.GetManifestResourceStream(typeof(ResourceLoader), fileName);
 		using var sr = new StreamReader(rs!, Encoding.UTF8);
 		while ((sr.ReadLine() ?? string.Empty) is { } line)

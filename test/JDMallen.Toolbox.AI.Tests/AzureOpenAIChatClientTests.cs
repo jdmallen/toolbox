@@ -6,9 +6,9 @@ namespace JDMallen.Toolbox.AI.Tests;
 public class AzureOpenAIChatClientTests
 {
 	private static readonly AzureOpenAIClientOptions Options = new(
-		ApiKey: "test-azure-key",
-		Endpoint: "https://test.openai.azure.com",
-		Deployment: "gpt-4");
+		"test-azure-key",
+		"https://test.openai.azure.com",
+		"gpt-4");
 
 	private static readonly CompletionRequest Request = new("system", "user prompt", 500);
 
@@ -22,8 +22,8 @@ public class AzureOpenAIChatClientTests
 		var cts = new CancellationTokenSource();
 		await cts.CancelAsync();
 
-		var handler = new StubHttpMessageHandler(
-			_ => Task.FromCanceled<HttpResponseMessage>(cts.Token));
+		var handler
+			= new StubHttpMessageHandler(_ => Task.FromCanceled<HttpResponseMessage>(cts.Token));
 
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 

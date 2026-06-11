@@ -1,12 +1,11 @@
-using JetBrains.Annotations;
 using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 
 namespace JDMallen.Toolbox.Implementations;
 
 /// <summary>
-/// Base class for entity models providing common properties for audit tracking and soft deletes.
+/// Base class for entity models providing common properties for audit tracking and
+/// soft deletes.
 /// </summary>
-[UsedImplicitly]
 public abstract class EntityModel : IEntityModel
 {
 	/// <summary>
@@ -20,23 +19,25 @@ public abstract class EntityModel : IEntityModel
 	public DateTime DateModified { get; set; } = DateTime.UtcNow;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the entity is logically deleted (soft delete).
+	/// Gets or sets a value indicating whether the entity is logically deleted (soft
+	/// delete).
 	/// </summary>
-	public bool IsDeleted { get; set; } = false;
+	public bool IsDeleted { get; set; }
 }
 
 /// <summary>
-/// Generic base class for database entities with a primary key of type <typeparamref name="TId"/>.
+/// Generic base class for database entities with a primary key of type
+/// <typeparamref name="TId" />.
 /// Typically used for entities referred to by their respective SQL table.
 /// </summary>
 /// <typeparam name="TId">The type of the primary key.</typeparam>
+
 // ReSharper disable once InheritdocConsiderUsage
-[UsedImplicitly]
 public abstract class EntityModel<TId> : EntityModel, IEntityModel<TId>
 	where TId : struct
 {
 	/// <summary>
 	/// Gets or sets the primary key of the entity.
 	/// </summary>
-	public TId Id { get; set; }
+	public TId Id { get; protected set; }
 }

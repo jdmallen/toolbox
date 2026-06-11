@@ -9,10 +9,35 @@ namespace JDMallen.Toolbox.AspNetCore.Tests;
 public class DtoTests
 {
 	[Fact]
+	public void GitHubCallbackDto_StructurallyEqualInstancesAreEqual()
+	{
+		var first = new GitHubCallbackDto
+		{
+			Code = "abc",
+			State = "xyz",
+		};
+		var second = new GitHubCallbackDto
+		{
+			Code = "abc",
+			State = "xyz",
+		};
+
+		Assert.Equal(first, second);
+	}
+
+	[Fact]
 	public void LoginDto_StructurallyEqualInstancesAreEqual()
 	{
-		var first = new LoginDto { Email = "user@test", Password = "secret" };
-		var second = new LoginDto { Email = "user@test", Password = "secret" };
+		var first = new LoginDto
+		{
+			Email = "user@test",
+			Password = "secret",
+		};
+		var second = new LoginDto
+		{
+			Email = "user@test",
+			Password = "secret",
+		};
 
 		Assert.Equal(first, second);
 		Assert.True(first == second);
@@ -22,9 +47,13 @@ public class DtoTests
 	[Fact]
 	public void LoginDto_WithExpressionProducesModifiedCopy()
 	{
-		var original = new LoginDto { Email = "user@test", Password = "secret" };
+		var original = new LoginDto
+		{
+			Email = "user@test",
+			Password = "secret",
+		};
 
-		var rotated = original with { Password = "rotated" };
+		LoginDto rotated = original with { Password = "rotated" };
 
 		Assert.NotEqual(original, rotated);
 		Assert.Equal("user@test", rotated.Email);
@@ -41,17 +70,8 @@ public class DtoTests
 			Password = "secret",
 			DisplayName = "User",
 		};
-		var second = first with { DisplayName = "Someone Else" };
+		RegisterDto second = first with { DisplayName = "Someone Else" };
 
 		Assert.NotEqual(first, second);
-	}
-
-	[Fact]
-	public void GitHubCallbackDto_StructurallyEqualInstancesAreEqual()
-	{
-		var first = new GitHubCallbackDto { Code = "abc", State = "xyz" };
-		var second = new GitHubCallbackDto { Code = "abc", State = "xyz" };
-
-		Assert.Equal(first, second);
 	}
 }

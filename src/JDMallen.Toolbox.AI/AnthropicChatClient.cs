@@ -5,14 +5,14 @@ using System.Text.Json.Serialization;
 namespace JDMallen.Toolbox.AI;
 
 /// <summary>
-///     Anthropic (Claude) implementation of <see cref="IChatCompletionClient" />.
-///     Owns only the Anthropic wire format: the Messages API endpoint,
-///     <c>x-api-key</c> + <c>anthropic-version</c> headers, a top-level
-///     <c>system</c> prompt, and the <c>content[].text</c> response shape.
+/// Anthropic (Claude) implementation of <see cref="IChatCompletionClient" />.
+/// Owns only the Anthropic wire format: the Messages API endpoint,
+/// <c>x-api-key</c> + <c>anthropic-version</c> headers, a top-level
+/// <c>system</c> prompt, and the <c>content[].text</c> response shape.
 /// </summary>
 /// <param name="httpClient">
-///     The HTTP client used for requests. The caller owns its lifetime; requests use
-///     absolute URIs, so no base address is required.
+/// The HTTP client used for requests. The caller owns its lifetime; requests use
+/// absolute URIs, so no base address is required.
 /// </param>
 /// <param name="options">The API key and model to use.</param>
 public sealed class AnthropicChatClient(
@@ -37,7 +37,7 @@ public sealed class AnthropicChatClient(
 		using var message = new HttpRequestMessage(HttpMethod.Post, URL);
 		message.Content = JsonContent.Create(
 			body,
-			AiJsonContext.Default.AnthropicRequest);
+			AIJsonContext.Default.AnthropicRequest);
 		message.Headers.Add("x-api-key", options.ApiKey);
 		message.Headers.Add("anthropic-version", ANTHROPIC_VERSION);
 
@@ -55,14 +55,14 @@ public sealed class AnthropicChatClient(
 		}
 
 		AnthropicResponse? result = await response.Content
-			.ReadFromJsonAsync(AiJsonContext.Default.AnthropicResponse, cancellationToken)
+			.ReadFromJsonAsync(AIJsonContext.Default.AnthropicResponse, cancellationToken)
 			.ConfigureAwait(false);
 
 		// The Messages API returns an array of content blocks; concatenate the text ones.
 		var sb = new StringBuilder();
 
 		foreach (AnthropicBlock block in (result?.Content ?? [])
-			.Where(block => block.Type == "text"))
+		         .Where(block => block.Type == "text"))
 		{
 			sb.Append(block.Text);
 		}

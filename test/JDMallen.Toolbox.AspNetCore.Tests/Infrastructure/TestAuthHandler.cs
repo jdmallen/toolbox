@@ -3,13 +3,14 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace JDMallen.Toolbox.AspNetCore.Tests.Infrastructure;
 
 /// <summary>
 /// Authentication handler for the in-process test server. A request is treated
-/// as authenticated only when it carries the <see cref="UserHeader"/> header;
-/// its value becomes the <see cref="ClaimTypes.NameIdentifier"/> claim. This
+/// as authenticated only when it carries the <see cref="UserHeader" /> header;
+/// its value becomes the <see cref="ClaimTypes.NameIdentifier" /> claim. This
 /// lets a single test host produce both authenticated and anonymous requests so
 /// the authorization-related endpoint helpers can be exercised end to end.
 /// </summary>
@@ -30,7 +31,7 @@ internal sealed class TestAuthHandler(
 
 	protected override Task<AuthenticateResult> HandleAuthenticateAsync()
 	{
-		if (!Request.Headers.TryGetValue(UserHeader, out var userId)
+		if (!Request.Headers.TryGetValue(UserHeader, out StringValues userId)
 		    || string.IsNullOrWhiteSpace(userId))
 		{
 			return Task.FromResult(AuthenticateResult.NoResult());

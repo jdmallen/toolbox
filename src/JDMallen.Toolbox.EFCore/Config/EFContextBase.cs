@@ -1,4 +1,4 @@
-using JDMallen.Toolbox.Data.Abstractions.Interfaces;
+﻿using JDMallen.Toolbox.Data.Abstractions.Interfaces;
 using JDMallen.Toolbox.EFCore.Extensions;
 using JDMallen.Toolbox.EFCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -10,20 +10,22 @@ namespace JDMallen.Toolbox.EFCore.Config;
 /// Abstract base <see cref="DbContext" /> that wires up the conventions this
 /// toolbox provides around <see cref="IEntityModel" />:
 /// <list type="bullet">
-/// <item>
-/// entity configuration is discovered from
-/// <see cref="IEntityTypeConfiguration{TEntity}" /> implementations in the
-/// derived context's assembly via
-/// <see cref="ModelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly,System.Func{System.Type,bool})" />;
-/// </item>
-/// <item>
-/// a soft-delete global query filter is applied through
-/// <see cref="SoftDeleteModelBuilderExtensions.AddSoftDeleteQueryFilter" />;
-/// </item>
-/// <item>
-/// audit timestamps are stamped on save by
-/// <see cref="AuditableEntitySaveChangesInterceptor" />.
-/// </item>
+///   <item>
+///   entity configuration is discovered from
+///   <see cref="IEntityTypeConfiguration{TEntity}" /> implementations in the
+///   derived context's assembly via
+///   <see
+///     cref="ModelBuilder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly,System.Func{System.Type,bool})" />
+///   ;
+///   </item>
+///   <item>
+///   a soft-delete global query filter is applied through
+///   <see cref="SoftDeleteModelBuilderExtensions.AddSoftDeleteQueryFilter" />;
+///   </item>
+///   <item>
+///   audit timestamps are stamped on save by
+///   <see cref="AuditableEntitySaveChangesInterceptor" />.
+///   </item>
 /// </list>
 /// </summary>
 public abstract class EFContextBase : DbContext, IContext

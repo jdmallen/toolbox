@@ -40,16 +40,16 @@ public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 		var dbContext = context.HttpContext.RequestServices
 			.GetRequiredService<DbContext>();
 
-		var userId = context.HttpContext.User.GetUserIdAsGuid();
+		Guid userId = context.HttpContext.User.GetUserIdAsGuid();
 
 		// Extract entity ID from route or request
-		var entityId = ExtractEntityId(context);
+		Guid? entityId = ExtractEntityId(context);
 		if (!entityId.HasValue)
 		{
 			return await next(context);
 		}
 
-		var entity = await dbContext.Set<TEntity>()
+		TEntity? entity = await dbContext.Set<TEntity>()
 			.AsNoTracking()
 			.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == entityId.Value);
 
@@ -59,7 +59,7 @@ public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 				$"{typeof(TEntity).Name} not found."),
 			_ when entity.UserId != userId => ProblemDetailsResults.Forbidden(
 				"You do not have permission to access this resource."),
-			_ => await next(context)
+			_ => await next(context),
 		};
 	}
 
@@ -68,23 +68,23 @@ public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 		// Try route values first
 		if (context.HttpContext.Request.RouteValues.TryGetValue(
 			    "id",
-			    out var routeId))
+			    out object? routeId))
 		{
-			if (Guid.TryParse(routeId?.ToString(), out var guid))
+			if (Guid.TryParse(routeId?.ToString(), out Guid guid))
 			{
 				return guid;
 			}
 		}
 
 		// Try request arguments with Id property
-		foreach (var arg in context.Arguments)
+		foreach (object? arg in context.Arguments)
 		{
 			if (arg is null)
 			{
 				continue;
 			}
 
-			var idProperty = arg.GetType()
+			PropertyInfo? idProperty = arg.GetType()
 				.GetProperty("Id", BindingFlags.IgnoreCase | BindingFlags.Public);
 			if (idProperty?.PropertyType == typeof(Guid))
 			{

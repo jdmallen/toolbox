@@ -18,8 +18,10 @@ public class RequestValidationFilterTests
 
 	private sealed class GadgetValidator : AbstractValidator<CreateGadgetRequest>
 	{
-		public GadgetValidator() =>
+		public GadgetValidator()
+		{
 			RuleFor(request => request.Name).NotEmpty();
+		}
 	}
 
 	// No validator is registered, so the DataAnnotations fallback applies.
@@ -31,44 +33,34 @@ public class RequestValidationFilterTests
 	}
 
 	private static void MapGadgets(IEndpointRouteBuilder app) =>
-		app.MapPost("/gadgets", (CreateGadgetRequest request) =>
-				Results.Ok(request.Name))
+		app.MapPost(
+				"/gadgets",
+				(CreateGadgetRequest request) =>
+					Results.Ok(request.Name))
 			.WithRequestValidation<CreateGadgetRequest>();
 
 	private static void MapWidgets(IEndpointRouteBuilder app) =>
-		app.MapPost("/widgets", (CreateWidgetRequest request) =>
-				Results.Ok(request.Name))
+		app.MapPost(
+				"/widgets",
+				(CreateWidgetRequest request) =>
+					Results.Ok(request.Name))
 			.WithRequestValidation<CreateWidgetRequest>();
 
-	[Fact]
-	public async Task FluentValidation_RejectsInvalidRequest()
+	private sealed record ValidationProblemPayload
 	{
-		await using var host = await MinimalApiTestHost.StartAsync(
-			configureServices: services =>
-				services.AddScoped<IValidator<CreateGadgetRequest>, GadgetValidator>(),
-			configureEndpoints: MapGadgets);
-
-		var response = await host.Client.PostAsJsonAsync(
-			"/gadgets",
-			new CreateGadgetRequest(string.Empty));
-
-		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-		var problem = await response.Content.ReadFromJsonAsync<ValidationProblemPayload>();
-		Assert.NotNull(problem);
-		Assert.Contains(nameof(CreateGadgetRequest.Name), problem!.Errors.Keys);
+		public Dictionary<string, string[]> Errors { get; init; } = new();
 	}
 
 	[Fact]
-	public async Task FluentValidation_AllowsValidRequest()
+	public async Task DataAnnotations_AllowsValidRequest()
 	{
-		await using var host = await MinimalApiTestHost.StartAsync(
-			configureServices: services =>
-				services.AddScoped<IValidator<CreateGadgetRequest>, GadgetValidator>(),
-			configureEndpoints: MapGadgets);
+		await using MinimalApiTestHost host = await MinimalApiTestHost.StartAsync(
+			null,
+			MapWidgets);
 
-		var response = await host.Client.PostAsJsonAsync(
-			"/gadgets",
-			new CreateGadgetRequest("sprocket"));
+		HttpResponseMessage response = await host.Client.PostAsJsonAsync(
+			"/widgets",
+			new CreateWidgetRequest { Name = "ok" });
 
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 	}
@@ -76,36 +68,50 @@ public class RequestValidationFilterTests
 	[Fact]
 	public async Task DataAnnotations_RejectsInvalidRequest()
 	{
-		await using var host = await MinimalApiTestHost.StartAsync(
-			configureServices: null,
-			configureEndpoints: MapWidgets);
+		await using MinimalApiTestHost host = await MinimalApiTestHost.StartAsync(
+			null,
+			MapWidgets);
 
-		var response = await host.Client.PostAsJsonAsync(
+		HttpResponseMessage response = await host.Client.PostAsJsonAsync(
 			"/widgets",
 			new CreateWidgetRequest { Name = "" });
 
 		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 		var problem = await response.Content.ReadFromJsonAsync<ValidationProblemPayload>();
 		Assert.NotNull(problem);
-		Assert.Contains(nameof(CreateWidgetRequest.Name), problem!.Errors.Keys);
+		Assert.Contains(nameof(CreateWidgetRequest.Name), problem.Errors.Keys);
 	}
 
 	[Fact]
-	public async Task DataAnnotations_AllowsValidRequest()
+	public async Task FluentValidation_AllowsValidRequest()
 	{
-		await using var host = await MinimalApiTestHost.StartAsync(
-			configureServices: null,
-			configureEndpoints: MapWidgets);
+		await using MinimalApiTestHost host = await MinimalApiTestHost.StartAsync(
+			services =>
+				services.AddScoped<IValidator<CreateGadgetRequest>, GadgetValidator>(),
+			MapGadgets);
 
-		var response = await host.Client.PostAsJsonAsync(
-			"/widgets",
-			new CreateWidgetRequest { Name = "ok" });
+		HttpResponseMessage response = await host.Client.PostAsJsonAsync(
+			"/gadgets",
+			new CreateGadgetRequest("sprocket"));
 
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 	}
 
-	private sealed record ValidationProblemPayload
+	[Fact]
+	public async Task FluentValidation_RejectsInvalidRequest()
 	{
-		public Dictionary<string, string[]> Errors { get; init; } = new();
+		await using MinimalApiTestHost host = await MinimalApiTestHost.StartAsync(
+			services =>
+				services.AddScoped<IValidator<CreateGadgetRequest>, GadgetValidator>(),
+			MapGadgets);
+
+		HttpResponseMessage response = await host.Client.PostAsJsonAsync(
+			"/gadgets",
+			new CreateGadgetRequest(string.Empty));
+
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+		var problem = await response.Content.ReadFromJsonAsync<ValidationProblemPayload>();
+		Assert.NotNull(problem);
+		Assert.Contains(nameof(CreateGadgetRequest.Name), problem.Errors.Keys);
 	}
 }

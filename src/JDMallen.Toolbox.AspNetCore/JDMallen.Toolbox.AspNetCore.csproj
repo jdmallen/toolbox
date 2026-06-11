@@ -5,7 +5,7 @@
         <RootNamespace>JDMallen.Toolbox.AspNetCore</RootNamespace>
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>JDMallen.Toolbox.AspNetCore</PackageId>
-        
+
         <Description>ASP.NET Core utilities including authentication, identity, JWT handling, and startup extensions.</Description>
     </PropertyGroup>
 
@@ -34,10 +34,10 @@
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0"/>
 
         <!-- Entity Framework Core -->
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2"/>
 
         <!-- Validation -->
-        <PackageReference Include="FluentValidation" Version="12.1.1" />
+        <PackageReference Include="FluentValidation" Version="12.1.1"/>
     </ItemGroup>
 
 </Project>

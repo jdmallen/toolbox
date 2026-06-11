@@ -32,6 +32,7 @@ public record PagedRequest(int? Page, int? PageSize) : IPagedRequest;
 /// Paginated result container.
 /// </summary>
 public record PagedList<T>(
+
 	// ReSharper disable once NotAccessedPositionalProperty.Global
 	List<T> Items,
 	int Page,
@@ -72,18 +73,22 @@ public static class PaginationExtensions
 		IPagedRequest request,
 		CancellationToken cancellationToken = default)
 	{
-		var page = request.Page ?? 1;
-		var pageSize = Math.Min(request.PageSize ?? 10, IPagedRequest.MaxPageSize);
+		int page = request.Page ?? 1;
+		int pageSize = Math.Min(request.PageSize ?? 10, IPagedRequest.MaxPageSize);
 
 		ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(page, 0);
 		ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(pageSize, 0);
 
-		var totalItems = await query.CountAsync(cancellationToken);
-		var items = await query
+		int totalItems = await query.CountAsync(cancellationToken);
+		List<T> items = await query
 			.Skip((page - 1) * pageSize)
 			.Take(pageSize)
 			.ToListAsync(cancellationToken);
 
-		return new PagedList<T>(items, page, pageSize, totalItems);
+		return new PagedList<T>(
+			items,
+			page,
+			pageSize,
+			totalItems);
 	}
 }

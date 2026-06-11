@@ -28,5 +28,5 @@ public enum PasswordStrength
 	/// <summary>
 	/// Password has excellent strength (over 120 bits of entropy).
 	/// </summary>
-	Excellent
+	Excellent,
 }
