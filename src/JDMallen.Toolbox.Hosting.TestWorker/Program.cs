@@ -3,7 +3,7 @@ namespace JDMallen.Toolbox.Hosting.TestWorker;
 /// <summary>
 /// The main entry point for the hosted worker service application.
 /// </summary>
-public class Program
+public static class Program
 {
 	/// <summary>
 	/// Creates and configures the host builder for the worker service.

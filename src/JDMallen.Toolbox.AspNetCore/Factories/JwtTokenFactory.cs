@@ -83,7 +83,7 @@ public class JwtTokenFactory : IJwtTokenFactory
 		var token = new JwtSecurityToken(
 			JwtOptions.Issuer,
 			JwtOptions.Audience,
-			claims.Where(x => x != null).ToList(),
+			[.. claims.Where(x => x != null)],
 			JwtOptions.NotBefore,
 			JwtOptions.Expiration,
 			JwtOptions.SigningCredentials);

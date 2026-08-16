@@ -50,7 +50,7 @@ public class RateLimitingExtensionsTests
 
 		try
 		{
-			return responses.Select(response => response.StatusCode).ToArray();
+			return [.. responses.Select(response => response.StatusCode)];
 		}
 		finally
 		{

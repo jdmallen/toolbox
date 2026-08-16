@@ -14,9 +14,6 @@ public sealed class SystemTimeProvider : ITimeProvider
 	public static SystemTimeProvider Instance { get; } = new();
 
 	/// <inheritdoc />
-	public DateTime GetUtcNow()
-	{
-		return DateTime.UtcNow;
-	}
+	public DateTime GetUtcNow() => DateTime.UtcNow;
 }
 #endif

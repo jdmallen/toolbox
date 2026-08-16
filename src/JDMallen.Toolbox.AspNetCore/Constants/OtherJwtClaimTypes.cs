@@ -3,7 +3,7 @@
 /// <summary>
 /// Additional JWT claim type constants not covered by standard claims.
 /// </summary>
-public class OtherJwtClaimTypes
+public static class OtherJwtClaimTypes
 {
 	/// <summary>
 	/// The primary security identifier claim type.

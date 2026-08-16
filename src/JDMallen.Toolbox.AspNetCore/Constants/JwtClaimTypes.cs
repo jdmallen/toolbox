@@ -3,7 +3,7 @@
 /// <summary>
 /// Constants for JWT claim types following RFC 7519 standard.
 /// </summary>
-public class JwtClaimTypes
+public static class JwtClaimTypes
 {
 	/// <summary>
 	/// Custom claim type to represent an AppUser's primary ID

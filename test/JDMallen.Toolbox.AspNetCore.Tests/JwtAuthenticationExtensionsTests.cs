@@ -20,7 +20,7 @@ public class JwtAuthenticationExtensionsTests
 	private static SigningCredentials TestSigningCredentials() =>
 		new(
 			new SymmetricSecurityKey(
-				"a-very-long-test-signing-key-0123456789"u8.ToArray()),
+				[.. "a-very-long-test-signing-key-0123456789"u8]),
 			SecurityAlgorithms.HmacSha256);
 
 	private static IConfiguration ConfigurationWith(

@@ -5,6 +5,43 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1]
+
+Maintenance release: dependency updates across every project and a
+language-modernization pass. No public API changes, and no behavior changes to
+any of the three chat completion clients.
+
+### Changed
+
+- **Runtime dependencies updated.** The `Microsoft.AspNetCore.*`,
+  `Microsoft.Extensions.*`, and `Microsoft.EntityFrameworkCore*` packages move
+  from 10.0.2 to **10.0.11**; `Microsoft.IdentityModel.Tokens` and
+  `System.IdentityModel.Tokens.Jwt` from 8.15.0 to **8.22.0**; and
+  `JetBrains.Annotations` from 2025.2.4 to **2026.2.0**. `FluentValidation`,
+  `Newtonsoft.Json`, `ncrontab`, and `System.ComponentModel.Annotations` are
+  unchanged.
+- **Test tooling updated** across all four test projects:
+  `Microsoft.NET.Test.Sdk` 17.14.1 → **18.9.0**, `xunit.runner.visualstudio`
+  3.1.4 → **4.0.0**, `coverlet.collector` 6.0.4 → **10.0.1**, and
+  `Microsoft.Extensions.TimeProvider.Testing` 10.7.0 → **10.9.0**. The two
+  tooling-only packages now carry the `PrivateAssets`/`IncludeAssets` metadata
+  the current test project template emits. `xunit` itself stays on 2.9.3.
+- **Language modernization.** Constant-only holders — `JwtClaimTypes`,
+  `OAuthSchemes`, `OtherJwtClaimTypes`, and the TestWorker `Program` — are now
+  `static class`, so they can no longer be instantiated or derived from.
+  `.ToArray()` and `.ToList()` call sites in `JwtTokenFactory`,
+  `CustomPasswordValidator`, and two test helpers became collection expressions,
+  and `SystemTimeProvider.GetUtcNow` is expression-bodied. Inside
+  `OpenAICompatibleChatClient`, a guard clause became a ternary and a nested
+  `if` became a `continue`; the wire format is untouched.
+- **Solution organization.** The eight non-AI projects — `JDMallen.Toolbox`,
+  `.AspNetCore`, `.Data.Abstractions`, `.EFCore`, `.EFCore.Identity`,
+  `.EFCore.SqlServer`, `.Hosting`, and `.Hosting.TestWorker` — now sit in the
+  `src` solution folder next to `JDMallen.Toolbox.AI`, which was already there,
+  so the solution tree finally matches the on-disk layout. `CHANGELOG.md` joins
+  the other root files in Solution Items. This is a solution-file change only:
+  nothing moved on disk, and no project path, package, or reference changed.
+
 ## [3.1.0]
 
 Adds a third chat completion client to **`JDMallen.Toolbox.AI`**, covering any

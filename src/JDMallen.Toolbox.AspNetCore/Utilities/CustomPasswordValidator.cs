@@ -258,6 +258,6 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 			errors.Add(_errors.PasswordTooShort(_options.MinimumLength));
 		}
 
-		return IdentityResult.Failed(errors.ToArray());
+		return IdentityResult.Failed([.. errors]);
 	}
 }

@@ -3,7 +3,7 @@
 /// <summary>
 /// Constants for OAuth authentication scheme names.
 /// </summary>
-public class OAuthSchemes
+public static class OAuthSchemes
 {
 	/// <summary>
 	/// Facebook OAuth scheme name.

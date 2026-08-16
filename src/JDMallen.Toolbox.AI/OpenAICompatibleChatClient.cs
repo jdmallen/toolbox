@@ -79,14 +79,11 @@ public sealed class OpenAICompatibleChatClient(
 			.ReadFromJsonAsync(AIJsonContext.Default.OpenAICompatibleResponse, cancellationToken)
 			.ConfigureAwait(false);
 
-		if (result?.Choices is not { Count: > 0 } choices)
-		{
-			return string.Empty;
-		}
-
 		// reasoning_content, when present, is deliberately dropped: callers asked
 		// for the completion, not the model's scratch work.
-		return StripReasoning(choices[0].Message?.Content ?? string.Empty);
+		return result?.Choices is not { Count: > 0 } choices
+			? string.Empty
+			: StripReasoning(choices[0].Message?.Content ?? string.Empty);
 	}
 
 	/// <summary>
@@ -112,7 +109,7 @@ public sealed class OpenAICompatibleChatClient(
 		}
 
 		var stripped = new StringBuilder(content.Length);
-		int cursor = 0;
+		var cursor = 0;
 
 		while (cursor < content.Length)
 		{
@@ -126,11 +123,13 @@ public sealed class OpenAICompatibleChatClient(
 					cursor,
 					StringComparison.OrdinalIgnoreCase);
 
-				if (candidate >= 0 && (openStart < 0 || candidate < openStart))
+				if (candidate < 0 || (openStart >= 0 && candidate >= openStart))
 				{
-					openStart = candidate;
-					openEnd = candidate + tagName.Length + 2;
+					continue;
 				}
+
+				openStart = candidate;
+				openEnd = candidate + tagName.Length + 2;
 			}
 
 			if (openStart < 0)
@@ -179,8 +178,13 @@ internal sealed record OpenAICompatibleRequest(
 	[property: JsonPropertyName("temperature")]
 	double Temperature)
 {
+#pragma warning disable CA1822
+	// Must stay an instance member: System.Text.Json does not serialize static
+	// properties, and making this static silently drops "stream": false from the
+	// request body.
 	[JsonPropertyName("stream")]
 	public bool Stream => false;
+#pragma warning restore CA1822
 }
 
 internal sealed record OpenAICompatibleMessage(
