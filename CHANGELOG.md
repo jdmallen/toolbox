@@ -5,6 +5,35 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0]
+
+Adds a third chat completion client to **`JDMallen.Toolbox.AI`**, covering any
+server that speaks the OpenAI `/v1/chat/completions` API — openai.com itself, or
+a self-hosted runner such as llama.cpp, llama-swap, Ollama, vLLM, or LM Studio.
+No existing API changed, so this is additive for current consumers.
+
+### Added
+
+- **`OpenAICompatibleChatClient`** and **`OpenAICompatibleClientOptions`**
+  (`BaseUrl`, `Model`, optional `ApiKey`). The client posts to
+  `{BaseUrl}/chat/completions` with the model named in the body, and reads
+  `choices[0].message.content`. It differs from `AzureOpenAIChatClient` in the
+  three places Azure diverges from stock OpenAI: the deployment is not in the
+  path, auth is `Authorization: Bearer` rather than an `api-key` header, and no
+  `api-version` query string is sent.
+- **Optional authentication.** When `ApiKey` is null, empty, or whitespace, no
+  `Authorization` header is sent at all — self-hosted runners typically accept
+  anonymous requests, and an empty bearer token is worse than none.
+- **Reasoning-model handling.** Thinking models are common on self-hosted
+  runners and otherwise return unusable completions, so the client drops the
+  `reasoning_content` field some servers emit and strips inline `<think>`,
+  `<thinking>`, and `<reasoning>` blocks from the content. A *leading* unclosed
+  opening tag means generation was truncated mid-thought (usually by
+  `MaxTokens`); the remainder is discarded and the caller gets the empty string
+  it already handles, rather than reasoning passed off as an answer. An unclosed
+  tag anywhere else is left alone — it is far more likely to be part of the
+  answer, such as a shell command or an XML snippet.
+
 ## [3.0.1]
 
 Distribution-only change — no library code or public API changes. The packages
