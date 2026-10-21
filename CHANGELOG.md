@@ -7,24 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.2.1]
 
-Documentation release: every package now has a README, and each one ships
-inside its package so nuget.org shows it on the package page. No library code
-or public API changes.
+Documentation release: the consumer-facing packages now have READMEs, and each
+one ships inside its package so nuget.org shows it on the package page. No
+library code or public API changes.
 
 ### Added
 
-- **READMEs for the six packages that lacked one**: `JDMallen.Toolbox`,
-  `JDMallen.Toolbox.AI`, `JDMallen.Toolbox.AspNetCore`,
-  `JDMallen.Toolbox.Data.Abstractions`, `JDMallen.Toolbox.EFCore`, and
-  `JDMallen.Toolbox.EFCore.Identity`. Each covers installation, usage examples,
-  target frameworks, and dependencies.
+- **READMEs for the five packages that lacked one**: `JDMallen.Toolbox.AI`,
+  `JDMallen.Toolbox.AspNetCore`, `JDMallen.Toolbox.Data.Abstractions`,
+  `JDMallen.Toolbox.EFCore`, and `JDMallen.Toolbox.EFCore.Identity`. Each covers
+  installation, usage examples, target frameworks, and dependencies.
 
 ### Changed
 
-- **Package readmes.** Each package project sets `PackageReadmeFile` and packs
-  its own `README.md`, so all eight packages, including the existing
-  `JDMallen.Toolbox.Hosting` and `JDMallen.Toolbox.EFCore.SqlServer` READMEs,
-  now include their README.
+- **Package readmes.** Each of those projects, plus `JDMallen.Toolbox.Hosting`
+  and `JDMallen.Toolbox.EFCore.SqlServer` (which already had READMEs), sets
+  `PackageReadmeFile` and packs its own `README.md`. The base `JDMallen.Toolbox`
+  library is still published as a dependency of the others, without a README.
 
 ## [3.2.0]
 
