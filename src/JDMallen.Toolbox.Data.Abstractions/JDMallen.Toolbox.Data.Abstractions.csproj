@@ -5,7 +5,12 @@
         <RootNamespace>JDMallen.Toolbox.Data.Abstractions</RootNamespace>
         <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
         <PackageId>JDMallen.Toolbox.Data.Abstractions</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>Data abstractions and interfaces for repository patterns, entity models, and query parameters.</Description>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="/"/>
+    </ItemGroup>
 
 </Project>

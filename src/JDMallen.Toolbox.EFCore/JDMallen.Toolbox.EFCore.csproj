@@ -5,6 +5,7 @@
         <RootNamespace>JDMallen.Toolbox.EFCore</RootNamespace>
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>JDMallen.Toolbox.EFCore</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>Entity Framework Core utilities including base context, filters, and entity models.</Description>
     </PropertyGroup>
 
@@ -16,6 +17,10 @@
     <ItemGroup>
         <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj"/>
         <ProjectReference Include="..\JDMallen.Toolbox.Data.Abstractions\JDMallen.Toolbox.Data.Abstractions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="/"/>
     </ItemGroup>
 
 </Project>

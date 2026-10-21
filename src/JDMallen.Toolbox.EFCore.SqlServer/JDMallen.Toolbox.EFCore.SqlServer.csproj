@@ -5,6 +5,7 @@
         <RootNamespace>JDMallen.Toolbox.EFCore.SqlServer</RootNamespace>
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>JDMallen.Toolbox.EFCore.SqlServer</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>SQL Server provider package for JDMallen.Toolbox.EFCore. Brings in Microsoft.EntityFrameworkCore.SqlServer.</Description>
     </PropertyGroup>
 
@@ -14,6 +15,10 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="/"/>
     </ItemGroup>
 
 </Project>

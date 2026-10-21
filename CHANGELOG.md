@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.1]
+
+Documentation release: every package now has a README, and each one ships
+inside its package so nuget.org shows it on the package page. No library code
+or public API changes.
+
+### Added
+
+- **READMEs for the six packages that lacked one**: `JDMallen.Toolbox`,
+  `JDMallen.Toolbox.AI`, `JDMallen.Toolbox.AspNetCore`,
+  `JDMallen.Toolbox.Data.Abstractions`, `JDMallen.Toolbox.EFCore`, and
+  `JDMallen.Toolbox.EFCore.Identity`. Each covers installation, usage examples,
+  target frameworks, and dependencies.
+
+### Changed
+
+- **Package readmes.** Each package project sets `PackageReadmeFile` and packs
+  its own `README.md`, so all eight packages, including the existing
+  `JDMallen.Toolbox.Hosting` and `JDMallen.Toolbox.EFCore.SqlServer` READMEs,
+  now include their README.
+
 ## [3.2.0]
 
 Adds image input to `JDMallen.Toolbox.AI`, so vision-capable models can be sent

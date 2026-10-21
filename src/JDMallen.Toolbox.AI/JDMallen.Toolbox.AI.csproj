@@ -5,9 +5,14 @@
         <RootNamespace>JDMallen.Toolbox.AI</RootNamespace>
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>JDMallen.Toolbox.AI</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>Minimal, trim-safe chat completion clients for Anthropic, Azure OpenAI, and any OpenAI-compatible endpoint (including self-hosted models) over raw HTTP with source-generated JSON.</Description>
         <IsTrimmable>true</IsTrimmable>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="/"/>
+    </ItemGroup>
 
 </Project>

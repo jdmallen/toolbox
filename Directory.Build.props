@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <!-- Common package metadata -->
-        <Version>3.2.0</Version>
+        <Version>3.2.1</Version>
         <Authors>J.D. Mallen</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>

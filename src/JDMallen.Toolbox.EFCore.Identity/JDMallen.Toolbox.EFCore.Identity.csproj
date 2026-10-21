@@ -5,6 +5,7 @@
         <RootNamespace>JDMallen.Toolbox.EFCore.Identity</RootNamespace>
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>JDMallen.Toolbox.EFCore.Identity</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>ASP.NET Core Identity integration with Entity Framework Core.</Description>
     </PropertyGroup>
 
@@ -15,6 +16,10 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="/"/>
     </ItemGroup>
 
 </Project>
