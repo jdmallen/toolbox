@@ -8,9 +8,10 @@ using Microsoft.AspNetCore.Identity;
 namespace JDMallen.Toolbox.AspNetCore.Tests;
 
 /// <summary>
-/// Tests for <see cref="CustomPasswordValidator{TUser}.CheckPassword" /> and the
-/// embedded resources behind it. Before 3.2.2, <see cref="ResourceLoader" />'s
-/// iterators never ended, so any password of two or more characters hung.
+/// Characterization tests for
+/// <see cref="CustomPasswordValidator{TUser}.CheckPassword" />. They pin the
+/// entropy, strength, and error flags for known passwords, so moving the
+/// embedded resources in 4.0 can't silently change results.
 /// </summary>
 public class CustomPasswordValidatorTests
 {

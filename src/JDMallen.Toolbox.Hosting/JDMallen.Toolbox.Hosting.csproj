@@ -6,6 +6,12 @@
         <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
         <PackageId>JDMallen.Toolbox.Hosting</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <!-- Package validation: pack fails on any API break against the
+             baseline that isn't recorded in CompatibilitySuppressions.xml. -->
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageValidationBaselineVersion>3.2.1</PackageValidationBaselineVersion>
+
         <Description>Background service base classes with support for scoped services and cron-based scheduling.</Description>
     </PropertyGroup>
 

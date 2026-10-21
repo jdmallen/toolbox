@@ -6,6 +6,12 @@
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>JDMallen.Toolbox.EFCore.SqlServer</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <!-- Package validation: pack fails on any API break against the
+             baseline that isn't recorded in CompatibilitySuppressions.xml. -->
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageValidationBaselineVersion>3.2.1</PackageValidationBaselineVersion>
+
         <Description>SQL Server provider package for JDMallen.Toolbox.EFCore. Brings in Microsoft.EntityFrameworkCore.SqlServer.</Description>
     </PropertyGroup>
 

@@ -6,6 +6,12 @@
         <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>
         <PackageId>JDMallen.Toolbox.Data.Abstractions</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <!-- Package validation: pack fails on any API break against the
+             baseline that isn't recorded in CompatibilitySuppressions.xml. -->
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageValidationBaselineVersion>3.2.1</PackageValidationBaselineVersion>
+
         <Description>Data abstractions and interfaces for repository patterns, entity models, and query parameters.</Description>
     </PropertyGroup>
 

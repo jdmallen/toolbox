@@ -6,6 +6,12 @@
         <TargetFramework>net10.0</TargetFramework>
         <PackageId>JDMallen.Toolbox.EFCore.Identity</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <!-- Package validation: pack fails on any API break against the
+             baseline that isn't recorded in CompatibilitySuppressions.xml. -->
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageValidationBaselineVersion>3.2.1</PackageValidationBaselineVersion>
+
         <Description>ASP.NET Core Identity integration with Entity Framework Core.</Description>
     </PropertyGroup>
 

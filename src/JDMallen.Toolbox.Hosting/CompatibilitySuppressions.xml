@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:JDMallen.Toolbox.Hosting.ITimeProvider</Target>
+    <Left>lib/netstandard2.0/JDMallen.Toolbox.Hosting.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.Hosting.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:JDMallen.Toolbox.Hosting.SystemTimeProvider</Target>
+    <Left>lib/netstandard2.0/JDMallen.Toolbox.Hosting.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.Hosting.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.Hosting.ScheduledBackgroundService`1.#ctor(Microsoft.Extensions.Logging.ILogger{`0},Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,System.String,System.Boolean,JDMallen.Toolbox.Hosting.ITimeProvider)</Target>
+    <Left>lib/netstandard2.0/JDMallen.Toolbox.Hosting.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.Hosting.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.Hosting.ScopedBackgroundService`1.#ctor(Microsoft.Extensions.Logging.ILogger{`0},Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,JDMallen.Toolbox.Hosting.ITimeProvider)</Target>
+    <Left>lib/netstandard2.0/JDMallen.Toolbox.Hosting.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.Hosting.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.Hosting.ScopedBackgroundService`1.get_TimeProvider</Target>
+    <Left>lib/netstandard2.0/JDMallen.Toolbox.Hosting.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.Hosting.dll</Right>
+  </Suppression>
+</Suppressions>
