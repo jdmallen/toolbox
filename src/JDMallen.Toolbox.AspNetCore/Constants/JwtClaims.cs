@@ -3,7 +3,7 @@
 /// <summary>
 /// Constants for custom JWT claim values used in application authorization.
 /// </summary>
-public class JwtClaims
+public static class JwtClaims
 {
 	/// <summary>
 	/// Claim value for standard API user role.

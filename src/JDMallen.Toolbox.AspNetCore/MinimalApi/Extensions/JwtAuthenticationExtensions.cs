@@ -1,14 +1,11 @@
-using System.Net;
+using JDMallen.Toolbox.AspNetCore.Factories;
 using JDMallen.Toolbox.AspNetCore.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions;
 
@@ -18,44 +15,48 @@ namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions;
 public static class JwtAuthenticationExtensions
 {
 	/// <summary>
-	/// Configures JWT Bearer authentication for Minimal APIs and MVC. The issuer,
-	/// audience, and other string claims are bound from the named configuration
-	/// section, while the signing credentials must be supplied via
-	/// <paramref name="signingCredentials" /> because a <see cref="SecurityKey" />
-	/// cannot be bound from configuration.
+	/// Configures JWT Bearer authentication for Minimal APIs and MVC, and
+	/// registers an <see cref="IJwtTokenFactory" /> that issues tokens this
+	/// configuration accepts. The issuer, audience, and other string settings
+	/// are bound from the named configuration section into
+	/// <see cref="JwtOptions" />. The signing credentials are passed in, because
+	/// a <see cref="SecurityKey" /> cannot be bound from configuration, and are
+	/// registered as <see cref="JwtSigningCredentials" /> for both validation
+	/// and signing.
 	/// </summary>
+	/// <remarks>
+	/// <see cref="IJwtTokenFactory" /> is registered with <c>TryAdd</c>, so a
+	/// factory registered earlier wins.
+	/// </remarks>
+	/// <param name="services">The service collection to add to.</param>
+	/// <param name="configuration">The configuration holding the JWT section.</param>
+	/// <param name="signingCredentials">
+	/// The credentials that sign issued tokens and validate incoming ones.
+	/// </param>
+	/// <param name="jwtSectionName">The configuration section to bind.</param>
+	/// <returns>The authentication builder, for chaining more schemes.</returns>
+	/// <exception cref="ArgumentNullException">
+	/// <paramref name="signingCredentials" /> is null.
+	/// </exception>
 	/// <exception cref="InvalidOperationException">
-	/// Thrown when the configuration section is missing, or when no signing
-	/// credentials are available from either the argument or the bound options.
+	/// The configuration section is missing or empty.
 	/// </exception>
 	public static AuthenticationBuilder AddJwtAuthentication(
 		this IServiceCollection services,
 		IConfiguration configuration,
-		string jwtSectionName = "Jwt",
-		SigningCredentials? signingCredentials = null)
+		SigningCredentials signingCredentials,
+		string jwtSectionName = "Jwt")
 	{
+		var jwtSigningCredentials = new JwtSigningCredentials(signingCredentials);
+
 		IConfigurationSection jwtSection = configuration.GetSection(jwtSectionName);
 		JwtOptions jwtOptions = jwtSection.Get<JwtOptions>()
 			?? throw new InvalidOperationException(
 				$"JWT configuration section '{jwtSectionName}' is missing or empty.");
 
 		services.Configure<JwtOptions>(jwtSection);
-
-		// SigningCredentials cannot be bound from configuration (its SecurityKey
-		// is abstract), so prefer the explicitly supplied value and fall back to
-		// anything assembled on the bound options. The property is non-nullable,
-		// but reflection-based binding can still leave it null at runtime, hence
-		// the nullable local and the explicit guard below.
-		SigningCredentials? resolvedSigningCredentials =
-			signingCredentials ?? jwtOptions.SigningCredentials;
-
-		if (resolvedSigningCredentials is null)
-		{
-			throw new InvalidOperationException(
-				"JWT signing credentials were not supplied. Pass them via the "
-				+ $"'{nameof(signingCredentials)}' parameter; they cannot be bound "
-				+ "from configuration.");
-		}
+		services.AddSingleton(jwtSigningCredentials);
+		services.TryAddSingleton<IJwtTokenFactory, JwtTokenFactory>();
 
 		return services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			.AddJwtBearer(options =>
@@ -65,7 +66,7 @@ public static class JwtAuthenticationExtensions
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = resolvedSigningCredentials.Key,
+					IssuerSigningKey = jwtSigningCredentials.Credentials.Key,
 					ValidateIssuer = true,
 					ValidIssuer = jwtOptions.Issuer,
 					ValidateAudience = true,
@@ -73,35 +74,6 @@ public static class JwtAuthenticationExtensions
 					ValidateLifetime = true,
 					ClockSkew = TimeSpan.FromMinutes(5),
 				};
-			});
-	}
-
-	/// <summary>
-	/// Adds a RouteHandlerBuilder extension to require JWT authentication with
-	/// proper OpenAPI metadata.
-	/// </summary>
-	[Obsolete(
-		"This uses `WithOpenApi` which is deprecated. "
-		+ "Consider using Swashbuckle or another OpenAPI library for better support.")]
-	public static RouteHandlerBuilder RequireJwtAuth(this RouteHandlerBuilder builder)
-	{
-		return builder
-			.RequireAuthorization()
-			.Produces<ProblemHttpResult>(
-				HttpStatusCode.Unauthorized.GetHashCode())
-			.WithOpenApi(operation =>
-			{
-				var securitySchemeReference = new OpenApiSecuritySchemeReference(
-					JwtBearerDefaults.AuthenticationScheme);
-
-				var securityRequirement = new OpenApiSecurityRequirement
-				{
-					{ securitySchemeReference, [] },
-				};
-
-				operation.Security = new List<OpenApiSecurityRequirement> { securityRequirement };
-
-				return operation;
 			});
 	}
 }

@@ -9,7 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace JDMallen.Toolbox.AspNetCore.Tests;
 
 /// <summary>
-/// Tests for the claims <see cref="JwtTokenFactory" /> stamps on each token.
+/// Tests for the identities <see cref="JwtTokenFactory" /> builds and the
+/// claims it stamps on each token.
 /// </summary>
 public class JwtTokenFactoryTests
 {
@@ -21,10 +22,14 @@ public class JwtTokenFactoryTests
 					Issuer = "https://issuer.example.com",
 					Audience = "https://audience.example.com",
 					Subject = "tests",
-					SigningCredentials = new SigningCredentials(
-						new SymmetricSecurityKey(new byte[32]),
-						SecurityAlgorithms.HmacSha256),
-				}));
+				}),
+			new JwtSigningCredentials(
+				new SigningCredentials(
+					new SymmetricSecurityKey(new byte[32]),
+					SecurityAlgorithms.HmacSha256)));
+
+	private static JwtSecurityToken Read(string token) =>
+		new JwtSecurityTokenHandler().ReadJwtToken(token);
 
 	[Fact]
 	public void GenerateToken_StampsIssuedAtInWholeUnixSeconds()
@@ -39,8 +44,7 @@ public class JwtTokenFactoryTests
 
 		// 4.0 truncates to the second, as DateTimeOffset.ToUnixTimeSeconds does;
 		// 3.x rounded up, which could stamp an iat up to a second in the future.
-		Claim issuedAt = new JwtSecurityTokenHandler()
-			.ReadJwtToken(token)
+		Claim issuedAt = Read(token)
 			.Claims
 			.Single(claim => claim.Type == JwtClaimTypes.IssuedAt);
 
@@ -52,18 +56,61 @@ public class JwtTokenFactoryTests
 	}
 
 	[Fact]
-	public void GenerateToken_ThrowsForItsOwnClaimsIdentity()
+	public void GenerateClaimsIdentity_HasOneNameClaim()
 	{
-		// Pinned bug (B8): GenerateClaimsIdentity wraps a GenericIdentity, which
-		// already carries a Name claim, then adds a second one. GenerateToken's
-		// SingleOrDefault on Name then throws. Phase 4 rewrites both methods
-		// (with B2); flip this test then.
-		JwtTokenFactory factory = CreateFactory();
-		ClaimsIdentity identity =
-			factory.GenerateClaimsIdentity("user@example.com", Guid.NewGuid());
+		// 3.x wrapped a GenericIdentity, which already carries a Name claim, and
+		// added a second one, so GenerateToken threw on its own identity (B8).
+		ClaimsIdentity identity = CreateFactory()
+			.GenerateClaimsIdentity("user@example.com", Guid.NewGuid());
 
-		Assert.Equal(2, identity.FindAll(ClaimTypes.Name).Count());
-		Assert.Throws<InvalidOperationException>(
-			() => factory.GenerateToken(identity));
+		Assert.Single(identity.FindAll(ClaimTypes.Name));
+		Assert.Equal("user@example.com", identity.Name);
+		Assert.True(identity.IsAuthenticated);
+	}
+
+	[Fact]
+	public void GenerateToken_CarriesTheUserIdAndEmailOfItsOwnIdentity()
+	{
+		// 3.x wrote the email (the Name claim) into "id" and dropped the real
+		// user ID (B2).
+		JwtTokenFactory factory = CreateFactory();
+		var userId = Guid.NewGuid();
+
+		JwtSecurityToken token = Read(
+			factory.GenerateToken(
+				factory.GenerateClaimsIdentity("user@example.com", userId)));
+
+		Assert.Equal(
+			userId.ToString("D"),
+			token.Claims.Single(claim => claim.Type == JwtClaimTypes.UserId).Value);
+		Assert.Equal(
+			"user@example.com",
+			token.Claims.Single(claim => claim.Type == OtherJwtClaimTypes.Email).Value);
+	}
+
+	[Fact]
+	public void GenerateToken_FallsBackToTheNameIdentifierForTheUserId()
+	{
+		var identity = new ClaimsIdentity(
+			[new Claim(ClaimTypes.NameIdentifier, "42")]);
+
+		JwtSecurityToken token = Read(CreateFactory().GenerateToken(identity));
+
+		Assert.Equal(
+			"42",
+			token.Claims.Single(claim => claim.Type == JwtClaimTypes.UserId).Value);
+	}
+
+	[Fact]
+	public void GenerateToken_OmitsTheUserIdWhenTheIdentityHasNone()
+	{
+		var identity = new ClaimsIdentity(
+			[new Claim(ClaimTypes.Name, "user@example.com")]);
+
+		JwtSecurityToken token = Read(CreateFactory().GenerateToken(identity));
+
+		Assert.DoesNotContain(
+			token.Claims,
+			claim => claim.Type == JwtClaimTypes.UserId);
 	}
 }

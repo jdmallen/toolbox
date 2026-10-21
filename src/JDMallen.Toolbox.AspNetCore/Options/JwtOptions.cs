@@ -1,11 +1,15 @@
 ﻿using JDMallen.Toolbox.Structs;
-using Microsoft.IdentityModel.Tokens;
 
 namespace JDMallen.Toolbox.AspNetCore.Options;
 
 /// <summary>
 /// Configuration options for JSON Web Token (JWT) generation and validation.
 /// </summary>
+/// <remarks>
+/// The signing credentials are not part of these options; they are passed to
+/// <c>AddJwtAuthentication</c> and registered as
+/// <see cref="JwtSigningCredentials" />.
+/// </remarks>
 public class JwtOptions
 {
 	/// <summary>
@@ -90,11 +94,6 @@ public class JwtOptions
 	/// NumericDate value.  Use of this claim is OPTIONAL.
 	/// </remarks>
 	public static DateTime NotBefore => DateTime.UtcNow;
-
-	/// <summary>
-	/// The signing credentials to use when signing tokens.
-	/// </summary>
-	public required SigningCredentials SigningCredentials { get; init; }
 
 	/// <summary>
 	/// RFC 7519 - 4.1.2.  "sub" (Subject) Claim

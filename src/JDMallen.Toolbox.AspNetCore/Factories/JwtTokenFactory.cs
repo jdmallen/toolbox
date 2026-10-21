@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Principal;
 using JDMallen.Toolbox.AspNetCore.Constants;
 using JDMallen.Toolbox.AspNetCore.Options;
 using Microsoft.Extensions.Options;
@@ -17,9 +16,15 @@ public class JwtTokenFactory : IJwtTokenFactory
 	/// Initializes a new instance of the <see cref="JwtTokenFactory" /> class.
 	/// </summary>
 	/// <param name="jwtOptions">The JWT configuration options.</param>
-	public JwtTokenFactory(IOptions<JwtOptions> jwtOptions)
+	/// <param name="signingCredentials">The credentials to sign tokens with.</param>
+	public JwtTokenFactory(
+		IOptions<JwtOptions> jwtOptions,
+		JwtSigningCredentials signingCredentials)
 	{
+		ArgumentNullException.ThrowIfNull(jwtOptions);
+		ArgumentNullException.ThrowIfNull(signingCredentials);
 		JwtOptions = jwtOptions.Value;
+		SigningCredentials = signingCredentials;
 	}
 
 	/// <summary>
@@ -27,14 +32,19 @@ public class JwtTokenFactory : IJwtTokenFactory
 	/// </summary>
 	protected JwtOptions JwtOptions { get; }
 
+	/// <summary>
+	/// Gets the credentials tokens are signed with.
+	/// </summary>
+	protected JwtSigningCredentials SigningCredentials { get; }
+
 	/// <inheritdoc />
 	public ClaimsIdentity GenerateClaimsIdentity(string email, string id) => new(
-		new GenericIdentity(email, "token"),
 		[
 			new Claim(JwtClaimTypes.UserId, id),
 			new Claim(ClaimTypes.Name, email),
 			new Claim(ClaimTypes.Email, email),
-		]);
+		],
+		"token");
 
 	/// <inheritdoc />
 	public ClaimsIdentity GenerateClaimsIdentity(string email, Guid id)
@@ -43,11 +53,13 @@ public class JwtTokenFactory : IJwtTokenFactory
 	/// <inheritdoc />
 	public string GenerateToken(ClaimsIdentity identity)
 	{
-		string? userName =
-			identity
-				.Claims
-				.SingleOrDefault(c => c.Type == ClaimTypes.Name)
-				?.Value;
+		ArgumentNullException.ThrowIfNull(identity);
+
+		// The same lookup order ClaimsPrincipalExtensions.GetUserId reads back.
+		string? userId =
+			(identity.FindFirst(JwtClaimTypes.UserId)
+				?? identity.FindFirst(ClaimTypes.NameIdentifier))
+			?.Value;
 
 		var claims = new List<Claim?>
 		{
@@ -60,15 +72,10 @@ public class JwtTokenFactory : IJwtTokenFactory
 				ClaimValueTypes.Integer64),
 		};
 
-		if (!string.IsNullOrWhiteSpace(userName))
+		if (!string.IsNullOrWhiteSpace(userId))
 		{
-			claims.Add(new Claim(JwtClaimTypes.UserId, userName));
+			claims.Add(new Claim(JwtClaimTypes.UserId, userId));
 		}
-
-		//			if (!string.IsNullOrWhiteSpace(email))
-		//			{
-		//				claims.Add(new Claim(JwtClaimTypes.Subject, email));
-		//			}
 
 		claims.Add(
 			identity.FindAll(ClaimTypes.PrimarySid)
@@ -88,7 +95,7 @@ public class JwtTokenFactory : IJwtTokenFactory
 			[.. claims.Where(x => x != null)],
 			JwtOptions.NotBefore,
 			JwtOptions.Expiration,
-			JwtOptions.SigningCredentials);
+			SigningCredentials.Credentials);
 
 		return new JwtSecurityTokenHandler().WriteToken(token);
 	}

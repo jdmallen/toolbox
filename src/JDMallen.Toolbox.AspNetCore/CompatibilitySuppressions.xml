@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.AspNetCore.Constants.JwtClaims.#ctor</Target>
+    <Left>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.AspNetCore.Factories.JwtTokenFactory.#ctor(Microsoft.Extensions.Options.IOptions{JDMallen.Toolbox.AspNetCore.Options.JwtOptions})</Target>
+    <Left>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions.JwtAuthenticationExtensions.AddJwtAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,System.String,Microsoft.IdentityModel.Tokens.SigningCredentials)</Target>
+    <Left>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.AspNetCore.MinimalApi.Extensions.JwtAuthenticationExtensions.RequireJwtAuth(Microsoft.AspNetCore.Builder.RouteHandlerBuilder)</Target>
+    <Left>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.AspNetCore.Options.JwtOptions.get_SigningCredentials</Target>
+    <Left>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JDMallen.Toolbox.AspNetCore.Options.JwtOptions.set_SigningCredentials(Microsoft.IdentityModel.Tokens.SigningCredentials)</Target>
+    <Left>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:JDMallen.Toolbox.AspNetCore.Constants.JwtClaims</Target>
+    <Left>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Left>
+    <Right>lib/net10.0/JDMallen.Toolbox.AspNetCore.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>

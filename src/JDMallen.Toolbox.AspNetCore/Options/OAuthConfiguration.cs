@@ -43,7 +43,7 @@ public class OAuthConfiguration
 	/// <summary>
 	/// Gets or sets the scopes to request from Google OAuth.
 	/// </summary>
-	public IEnumerable<string> GoogleScopes { get; } = [];
+	public IEnumerable<string> GoogleScopes { get; set; } = [];
 
 	/// <summary>
 	/// Gets or sets the Twitter OAuth client ID.
