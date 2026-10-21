@@ -1,6 +1,5 @@
-﻿using JDMallen.Toolbox.AspNetCore.Constants;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using System.Text.Json.Serialization;
+using JDMallen.Toolbox.AspNetCore.Constants;
 
 namespace JDMallen.Toolbox.AspNetCore.Models;
 
@@ -18,7 +17,7 @@ public class PasswordResult
 	/// <summary>
 	/// Gets or sets any validation errors associated with the password.
 	/// </summary>
-	[JsonConverter(typeof(StringEnumConverter))]
+	[JsonConverter(typeof(JsonStringEnumConverter))]
 	public PasswordError Error { get; set; } = PasswordError.None;
 
 	/// <summary>

@@ -1,12 +1,12 @@
+using System.Text.Json;
 using JDMallen.Toolbox.Structs;
-using Newtonsoft.Json;
 
 namespace JDMallen.Toolbox.Tests;
 
 /// <summary>
 /// Characterization tests for <see cref="MiniGuid" />: they pin the current
-/// encoding, equality, and ordering so the 4.0 changes (a System.Text.Json
-/// converter in place of the Newtonsoft one) can't silently alter them.
+/// encoding, equality, and ordering, and cover the System.Text.Json converter
+/// that replaced the Newtonsoft one in 4.0.
 /// </summary>
 public class MiniGuidTests
 {
@@ -147,19 +147,68 @@ public class MiniGuidTests
 	private sealed class Holder
 	{
 		public MiniGuid Id { get; set; }
+
+		public MiniGuid? OptionalId { get; set; }
 	}
 
 	[Fact]
-	public void NewtonsoftJson_SerializesAsTheEncodedString()
+	public void Json_SerializesAsTheEncodedString()
 	{
-		// Phase 2 replaces the Newtonsoft converter with a System.Text.Json one;
-		// it must produce this same JSON shape.
-		string json = JsonConvert.SerializeObject(
+		// Same shape the 3.x Newtonsoft converter wrote.
+		string json = JsonSerializer.Serialize(
 			new Holder { Id = new MiniGuid(PlainGuid) });
 
-		Assert.Equal($"{{\"Id\":\"{PlainEncoded}\"}}", json);
+		Assert.Equal($"{{\"Id\":\"{PlainEncoded}\",\"OptionalId\":null}}", json);
+	}
+
+	[Fact]
+	public void Json_RoundTripsValueAndNullable()
+	{
+		var original = new Holder
+		{
+			Id = new MiniGuid(SubstitutedGuid),
+			OptionalId = new MiniGuid(PlainGuid),
+		};
+
+		Holder copy = JsonSerializer.Deserialize<Holder>(
+			JsonSerializer.Serialize(original))!;
+
+		Assert.Equal(SubstitutedGuid, copy.Id.Guid);
+		Assert.Equal(PlainGuid, copy.OptionalId!.Value.Guid);
+	}
+
+	[Fact]
+	public void Json_WritesDefaultAsTheEmptyGuidEncoding()
+	{
+		// default(MiniGuid) has a null Value; the converter encodes the Guid
+		// instead, so it never writes JSON null for a non-nullable MiniGuid.
 		Assert.Equal(
-			PlainGuid,
-			JsonConvert.DeserializeObject<Holder>(json)!.Id.Guid);
+			"\"AAAAAAAAAAAAAAAAAAAAAA\"",
+			JsonSerializer.Serialize(default(MiniGuid)));
+	}
+
+	[Fact]
+	public void Json_WorksAsADictionaryKey()
+	{
+		var map = new Dictionary<MiniGuid, int> { [new MiniGuid(PlainGuid)] = 1 };
+
+		string json = JsonSerializer.Serialize(map);
+
+		Assert.Equal($"{{\"{PlainEncoded}\":1}}", json);
+		Assert.Equal(
+			1,
+			JsonSerializer.Deserialize<Dictionary<MiniGuid, int>>(json)![
+				new MiniGuid(PlainGuid)]);
+	}
+
+	[Theory]
+	[InlineData("123")]
+	[InlineData("\"\"")]
+	[InlineData("\"tooShort\"")]
+	[InlineData("\"!!!!!!!!!!!!!!!!!!!!!!\"")]
+	public void Json_RejectsInvalidInput(string json)
+	{
+		Assert.Throws<JsonException>(
+			() => JsonSerializer.Deserialize<MiniGuid>(json));
 	}
 }

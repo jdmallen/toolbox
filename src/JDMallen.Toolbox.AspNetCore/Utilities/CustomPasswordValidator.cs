@@ -1,7 +1,7 @@
 ﻿using JDMallen.Toolbox.AspNetCore.Constants;
 using JDMallen.Toolbox.AspNetCore.Models;
 using JDMallen.Toolbox.AspNetCore.Options;
-using JDMallen.Toolbox.Resources;
+using JDMallen.Toolbox.AspNetCore.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -88,16 +88,16 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		string plower = password.ToLowerInvariant();
 #pragma warning restore CA1308 // Normalize strings to uppercase
 
+		float[] frequencyTable = PasswordResources.FrequencyTable;
+		var bitsPerCharacter = (float)Math.Log(GetCharacterSet(password), 2);
 		int aidx = GetIndex(plower[0]);
 		for (var b = 1; b < len; b++)
 		{
 			int bidx = GetIndex(plower[b]);
-			bool parseOk =
-				float.TryParse(
-					ResourceLoader.FrequencyTable.ToArray()[aidx * 27 + bidx],
-					out float freq);
-			float c = 1.0F - (parseOk ? freq : 0);
-			bits += (float)Math.Log(GetCharacterSet(password), 2) * c * c;
+			float freq =
+				frequencyTable[aidx * PasswordResources.AlphabetSize + bidx];
+			float c = 1.0F - freq;
+			bits += bitsPerCharacter * c * c;
 			aidx = bidx;
 		}
 
@@ -207,7 +207,7 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		// The common-password resource list is stored lowercase, so the input must
 		// be lowercased to match it; ToUpperInvariant (CA1308) would never match.
 #pragma warning disable CA1308 // Normalize strings to uppercase
-		=> ResourceLoader.CommonPasswords.Contains(password.ToLowerInvariant());
+		=> PasswordResources.CommonPasswords.Contains(password.ToLowerInvariant());
 #pragma warning restore CA1308 // Normalize strings to uppercase
 
 	/// <summary>Validates a password as an asynchronous operation.</summary>

@@ -1,7 +1,6 @@
 using System.Net;
 using JDMallen.Toolbox.AspNetCore.MinimalApi;
 using JDMallen.Toolbox.AspNetCore.Tests.Infrastructure;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -14,7 +13,7 @@ public class EndpointExtensionsTests
 	/// Sample endpoint used to prove that <c>MapEndpoint</c> dispatches to the
 	/// type's static <see cref="IEndpoint.Map" /> implementation.
 	/// </summary>
-	[UsedImplicitly]
+	// ReSharper disable once ClassNeverInstantiated.Local
 	private sealed class PingEndpoint : IEndpoint
 	{
 		public static void Map(IEndpointRouteBuilder app) =>

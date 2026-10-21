@@ -10,7 +10,7 @@
         <!-- Package validation: pack fails on any API break against the
              baseline that isn't recorded in CompatibilitySuppressions.xml. -->
         <EnablePackageValidation>true</EnablePackageValidation>
-        <PackageValidationBaselineVersion>3.2.1</PackageValidationBaselineVersion>
+        <PackageValidationBaselineVersion>3.2.2</PackageValidationBaselineVersion>
 
         <Description>Minimal, trim-safe chat completion clients for Anthropic, Azure OpenAI, and any OpenAI-compatible endpoint (including self-hosted models) over raw HTTP with source-generated JSON.</Description>
         <IsTrimmable>true</IsTrimmable>

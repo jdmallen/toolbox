@@ -3,8 +3,9 @@ using JDMallen.Toolbox.Extensions;
 namespace JDMallen.Toolbox.Tests;
 
 /// <summary>
-/// Characterization tests for the string extensions in
-/// <see cref="StructExtensions" />, which 4.0 keeps but makes nullable-aware.
+/// Tests for <see cref="StringExtensions" />, which match the static
+/// <see cref="string" /> methods and (on .NET Core 3.0+) their nullable
+/// annotations.
 /// </summary>
 public class StringExtensionsTests
 {
@@ -21,12 +22,34 @@ public class StringExtensionsTests
 		bool isNullOrEmpty,
 		bool isNullOrWhiteSpace)
 	{
-		// The receiver is non-nullable today; null is still accepted at runtime.
-		// 4.0 changes the receiver to string? so callers don't need the '!'.
-		string receiver = value!;
-
-		Assert.Equal(hasValue, receiver.HasValue());
-		Assert.Equal(isNullOrEmpty, receiver.IsNullOrEmpty());
-		Assert.Equal(isNullOrWhiteSpace, receiver.IsNullOrWhiteSpace());
+		Assert.Equal(hasValue, value.HasValue());
+		Assert.Equal(isNullOrEmpty, value.IsNullOrEmpty());
+		Assert.Equal(isNullOrWhiteSpace, value.IsNullOrWhiteSpace());
 	}
+
+#if !TOOLBOX_NETSTANDARD2_0
+	// Compile-time test: the project treats nullable warnings as errors, so
+	// this only builds if each check tells the compiler the value isn't null.
+	// The netstandard2.0 build has no NotNullWhen attributes, so it's skipped
+	// there.
+	[Theory]
+	[InlineData("text")]
+	public void Checks_InformNullableFlowAnalysis(string? value)
+	{
+		if (value.HasValue())
+		{
+			Assert.Equal(4, value.Length);
+		}
+
+		if (!value.IsNullOrEmpty())
+		{
+			Assert.Equal(4, value.Length);
+		}
+
+		if (!value.IsNullOrWhiteSpace())
+		{
+			Assert.Equal(4, value.Length);
+		}
+	}
+#endif
 }

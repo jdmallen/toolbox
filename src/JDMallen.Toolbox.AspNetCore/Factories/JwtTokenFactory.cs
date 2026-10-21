@@ -1,9 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 using JDMallen.Toolbox.AspNetCore.Constants;
 using JDMallen.Toolbox.AspNetCore.Options;
-using JDMallen.Toolbox.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace JDMallen.Toolbox.AspNetCore.Factories;
@@ -54,7 +54,9 @@ public class JwtTokenFactory : IJwtTokenFactory
 			new(JwtClaimTypes.JwtId, JwtOptions.NewJti),
 			new(
 				JwtClaimTypes.IssuedAt,
-				"" + JwtOptions.IssuedAt.ToUnixTimestamp(),
+				new DateTimeOffset(JwtOptions.IssuedAt)
+					.ToUnixTimeSeconds()
+					.ToString(CultureInfo.InvariantCulture),
 				ClaimValueTypes.Integer64),
 		};
 

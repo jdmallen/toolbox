@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace JDMallen.Toolbox.Structs;
 
@@ -286,48 +285,4 @@ public struct MiniGuid
 	/// </summary>
 	/// <returns>The Base64-encoded string value.</returns>
 	public readonly override string ToString() => Value;
-}
-
-/// <summary>
-/// JSON converter for serializing and deserializing MiniGuid values.
-/// Handles conversion between MiniGuid and its string representation in JSON.
-/// </summary>
-[UsedImplicitly]
-public class MiniGuidJsonConverter : JsonConverter
-{
-	/// <summary>
-	/// Determines whether the converter can convert the specified type.
-	/// </summary>
-	/// <param name="objectType">The type to check.</param>
-	/// <returns>true if the type is MiniGuid or MiniGuid?; otherwise, false.</returns>
-	public override bool CanConvert(Type objectType)
-		=> objectType == typeof(MiniGuid) || objectType == typeof(MiniGuid?);
-
-	/// <summary>
-	/// Reads a MiniGuid value from JSON.
-	/// </summary>
-	/// <param name="reader">The JSON reader.</param>
-	/// <param name="objectType">The type of the object to deserialize.</param>
-	/// <param name="existingValue">The existing value (not used).</param>
-	/// <param name="serializer">The JSON serializer.</param>
-	/// <returns>The deserialized MiniGuid value.</returns>
-	public override object ReadJson(
-		JsonReader reader,
-		Type objectType,
-		object? existingValue,
-		JsonSerializer serializer)
-		=> ((MiniGuid)reader.Value?.ToString()! == null!
-			? new JsonSerializer().Deserialize(reader, objectType)
-			: (MiniGuid)reader.Value?.ToString()!)!;
-
-	/// <summary>
-	/// Writes a MiniGuid value to JSON.
-	/// </summary>
-	/// <param name="writer">The JSON writer.</param>
-	/// <param name="value">The MiniGuid value to serialize.</param>
-	/// <param name="serializer">The JSON serializer.</param>
-	public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
-	{
-		serializer.Serialize(writer, (MiniGuid)value! == null! ? value : ((MiniGuid)value).Value);
-	}
 }

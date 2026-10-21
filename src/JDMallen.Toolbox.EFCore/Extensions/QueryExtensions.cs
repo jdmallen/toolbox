@@ -24,7 +24,7 @@ public static class QueryExtensions
 		}
 
 		dynamic lambda =
-			UtilityMethods.GetExpressionFromPropertyName(
+			JDMallen.Toolbox.Linq.PropertyPath.ToLambda(
 				typeof(TSource),
 				fieldName);
 

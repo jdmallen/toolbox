@@ -10,14 +10,23 @@
         <!-- Package validation: pack fails on any API break against the
              baseline that isn't recorded in CompatibilitySuppressions.xml. -->
         <EnablePackageValidation>true</EnablePackageValidation>
-        <PackageValidationBaselineVersion>3.2.1</PackageValidationBaselineVersion>
-
+        <PackageValidationBaselineVersion>3.2.2</PackageValidationBaselineVersion>
 
         <Description>ASP.NET Core utilities including authentication, identity, JWT handling, and startup extensions.</Description>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\JDMallen.Toolbox\JDMallen.Toolbox.csproj"/>
+    </ItemGroup>
+
+    <!-- Password validator data, read by Resources/PasswordResources.cs -->
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\CommonPasswords.txt"/>
+        <EmbeddedResource Include="Resources\FrequencyTable.txt"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="JDMallen.Toolbox.AspNetCore.Tests"/>
     </ItemGroup>
 
     <ItemGroup>

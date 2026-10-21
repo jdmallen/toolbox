@@ -1,8 +1,10 @@
+using System.Globalization;
+using System.Text.Json;
 using JDMallen.Toolbox.AspNetCore.Constants;
 using JDMallen.Toolbox.AspNetCore.Models;
 using JDMallen.Toolbox.AspNetCore.Options;
+using JDMallen.Toolbox.AspNetCore.Resources;
 using JDMallen.Toolbox.AspNetCore.Utilities;
-using JDMallen.Toolbox.Resources;
 using Microsoft.AspNetCore.Identity;
 
 namespace JDMallen.Toolbox.AspNetCore.Tests;
@@ -21,8 +23,62 @@ public class CustomPasswordValidatorTests
 	[Fact]
 	public void Resources_HaveTheExpectedEntryCounts()
 	{
-		Assert.Equal(7186, ResourceLoader.CommonPasswords.Count());
-		Assert.Equal(27 * 27, ResourceLoader.FrequencyTable.Count());
+		Assert.Equal(7186, PasswordResources.CommonPasswords.Count);
+		Assert.Equal(27 * 27, PasswordResources.FrequencyTable.Length);
+	}
+
+	private static T WithCulture<T>(string cultureName, Func<T> action)
+	{
+		CultureInfo original = CultureInfo.CurrentCulture;
+		try
+		{
+			CultureInfo.CurrentCulture = new CultureInfo(cultureName);
+
+			return action();
+		}
+		finally
+		{
+			CultureInfo.CurrentCulture = original;
+		}
+	}
+
+	[Theory]
+	[InlineData("de-DE")]
+	[InlineData("fr-FR")]
+	[InlineData("en-US")]
+	public void FrequencyTable_ParsesTheSameUnderAnyCulture(string cultureName)
+	{
+		// B7: before 4.0 the table was parsed with the current culture, so
+		// de-DE read 0.2365 as 2365 and fr-FR failed to parse it at all.
+		float[] table = WithCulture(cultureName, PasswordResources.ParseFrequencyTable);
+
+		Assert.Equal(0.2365371f, table[0], 6);
+		Assert.All(table, frequency => Assert.InRange(frequency, 0f, 1f));
+	}
+
+	[Theory]
+	[InlineData("de-DE")]
+	[InlineData("fr-FR")]
+	public void CheckPassword_ScoresTheSameUnderAnyCulture(string cultureName)
+	{
+		PasswordResult result = WithCulture(cultureName, () => Check("password"));
+
+		Assert.Equal(28.693077, result.BitsOfEntropy, 3);
+		Assert.Equal(PasswordStrength.Poor, result.Strength);
+	}
+
+	[Fact]
+	public void PasswordResult_SerializesTheErrorAsNamesWithSystemTextJson()
+	{
+		// 4.0 switched the attribute from Newtonsoft's StringEnumConverter (which
+		// System.Text.Json, ASP.NET Core's default, ignored) to
+		// JsonStringEnumConverter.
+		string json = JsonSerializer.Serialize(Check("password"));
+
+		Assert.Contains(
+			"\"Error\":\"TooCommon, NotComplexEnough\"",
+			json,
+			StringComparison.Ordinal);
 	}
 
 	[Fact(Timeout = 10_000)]

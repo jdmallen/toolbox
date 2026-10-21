@@ -7,7 +7,7 @@ namespace JDMallen.Toolbox.Extensions;
 /// the expression tree.
 /// See https://stackoverflow.com/a/37602870/3986790
 /// </summary>
-public class ReplaceVisitor : ExpressionVisitor
+internal sealed class ReplaceVisitor : ExpressionVisitor
 {
 	private readonly Expression _from, _to;
 
