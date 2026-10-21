@@ -5,6 +5,30 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.2]
+
+Bug fix: password validation no longer hangs. Every release from 3.0.0 through
+3.2.1 is affected, so upgrade if you use the password validator.
+
+### Fixed
+
+- **`CustomPasswordValidator` never returned for passwords of two or more
+  characters.** The embedded-resource reader in `JDMallen.Toolbox`
+  (`ResourceLoader`) never stopped at end of file: after the last line it
+  yielded empty strings forever. `CheckPassword` reads the whole frequency
+  table, so it (and `ValidateAsync`, which calls it) spun until the process ran
+  out of memory. This hit every Identity sign-up or password change wired
+  through `AddCustomIdentity` in `JDMallen.Toolbox.EFCore.Identity`. Each
+  resource is now read once into an array. `ResourceLoader.CommonPasswords`
+  and `ResourceLoader.FrequencyTable` keep the same `IEnumerable<string>` type,
+  and password scores are unchanged.
+
+### Added
+
+- Regression tests for `CheckPassword`: known passwords with their entropy,
+  strength, and error flags, and a 10-second timeout guard that fails rather
+  than hangs if the bug returns.
+
 ## [3.2.1]
 
 Documentation release: the consumer-facing packages now have READMEs, and each

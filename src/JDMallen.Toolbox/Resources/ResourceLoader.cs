@@ -37,14 +37,20 @@ public class ResourceLoader
 			});
 	}
 
-	private static IEnumerable<string> ReadResourceFile(string fileName)
+	// Reads the whole file once into an array. The loop must end when ReadLine
+	// returns null (EOF); substituting a non-null fallback there makes it run
+	// forever.
+	private static string[] ReadResourceFile(string fileName)
 	{
 		using Stream? rs = Assembly.GetExecutingAssembly()
 			.GetManifestResourceStream(typeof(ResourceLoader), fileName);
 		using var sr = new StreamReader(rs!, Encoding.UTF8);
-		while ((sr.ReadLine() ?? string.Empty) is { } line)
+		var lines = new List<string>();
+		while (sr.ReadLine() is { } line)
 		{
-			yield return line;
+			lines.Add(line);
 		}
+
+		return [.. lines];
 	}
 }
