@@ -32,7 +32,7 @@ public sealed class AnthropicChatClient(
 			request.MaxTokens,
 			request.Temperature,
 			request.SystemPrompt,
-			[new AnthropicMessage("user", request.UserPrompt)]);
+			[new AnthropicMessage("user", BuildUserContent(request))]);
 
 		using var message = new HttpRequestMessage(HttpMethod.Post, URL);
 		message.Content = JsonContent.Create(
@@ -69,6 +69,43 @@ public sealed class AnthropicChatClient(
 
 		return sb.ToString();
 	}
+
+	/// <summary>
+	/// Returns the prompt as a plain string when there are no images, keeping the
+	/// original wire format for text-only requests. With images, returns an array
+	/// of content blocks: each image as a base64 <c>image</c> block, then the
+	/// prompt as a <c>text</c> block (Anthropic recommends images first).
+	/// </summary>
+	/// <remarks>
+	/// An explicit array rather than a collection expression, so the runtime type
+	/// is the one registered in <see cref="AIJsonContext" />.
+	/// </remarks>
+	private static object BuildUserContent(CompletionRequest request)
+	{
+		if (request.Images.Count == 0)
+		{
+			return request.UserPrompt;
+		}
+
+		var blocks = new AnthropicContentBlock[request.Images.Count + 1];
+
+		for (var index = 0; index < request.Images.Count; index++)
+		{
+			ImageInput image = request.Images[index];
+
+			blocks[index] = new AnthropicContentBlock("image")
+			{
+				Source = new AnthropicImageSource(
+					"base64",
+					image.MediaType,
+					image.ToBase64()),
+			};
+		}
+
+		blocks[^1] = new AnthropicContentBlock("text") { Text = request.UserPrompt };
+
+		return blocks;
+	}
 }
 
 internal sealed record AnthropicRequest(
@@ -81,10 +118,29 @@ internal sealed record AnthropicRequest(
 	[property: JsonPropertyName("messages")]
 	IReadOnlyList<AnthropicMessage> Messages);
 
+// Content is a string, or an AnthropicContentBlock[] when images are attached.
 internal sealed record AnthropicMessage(
 	[property: JsonPropertyName("role")] string Role,
 	[property: JsonPropertyName("content")]
-	string Content);
+	object Content);
+
+internal sealed record AnthropicContentBlock(
+	[property: JsonPropertyName("type")] string Type)
+{
+	[JsonPropertyName("text")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Text { get; init; }
+
+	[JsonPropertyName("source")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public AnthropicImageSource? Source { get; init; }
+}
+
+internal sealed record AnthropicImageSource(
+	[property: JsonPropertyName("type")] string Type,
+	[property: JsonPropertyName("media_type")]
+	string MediaType,
+	[property: JsonPropertyName("data")] string Data);
 
 internal sealed record AnthropicResponse(
 	[property: JsonPropertyName("content")]

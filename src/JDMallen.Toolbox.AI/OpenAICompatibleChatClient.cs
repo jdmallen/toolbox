@@ -43,7 +43,7 @@ public sealed class OpenAICompatibleChatClient(
 			options.Model,
 			[
 				new OpenAICompatibleMessage("system", request.SystemPrompt),
-				new OpenAICompatibleMessage("user", request.UserPrompt),
+				new OpenAICompatibleMessage("user", OpenAIContentParts.Build(request)),
 			],
 			request.MaxTokens,
 			request.Temperature);
@@ -187,10 +187,11 @@ internal sealed record OpenAICompatibleRequest(
 #pragma warning restore CA1822
 }
 
+// Content is a string, or an OpenAIContentPart[] when images are attached.
 internal sealed record OpenAICompatibleMessage(
 	[property: JsonPropertyName("role")] string Role,
 	[property: JsonPropertyName("content")]
-	string Content);
+	object Content);
 
 internal sealed record OpenAICompatibleResponse(
 	[property: JsonPropertyName("choices")]

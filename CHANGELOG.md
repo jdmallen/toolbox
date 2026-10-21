@@ -5,6 +5,31 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0]
+
+Adds image input to `JDMallen.Toolbox.AI`, so vision-capable models can be sent
+photos alongside the prompt. Additive only: existing callers compile and behave
+exactly as before.
+
+### Added
+
+- **`ImageInput`** (`Data` as raw bytes, `MediaType` such as `image/jpeg`) and
+  a **`CompletionRequest.Images`** init property, empty by default:
+  `new CompletionRequest(system, user, 500) { Images = [image] }`. It is an
+  init property rather than a constructor parameter, so the constructor that
+  3.1 callers compiled against is unchanged.
+- **Per-provider wire mapping.** With images attached, the user message
+  `content` becomes an array with the images first, then the prompt text:
+  - `AnthropicChatClient`: `image` blocks with a base64 `source`.
+  - `OpenAICompatibleChatClient` and `AzureOpenAIChatClient`: `image_url`
+    parts carrying `data:` URIs. Self-hosted runners need a vision model (for
+    llama.cpp, one loaded with its `mmproj` projector).
+
+### Unchanged
+
+- Requests with no images still send `content` as a plain string, byte for byte
+  the same as 3.1, since some self-hosted runners reject the array form.
+
 ## [3.1.1]
 
 Maintenance release: dependency updates across every project and a

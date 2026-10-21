@@ -27,7 +27,7 @@ public sealed class AzureOpenAIChatClient(
 		var body = new AzureOpenAIRequest(
 			[
 				new AzureOpenAIMessage("system", request.SystemPrompt),
-				new AzureOpenAIMessage("user", request.UserPrompt),
+				new AzureOpenAIMessage("user", OpenAIContentParts.Build(request)),
 			],
 			request.MaxTokens,
 			request.Temperature);
@@ -85,10 +85,11 @@ internal sealed record AzureOpenAIRequest(
 	public double TopP { get; init; } = 1.0;
 }
 
+// Content is a string, or an OpenAIContentPart[] when images are attached.
 internal sealed record AzureOpenAIMessage(
 	[property: JsonPropertyName("role")] string Role,
 	[property: JsonPropertyName("content")]
-	string Content);
+	object Content);
 
 internal sealed record AzureOpenAIResponse(
 	[property: JsonPropertyName("choices")]

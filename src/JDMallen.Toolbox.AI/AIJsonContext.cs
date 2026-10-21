@@ -13,4 +13,9 @@ namespace JDMallen.Toolbox.AI;
 [JsonSerializable(typeof(AzureOpenAIResponse))]
 [JsonSerializable(typeof(OpenAICompatibleRequest))]
 [JsonSerializable(typeof(OpenAICompatibleResponse))]
+
+// Runtime types of the object-typed message Content fields
+[JsonSerializable(typeof(string))]
+[JsonSerializable(typeof(AnthropicContentBlock[]))]
+[JsonSerializable(typeof(OpenAIContentPart[]))]
 internal sealed partial class AIJsonContext : JsonSerializerContext;
