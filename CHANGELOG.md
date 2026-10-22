@@ -5,6 +5,41 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0]
+
+Three additive features, each replacing code an app had to write itself. No
+breaking changes and no behavior changes to existing APIs.
+
+### Added
+
+`JDMallen.Toolbox.EFCore`:
+
+- **`AuditTimestampOptions`** and an
+  **`AuditableEntitySaveChangesInterceptor(AuditTimestampOptions,
+  TimeProvider?)`** constructor. With options, the interceptor stamps the
+  named created/modified properties on any tracked entity that has them, not
+  only `IEntityModel` implementations, so entities named `CreatedAtUTC` /
+  `UpdatedAtUTC` (for example) get audit timestamps too. `DateTime` and
+  `DateTime?` both work. `StampModifiedOnCreate = false` leaves a nullable
+  modified timestamp null until the first update. The parameterless
+  constructor is unchanged: `IEntityModel` entities with the `DateCreated` /
+  `DateModified` names.
+
+`JDMallen.Toolbox.AspNetCore`:
+
+- **Typed problem results**: `BadRequestProblem`, `ForbiddenProblem`,
+  `NotFoundProblem`, `ConflictProblem`, and `InternalServerErrorProblem`, on a
+  shared `TypedProblemResult` base. Same status, title, and detail as the
+  matching `ProblemDetailsResults` method, but each documents its own status in
+  OpenAPI (`IEndpointMetadataProvider`), so it can sit in a `Results<...>`
+  union without `.ProducesProblem(...)`. Execution goes through
+  `TypedResults.Problem`, so `AddProblemDetails` customizations still apply.
+- **`ToPagedListAsync(query, request, defaultPageSize, cancellationToken)`**
+  overload, for apps whose default page size isn't 10. The request's own
+  `PageSize` still wins, and the 100 cap still applies; a default outside
+  1-100 throws `ArgumentOutOfRangeException`. The original overload now
+  delegates to it with the new `PaginationExtensions.DefaultPageSize` (10).
+
 ## [4.0.0]
 
 `JDMallen.Toolbox` becomes a small, dependency-light toolkit worth installing on

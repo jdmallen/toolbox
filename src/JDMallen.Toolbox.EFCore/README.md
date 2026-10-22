@@ -81,6 +81,28 @@ optionsBuilder.AddInterceptors(new AuditableEntitySaveChangesInterceptor());
 modelBuilder.AddSoftDeleteQueryFilter();
 ```
 
+### Other timestamp property names
+
+Entities that don't implement `IEntityModel` can still be stamped. Name their
+properties with `AuditTimestampOptions`; any tracked entity that has a named
+property gets it set, and entities without it are skipped:
+
+```csharp
+builder.Services.AddDbContext<AppDbContext>(options => options
+	.UseNpgsql(connectionString)
+	.AddInterceptors(new AuditableEntitySaveChangesInterceptor(
+		new AuditTimestampOptions
+		{
+			CreatedPropertyName = "CreatedAtUTC",
+			ModifiedPropertyName = "UpdatedAtUTC",
+			// Leave a nullable "updated at" null until the first update
+			StampModifiedOnCreate = false,
+		})));
+```
+
+`DateTime` and `DateTime?` properties both work. Without options the
+interceptor behaves as before: `IEntityModel` entities only.
+
 ## Query Helpers
 
 Search, sort-by-property-name, and the `CreatedAfter` / `ModifiedBefore` date

@@ -58,6 +58,20 @@ a 400 `ValidationProblem` keyed by property name.
 `BadRequest`, `Conflict`, `Forbidden`, `NotFound`, and `InternalServerError`,
 each taking a `detail` and optional `instance`.
 
+For a `Results<...>` union, use the typed equivalents: `BadRequestProblem`,
+`ForbiddenProblem`, `NotFoundProblem`, `ConflictProblem`, and
+`InternalServerErrorProblem`. Each one adds its status to the endpoint's
+OpenAPI metadata, so no `.ProducesProblem(...)` call is needed:
+
+```csharp
+private static async Task<Results<Ok<Order>, NotFoundProblem>> Handle(
+	Guid id,
+	AppDbContext db)
+	=> await db.Orders.FindAsync(id) is { } order
+		? TypedResults.Ok(order)
+		: new NotFoundProblem($"Order {id} not found.");
+```
+
 To turn an Identity result into a response:
 
 ```csharp
@@ -79,7 +93,9 @@ app.MapGet("/orders", async ([AsParameters] PagedRequest paging, AppDbContext db
 ```
 
 `Page` defaults to 1 and `PageSize` to 10, capped at
-`IPagedRequest.MaxPageSize` (100). A page or page size of zero or less throws
+`IPagedRequest.MaxPageSize` (100). Pass your own default as the second
+argument, e.g. `.ToPagedListAsync(paging, 25, cancellationToken)`; it must be
+between 1 and 100. A page or page size of zero or less throws
 `ArgumentOutOfRangeException`. The returned `PagedList<T>` carries `Items`,
 `Page`, `PageSize`, `TotalItems`, `TotalPages`, `HasNextPage`, and
 `HasPreviousPage`.

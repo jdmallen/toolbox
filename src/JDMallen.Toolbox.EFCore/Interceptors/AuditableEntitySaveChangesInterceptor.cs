@@ -18,10 +18,20 @@ namespace JDMallen.Toolbox.EFCore.Interceptors;
 /// the timestamps are maintained centrally rather than by every call site. Pair
 /// it with <see cref="Extensions.SoftDeleteModelBuilderExtensions" /> for the
 /// soft-delete half.
+/// <para>
+/// To stamp entities that use other property names, construct it with
+/// <see cref="AuditTimestampOptions" />; see that type for the matching rules.
+/// </para>
 /// </remarks>
 public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
+	private static readonly AuditTimestampOptions DefaultOptions = new();
+
 	private readonly TimeProvider _timeProvider;
+
+	// Null keeps the original behavior: IEntityModel entities only, with the
+	// IEntityModel property names.
+	private readonly AuditTimestampOptions? _options;
 
 	/// <summary>
 	/// Initializes a new instance of the
@@ -35,6 +45,29 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 	public AuditableEntitySaveChangesInterceptor(TimeProvider? timeProvider = null)
 	{
 		_timeProvider = timeProvider ?? TimeProvider.System;
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the
+	/// <see cref="AuditableEntitySaveChangesInterceptor" /> class that stamps the
+	/// properties named in <paramref name="options" /> on any entity that has
+	/// them, not only on <see cref="IEntityModel" /> implementations.
+	/// </summary>
+	/// <param name="options">The audit property names to stamp.</param>
+	/// <param name="timeProvider">
+	/// The clock used to source the audit timestamps. Defaults to
+	/// <see cref="TimeProvider.System" /> when not supplied.
+	/// </param>
+	public AuditableEntitySaveChangesInterceptor(
+		AuditTimestampOptions options,
+		TimeProvider? timeProvider = null)
+		: this(timeProvider)
+	{
+		ArgumentNullException.ThrowIfNull(options);
+		ArgumentException.ThrowIfNullOrWhiteSpace(options.CreatedPropertyName);
+		ArgumentException.ThrowIfNullOrWhiteSpace(options.ModifiedPropertyName);
+
+		_options = options;
 	}
 
 	/// <inheritdoc />
@@ -69,22 +102,29 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 		// supplied TimeProvider's local offset.
 		DateTime nowUtc = _timeProvider.GetUtcNow().UtcDateTime;
 
-		foreach (EntityEntry<IEntityModel> entry in context.ChangeTracker.Entries<IEntityModel>())
+		AuditTimestampOptions options = _options ?? DefaultOptions;
+
+		IEnumerable<EntityEntry> entries = _options is null
+			? context.ChangeTracker.Entries<IEntityModel>()
+			: context.ChangeTracker.Entries();
+
+		foreach (EntityEntry entry in entries)
 		{
 			// IEntityModel exposes the timestamps as read-only, so the change
 			// tracker's metadata is used to set them rather than the CLR setters.
 			switch (entry.State)
 			{
 				case EntityState.Added:
-					entry.Property(nameof(IEntityModel.DateCreated)).CurrentValue =
-						nowUtc;
-					entry.Property(nameof(IEntityModel.DateModified)).CurrentValue =
-						nowUtc;
+					StampIfMapped(entry, options.CreatedPropertyName, nowUtc);
+
+					if (options.StampModifiedOnCreate)
+					{
+						StampIfMapped(entry, options.ModifiedPropertyName, nowUtc);
+					}
 
 					break;
 				case EntityState.Modified:
-					entry.Property(nameof(IEntityModel.DateModified)).CurrentValue =
-						nowUtc;
+					StampIfMapped(entry, options.ModifiedPropertyName, nowUtc);
 
 					break;
 				case EntityState.Detached:
@@ -100,6 +140,16 @@ public sealed class AuditableEntitySaveChangesInterceptor : SaveChangesIntercept
 						entry.State,
 						"Unexpected entity state encountered when stamping audit timestamps.");
 			}
+		}
+	}
+
+	// With custom options, entities that lack a named property are skipped for
+	// it; IEntityModel entities always have the default names.
+	private static void StampIfMapped(EntityEntry entry, string propertyName, DateTime nowUtc)
+	{
+		if (entry.Metadata.FindProperty(propertyName) is not null)
+		{
+			entry.Property(propertyName).CurrentValue = nowUtc;
 		}
 	}
 }
