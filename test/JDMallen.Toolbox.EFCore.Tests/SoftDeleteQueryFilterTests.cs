@@ -7,7 +7,7 @@ namespace JDMallen.Toolbox.EFCore.Tests;
 /// <summary>
 /// Verifies the soft-delete global query filter applied by
 /// <see
-///   cref="JDMallen.Toolbox.EFCore.Extensions.SoftDeleteModelBuilderExtensions.AddSoftDeleteQueryFilter" />
+///   cref="JDMallen.Toolbox.EFCore.Extensions.SoftDeleteModelBuilderExtensions.AddSoftDeleteQueryFilter(Microsoft.EntityFrameworkCore.ModelBuilder)" />
 /// (wired up automatically by the base context): soft-deleted rows are hidden by
 /// default and revealed only when query filters are ignored.
 /// </summary>

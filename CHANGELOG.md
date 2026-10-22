@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0]
+
+One additive feature. No breaking changes and no behavior changes to existing
+APIs.
+
+### Added
+
+`JDMallen.Toolbox.EFCore`:
+
+- **`SoftDeleteFilterOptions`** and an
+  **`AddSoftDeleteQueryFilter(ModelBuilder, SoftDeleteFilterOptions)`**
+  overload, the soft-delete counterpart to 4.1.0's `AuditTimestampOptions`.
+  Every root, non-owned entity type that maps a `bool` property named
+  `PropertyName` (default `IsDeleted`, CLR or shadow) gets a
+  `!EF.Property<bool>(e, PropertyName)` query filter, whether or not it
+  implements `IEntityModel`; types without the property, or with a non-`bool`
+  one, are skipped. An optional `FilterName` registers it as an EF Core named
+  query filter, so `IgnoreQueryFilters([FilterName])` drops just this one. The
+  parameterless overload is unchanged: `IEntityModel` entities only, unnamed.
+
 ## [4.1.0]
 
 Three additive features, each replacing code an app had to write itself. No

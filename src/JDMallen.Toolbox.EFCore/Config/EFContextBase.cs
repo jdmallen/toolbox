@@ -20,7 +20,7 @@ namespace JDMallen.Toolbox.EFCore.Config;
 ///   </item>
 ///   <item>
 ///   a soft-delete global query filter is applied through
-///   <see cref="SoftDeleteModelBuilderExtensions.AddSoftDeleteQueryFilter" />;
+///   <see cref="SoftDeleteModelBuilderExtensions.AddSoftDeleteQueryFilter(ModelBuilder)" />;
 ///   </item>
 ///   <item>
 ///   audit timestamps are stamped on save by

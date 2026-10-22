@@ -103,6 +103,39 @@ builder.Services.AddDbContext<AppDbContext>(options => options
 `DateTime` and `DateTime?` properties both work. Without options the
 interceptor behaves as before: `IEntityModel` entities only.
 
+### Other soft-delete property names
+
+The soft-delete filter has the same escape hatch. With
+`SoftDeleteFilterOptions`, every root, non-owned entity type that maps a
+`bool` property of that name (CLR or shadow) is filtered; types without one
+are skipped. Call it last in `OnModelCreating`, once every entity is
+configured:
+
+```csharp
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+	// ... entity configuration ...
+
+	modelBuilder.AddSoftDeleteQueryFilter(new SoftDeleteFilterOptions
+	{
+		PropertyName = "IsDeleted",   // the default
+		FilterName = "SoftDelete",    // optional EF Core named filter
+	});
+}
+```
+
+A `FilterName` registers an EF Core named query filter, so a query can drop
+just this filter and keep any others:
+
+```csharp
+var everything = await context.Orders
+	.IgnoreQueryFilters(["SoftDelete"])
+	.ToListAsync();
+```
+
+Leave `FilterName` null for an unnamed filter, as the parameterless overload
+registers; EF Core doesn't allow named and unnamed filters on the same entity.
+
 ## Query Helpers
 
 Search, sort-by-property-name, and the `CreatedAfter` / `ModifiedBefore` date

@@ -27,14 +27,16 @@ public class TypedProblemResultsTests
 	{
 	}
 
-	public static TheoryData<TypedProblemResult, int, string> Problems => new()
+	// Rows carry the result's Type (serializable, so Test Explorer lists each
+	// row) and the test constructs it.
+	public static TheoryData<Type, int, string> Problems => new()
 	{
-		{ new BadRequestProblem("detail"), StatusCodes.Status400BadRequest, "Bad Request" },
-		{ new ForbiddenProblem("detail"), StatusCodes.Status403Forbidden, "Forbidden" },
-		{ new NotFoundProblem("detail"), StatusCodes.Status404NotFound, "Not Found" },
-		{ new ConflictProblem("detail"), StatusCodes.Status409Conflict, "Conflict" },
+		{ typeof(BadRequestProblem), StatusCodes.Status400BadRequest, "Bad Request" },
+		{ typeof(ForbiddenProblem), StatusCodes.Status403Forbidden, "Forbidden" },
+		{ typeof(NotFoundProblem), StatusCodes.Status404NotFound, "Not Found" },
+		{ typeof(ConflictProblem), StatusCodes.Status409Conflict, "Conflict" },
 		{
-			new InternalServerErrorProblem("detail"),
+			typeof(InternalServerErrorProblem),
 			StatusCodes.Status500InternalServerError,
 			"Internal Server Error"
 		},
@@ -42,8 +44,10 @@ public class TypedProblemResultsTests
 
 	[Theory]
 	[MemberData(nameof(Problems))]
-	public void Problem_HasStatusTitleAndDetail(TypedProblemResult problem, int status, string title)
+	public void Problem_HasStatusTitleAndDetail(Type problemType, int status, string title)
 	{
+		var problem = (TypedProblemResult)Activator.CreateInstance(problemType, "detail", null)!;
+
 		Assert.Equal(status, problem.StatusCode);
 		Assert.Equal(status, problem.ProblemDetails.Status);
 		Assert.Equal(title, problem.ProblemDetails.Title);
@@ -75,6 +79,7 @@ public class TypedProblemResultsTests
 			.Where(metadata => metadata.Type == typeof(ProblemDetails))
 			.Select(metadata => metadata.StatusCode)
 			.Order()
+			// ReSharper disable once UseCollectionExpression
 			.ToArray();
 
 		Assert.Equal([StatusCodes.Status404NotFound, StatusCodes.Status409Conflict], documentedStatuses);
@@ -95,7 +100,7 @@ public class TypedProblemResultsTests
 		Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 		Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
 
-		ProblemDetails? body = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+		var body = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 		Assert.Equal("Not Found", body?.Title);
 		Assert.Equal("Gadget 7 was not found.", body?.Detail);
 	}
