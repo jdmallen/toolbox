@@ -45,3 +45,14 @@ dotnet_diagnostic.CA2000.severity = none
 # CA1307: Specify StringComparison for clarity.
 # Fires on assertion helpers over ASCII literals; no product logic depends on culture.
 dotnet_diagnostic.CA1307.severity = none
+
+# CA1001: Types that own disposable fields should be disposable.
+# xUnit v2 fixtures tear down in IAsyncLifetime.DisposeAsync, which xUnit calls;
+# the rule doesn't recognize it, so adding IDisposable would be a second,
+# redundant dispose path.
+dotnet_diagnostic.CA1001.severity = none
+
+# CA1720: Identifier contains type name.
+# Test parameters such as `Guid guid` name the value by its type on purpose; the
+# rule guards public API names, which tests don't ship.
+dotnet_diagnostic.CA1720.severity = none

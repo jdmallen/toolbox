@@ -86,13 +86,6 @@ public sealed class LinqSqliteTests : IAsyncLifetime
 	private Task<string[]> SearchAsync(string value, SearchStyle searchStyle) =>
 		NamesAsync(_context.Gadgets.Search(gadget => gadget.Name, value, searchStyle));
 
-	[Fact]
-	public async Task Search_Exact_IsCaseSensitiveUnderBinaryCollation()
-	{
-		Assert.Equal(["Middle"], await SearchAsync(" Middle ", SearchStyle.Exact));
-		Assert.Empty(await SearchAsync("middle", SearchStyle.Exact));
-	}
-
 	[Theory]
 	[InlineData("ID", new[] { "Middle" })]
 	[InlineData("ar", new[] { "Early" })]
@@ -100,9 +93,7 @@ public sealed class LinqSqliteTests : IAsyncLifetime
 	public async Task Search_Contains_TranslatesAndIgnoresCase(
 		string value,
 		string[] expected)
-	{
-		Assert.Equal(expected, await SearchAsync(value, SearchStyle.Contains));
-	}
+		=> Assert.Equal(expected, await SearchAsync(value, SearchStyle.Contains));
 
 	[Theory]
 	[InlineData("mid", new[] { "Middle" })]
@@ -111,18 +102,41 @@ public sealed class LinqSqliteTests : IAsyncLifetime
 	public async Task Search_StartsWith_TranslatesAndIgnoresCase(
 		string value,
 		string[] expected)
+		=> Assert.Equal(expected, await SearchAsync(value, SearchStyle.StartsWith));
+
+	[Fact]
+	public async Task CreatedFilters_Translate()
 	{
-		Assert.Equal(expected, await SearchAsync(value, SearchStyle.StartsWith));
+		Assert.Equal(["Late"], await NamesAsync(_context.Gadgets.CreatedAfter(T1)));
+		Assert.Equal(
+			["Late", "Middle"],
+			await NamesAsync(_context.Gadgets.CreatedAfter(T1, true)));
+		Assert.Equal(["Early"], await NamesAsync(_context.Gadgets.CreatedBefore(T1)));
+		Assert.Equal(
+			["Early", "Middle"],
+			await NamesAsync(_context.Gadgets.CreatedBefore(T1, true)));
 	}
 
 	[Fact]
-	public void Search_Contains_UpperCasesInSql()
+	public void DateFilters_EmitASingleComparison()
 	{
-		string sql = _context.Gadgets
-			.Search(gadget => gadget.Name, "mid", SearchStyle.Contains)
-			.ToQueryString();
+		string sql = _context.Gadgets.CreatedAfter(T1, true).ToQueryString();
 
-		Assert.Contains("upper(\"g\".\"Name\")", sql, StringComparison.Ordinal);
+		Assert.DoesNotContain("CASE", sql, StringComparison.Ordinal);
+		Assert.Contains("\"g\".\"DateCreated\" >= @", sql, StringComparison.Ordinal);
+	}
+
+	[Fact]
+	public async Task ModifiedFilters_Translate()
+	{
+		Assert.Equal(["Early"], await NamesAsync(_context.Gadgets.ModifiedAfter(T2)));
+		Assert.Equal(
+			["Early", "Late"],
+			await NamesAsync(_context.Gadgets.ModifiedAfter(T2, true)));
+		Assert.Equal(["Middle"], await NamesAsync(_context.Gadgets.ModifiedBefore(T2)));
+		Assert.Equal(
+			["Late", "Middle"],
+			await NamesAsync(_context.Gadgets.ModifiedBefore(T2, true)));
 	}
 
 	[Fact]
@@ -143,37 +157,19 @@ public sealed class LinqSqliteTests : IAsyncLifetime
 	}
 
 	[Fact]
-	public async Task CreatedFilters_Translate()
+	public void Search_Contains_UpperCasesInSql()
 	{
-		Assert.Equal(["Late"], await NamesAsync(_context.Gadgets.CreatedAfter(T1)));
-		Assert.Equal(
-			["Late", "Middle"],
-			await NamesAsync(_context.Gadgets.CreatedAfter(T1, true)));
-		Assert.Equal(["Early"], await NamesAsync(_context.Gadgets.CreatedBefore(T1)));
-		Assert.Equal(
-			["Early", "Middle"],
-			await NamesAsync(_context.Gadgets.CreatedBefore(T1, true)));
+		string sql = _context.Gadgets
+			.Search(gadget => gadget.Name, "mid", SearchStyle.Contains)
+			.ToQueryString();
+
+		Assert.Contains("upper(\"g\".\"Name\")", sql, StringComparison.Ordinal);
 	}
 
 	[Fact]
-	public async Task ModifiedFilters_Translate()
+	public async Task Search_Exact_IsCaseSensitiveUnderBinaryCollation()
 	{
-		Assert.Equal(["Early"], await NamesAsync(_context.Gadgets.ModifiedAfter(T2)));
-		Assert.Equal(
-			["Early", "Late"],
-			await NamesAsync(_context.Gadgets.ModifiedAfter(T2, true)));
-		Assert.Equal(["Middle"], await NamesAsync(_context.Gadgets.ModifiedBefore(T2)));
-		Assert.Equal(
-			["Late", "Middle"],
-			await NamesAsync(_context.Gadgets.ModifiedBefore(T2, true)));
-	}
-
-	[Fact]
-	public void DateFilters_EmitASingleComparison()
-	{
-		string sql = _context.Gadgets.CreatedAfter(T1, true).ToQueryString();
-
-		Assert.DoesNotContain("CASE", sql, StringComparison.Ordinal);
-		Assert.Contains("\"g\".\"DateCreated\" >= @", sql, StringComparison.Ordinal);
+		Assert.Equal(["Middle"], await SearchAsync(" Middle ", SearchStyle.Exact));
+		Assert.Empty(await SearchAsync("middle", SearchStyle.Exact));
 	}
 }

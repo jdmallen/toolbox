@@ -22,7 +22,7 @@ public class OAuthConfigurationTests
 				})
 			.Build();
 
-		OAuthConfiguration? options =
+		var options =
 			configuration.GetSection("OAuth").Get<OAuthConfiguration>();
 
 		Assert.NotNull(options);

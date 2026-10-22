@@ -6,7 +6,7 @@
 public enum SearchStyle
 {
 	/// <summary>
-	/// Exact match comparison.
+	/// Exact match comparison (<c>==</c>), with no case folding.
 	/// </summary>
 	Exact,
 
@@ -16,7 +16,7 @@ public enum SearchStyle
 	Contains,
 
 	/// <summary>
-	/// Match at the beginning of the string.
+	/// Case-insensitive match at the beginning of the string.
 	/// </summary>
 	StartsWith,
 }

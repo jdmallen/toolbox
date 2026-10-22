@@ -9,7 +9,8 @@ namespace JDMallen.Toolbox.AI;
 /// Implementation of <see cref="IChatCompletionClient" /> for any server that
 /// speaks the OpenAI <c>/v1/chat/completions</c> API — openai.com itself, or a
 /// self-hosted runner such as llama.cpp, llama-swap, Ollama, vLLM, LM Studio, or
-/// text-generation-webui. Owns only that wire format: <c>{BaseUrl}/chat/completions</c>,
+/// text-generation-webui. Owns only that wire format:
+/// <c>{BaseUrl}/chat/completions</c>,
 /// an optional <c>Authorization: Bearer</c> header, the model named in the request
 /// body, and the <c>choices[0].message.content</c> response shape.
 /// </summary>
@@ -179,6 +180,7 @@ internal sealed record OpenAICompatibleRequest(
 	double Temperature)
 {
 #pragma warning disable CA1822
+
 	// Must stay an instance member: System.Text.Json does not serialize static
 	// properties, and making this static silently drops "stream": false from the
 	// request body.

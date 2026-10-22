@@ -57,6 +57,25 @@ public class ClaimsPrincipalExtensionsTests
 	}
 
 	[Fact]
+	public void GetUserIdAsGuid_ParsesGuidClaim()
+	{
+		var expected = Guid.NewGuid();
+		ClaimsPrincipal principal = PrincipalWith(
+			new Claim(JwtClaimTypes.UserId, expected.ToString()));
+
+		Assert.Equal(expected, principal.GetUserIdAsGuid());
+	}
+
+	[Fact]
+	public void GetUserIdAsGuid_ThrowsWhenNotAGuid()
+	{
+		ClaimsPrincipal principal = PrincipalWith(
+			new Claim(JwtClaimTypes.UserId, "not-a-guid"));
+
+		Assert.Throws<InvalidOperationException>(() => principal.GetUserIdAsGuid());
+	}
+
+	[Fact]
 	public void GetUserId_FallsBackToNameIdentifier()
 	{
 		ClaimsPrincipal principal = PrincipalWith(
@@ -81,25 +100,6 @@ public class ClaimsPrincipalExtensionsTests
 		ClaimsPrincipal principal = PrincipalWith();
 
 		Assert.Throws<InvalidOperationException>(principal.GetUserId);
-	}
-
-	[Fact]
-	public void GetUserIdAsGuid_ParsesGuidClaim()
-	{
-		var expected = Guid.NewGuid();
-		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(JwtClaimTypes.UserId, expected.ToString()));
-
-		Assert.Equal(expected, principal.GetUserIdAsGuid());
-	}
-
-	[Fact]
-	public void GetUserIdAsGuid_ThrowsWhenNotAGuid()
-	{
-		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(JwtClaimTypes.UserId, "not-a-guid"));
-
-		Assert.Throws<InvalidOperationException>(() => principal.GetUserIdAsGuid());
 	}
 
 	[Fact]

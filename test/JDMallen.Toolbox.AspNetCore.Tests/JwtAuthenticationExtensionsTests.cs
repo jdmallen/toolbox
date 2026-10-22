@@ -96,6 +96,41 @@ public class JwtAuthenticationExtensionsTests
 	}
 
 	[Fact]
+	public async Task AddJwtAuthentication_KeepsAFactoryRegisteredEarlier()
+	{
+		var custom = new StubTokenFactory();
+		var services = new ServiceCollection();
+		services.AddSingleton<IJwtTokenFactory>(custom);
+		services.AddJwtAuthentication(
+			ConfigurationWith("https://issuer.test", "audience.test"),
+			TestSigningCredentials());
+
+		await using ServiceProvider provider = services.BuildServiceProvider();
+
+		Assert.Same(custom, provider.GetRequiredService<IJwtTokenFactory>());
+	}
+
+	[Fact]
+	public async Task AddJwtAuthentication_RegistersAFactorySigningWithTheSameKey()
+	{
+		// 3.x never put the credentials where JwtTokenFactory read them, so a
+		// factory resolved from DI signed with null credentials (B1).
+		SigningCredentials signingCredentials = TestSigningCredentials();
+		var services = new ServiceCollection();
+		services.AddJwtAuthentication(
+			ConfigurationWith("https://issuer.test", "audience.test"),
+			signingCredentials);
+
+		await using ServiceProvider provider = services.BuildServiceProvider();
+
+		Assert.IsType<JwtTokenFactory>(
+			provider.GetRequiredService<IJwtTokenFactory>());
+		Assert.Same(
+			signingCredentials,
+			provider.GetRequiredService<JwtSigningCredentials>().Credentials);
+	}
+
+	[Fact]
 	public async Task AddJwtAuthentication_RegistersJwtBearerScheme()
 	{
 		var services = new ServiceCollection();
@@ -146,41 +181,6 @@ public class JwtAuthenticationExtensionsTests
 	}
 
 	[Fact]
-	public async Task AddJwtAuthentication_RegistersAFactorySigningWithTheSameKey()
-	{
-		// 3.x never put the credentials where JwtTokenFactory read them, so a
-		// factory resolved from DI signed with null credentials (B1).
-		SigningCredentials signingCredentials = TestSigningCredentials();
-		var services = new ServiceCollection();
-		services.AddJwtAuthentication(
-			ConfigurationWith("https://issuer.test", "audience.test"),
-			signingCredentials);
-
-		await using ServiceProvider provider = services.BuildServiceProvider();
-
-		Assert.IsType<JwtTokenFactory>(
-			provider.GetRequiredService<IJwtTokenFactory>());
-		Assert.Same(
-			signingCredentials,
-			provider.GetRequiredService<JwtSigningCredentials>().Credentials);
-	}
-
-	[Fact]
-	public async Task AddJwtAuthentication_KeepsAFactoryRegisteredEarlier()
-	{
-		var custom = new StubTokenFactory();
-		var services = new ServiceCollection();
-		services.AddSingleton<IJwtTokenFactory>(custom);
-		services.AddJwtAuthentication(
-			ConfigurationWith("https://issuer.test", "audience.test"),
-			TestSigningCredentials());
-
-		await using ServiceProvider provider = services.BuildServiceProvider();
-
-		Assert.Same(custom, provider.GetRequiredService<IJwtTokenFactory>());
-	}
-
-	[Fact]
 	public async Task IssuedToken_AuthenticatesAndCarriesTheUserId()
 	{
 		WebApplicationBuilder builder = WebApplication.CreateSlimBuilder();
@@ -200,7 +200,7 @@ public class JwtAuthenticationExtensionsTests
 		await app.StartAsync();
 
 		var userId = Guid.NewGuid();
-		IJwtTokenFactory factory = app.Services.GetRequiredService<IJwtTokenFactory>();
+		var factory = app.Services.GetRequiredService<IJwtTokenFactory>();
 		string token = factory.GenerateToken(
 			factory.GenerateClaimsIdentity("user@example.com", userId));
 

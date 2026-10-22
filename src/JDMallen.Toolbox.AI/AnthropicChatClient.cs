@@ -124,16 +124,15 @@ internal sealed record AnthropicMessage(
 	[property: JsonPropertyName("content")]
 	object Content);
 
-internal sealed record AnthropicContentBlock(
-	[property: JsonPropertyName("type")] string Type)
+internal sealed record AnthropicContentBlock([property: JsonPropertyName("type")] string Type)
 {
-	[JsonPropertyName("text")]
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public string? Text { get; init; }
-
 	[JsonPropertyName("source")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public AnthropicImageSource? Source { get; init; }
+
+	[JsonPropertyName("text")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Text { get; init; }
 }
 
 internal sealed record AnthropicImageSource(

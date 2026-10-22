@@ -13,6 +13,7 @@ public class EndpointExtensionsTests
 	/// Sample endpoint used to prove that <c>MapEndpoint</c> dispatches to the
 	/// type's static <see cref="IEndpoint.Map" /> implementation.
 	/// </summary>
+
 	// ReSharper disable once ClassNeverInstantiated.Local
 	private sealed class PingEndpoint : IEndpoint
 	{

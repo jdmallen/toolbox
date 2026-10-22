@@ -94,6 +94,22 @@ public class ScheduledBackgroundServiceTests
 			"Condition was not satisfied within the allotted time.");
 	}
 
+	private const string INVALID_SCHEDULE = "I am a bad schedule";
+
+	[Theory]
+	[InlineData(null)]
+	[InlineData("")]
+	[InlineData("   ")]
+	public void ThrowsWhenScheduleIsBlank(string? cronSchedule)
+	{
+		var exception = Assert.Throws<ArgumentException>(() => new CountingScheduledService(
+			CreateScopeFactory(),
+			new FakeTimeProvider(StartInstant),
+			cronSchedule!));
+
+		Assert.Equal("cronSchedule", exception.ParamName);
+	}
+
 	[Fact]
 	public async Task DoesNotExecuteBeforeScheduledTimeIsReached()
 	{
@@ -121,6 +137,25 @@ public class ScheduledBackgroundServiceTests
 		fakeTimeProvider.Advance(TimeSpan.FromMinutes(1));
 		await service.RunScheduleCheckAsync();
 
+		Assert.Equal(1, service.ExecutionCount);
+	}
+
+	[Fact]
+	public async Task FallsBackToEveryMinuteOnInvalidSchedule()
+	{
+		var fakeTimeProvider = new FakeTimeProvider(StartInstant);
+		var service = new CountingScheduledService(
+			CreateScopeFactory(),
+			fakeTimeProvider,
+			INVALID_SCHEDULE);
+
+		// The fallback "*/1 * * * *" next fires at 08:01:00, one second later.
+		fakeTimeProvider.Advance(TimeSpan.FromSeconds(59));
+		await service.RunScheduleCheckAsync();
+		Assert.Equal(0, service.ExecutionCount);
+
+		fakeTimeProvider.Advance(TimeSpan.FromSeconds(1));
+		await service.RunScheduleCheckAsync();
 		Assert.Equal(1, service.ExecutionCount);
 	}
 
@@ -174,27 +209,6 @@ public class ScheduledBackgroundServiceTests
 		}
 	}
 
-	private const string InvalidSchedule = "I am a bad schedule";
-
-	[Fact]
-	public async Task FallsBackToEveryMinuteOnInvalidSchedule()
-	{
-		var fakeTimeProvider = new FakeTimeProvider(StartInstant);
-		var service = new CountingScheduledService(
-			CreateScopeFactory(),
-			fakeTimeProvider,
-			InvalidSchedule);
-
-		// The fallback "*/1 * * * *" next fires at 08:01:00, one second later.
-		fakeTimeProvider.Advance(TimeSpan.FromSeconds(59));
-		await service.RunScheduleCheckAsync();
-		Assert.Equal(0, service.ExecutionCount);
-
-		fakeTimeProvider.Advance(TimeSpan.FromSeconds(1));
-		await service.RunScheduleCheckAsync();
-		Assert.Equal(1, service.ExecutionCount);
-	}
-
 	[Fact]
 	public void LogsErrorWhenScheduleIsInvalid()
 	{
@@ -203,7 +217,7 @@ public class ScheduledBackgroundServiceTests
 		_ = new CountingScheduledService(
 			CreateScopeFactory(),
 			new FakeTimeProvider(StartInstant),
-			InvalidSchedule,
+			INVALID_SCHEDULE,
 			logger);
 
 		// The message names both strings, since NCrontab's exception names only
@@ -214,22 +228,7 @@ public class ScheduledBackgroundServiceTests
 			"Unable to parse cron schedule \"I am a bad schedule\"; defaulting to "
 			+ "\"*/1 * * * *\"",
 			record.Message);
-		Assert.Equal(InvalidSchedule, record.GetStructuredStateValue("CronSchedule"));
+		Assert.Equal(INVALID_SCHEDULE, record.GetStructuredStateValue("CronSchedule"));
 		Assert.IsType<CrontabException>(record.Exception);
-	}
-
-	[Theory]
-	[InlineData(null)]
-	[InlineData("")]
-	[InlineData("   ")]
-	public void ThrowsWhenScheduleIsBlank(string? cronSchedule)
-	{
-		ArgumentException exception = Assert.Throws<ArgumentException>(
-			() => new CountingScheduledService(
-				CreateScopeFactory(),
-				new FakeTimeProvider(StartInstant),
-				cronSchedule!));
-
-		Assert.Equal("cronSchedule", exception.ParamName);
 	}
 }

@@ -1,4 +1,5 @@
-﻿namespace JDMallen.Toolbox.AspNetCore.Options;
+﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
+namespace JDMallen.Toolbox.AspNetCore.Options;
 
 /// <summary>
 /// Configuration settings for OAuth authentication providers.

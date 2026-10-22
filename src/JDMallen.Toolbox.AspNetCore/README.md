@@ -142,39 +142,31 @@ var signingCredentials = new SigningCredentials(
 
 builder.Services.AddJwtAuthentication(
 	builder.Configuration,
-	signingCredentials: signingCredentials);   // section name defaults to "Jwt"
+	signingCredentials);   // section name defaults to "Jwt"
 ```
 
 This binds `JwtOptions` from the section and registers JWT bearer
 authentication that validates issuer, audience, lifetime (5-minute clock skew),
-and signing key, with HTTPS metadata required. Signing credentials cannot come
-from configuration, so the call throws if none are passed.
+and signing key, with HTTPS metadata required. Signing credentials can't come
+from configuration, so they're a required argument (null throws
+`ArgumentNullException`). They're registered once, as `JwtSigningCredentials`,
+and used both to validate incoming tokens and to sign issued ones.
 
 ### Issuing tokens
 
-`JwtTokenFactory` builds a signed token from `IOptions<JwtOptions>`, and the
-credentials passed to `AddJwtAuthentication` are not copied into those options.
-Register the factory with options that carry the same credentials:
-
-```csharp
-builder.Services.AddSingleton<IJwtTokenFactory>(new JwtTokenFactory(
-	Microsoft.Extensions.Options.Options.Create(new JwtOptions
-	{
-		Issuer = "https://api.example.com",
-		Audience = "https://app.example.com",
-		Subject = "api",
-		SigningCredentials = signingCredentials,
-	})));
-```
+`AddJwtAuthentication` also registers `IJwtTokenFactory` (unless you registered
+your own first), so inject it wherever you issue tokens:
 
 ```csharp
 ClaimsIdentity identity = tokenFactory.GenerateClaimsIdentity(user.Email!, user.Id);
 string jwt = tokenFactory.GenerateToken(identity);
 ```
 
-Each token gets a fresh `jti` (a `MiniGuid`), `iat`, `nbf`, and an expiry of
-`ValidForSpan` (default 30 minutes), plus any `sid`, `email`, and `role` claims
-on the identity.
+Each token gets a fresh `jti` (a `MiniGuid`), `iat` (whole Unix seconds),
+`nbf`, and an expiry of `ValidForSpan` (default 30 minutes). The identity's
+user ID (its `id` claim, or else `ClaimTypes.NameIdentifier`) goes into the
+token's `id` claim, so `User.GetUserIdAsGuid()` works on requests that carry
+it. Any `sid`, `email`, and `role` claims on the identity are copied too.
 
 ## OAuth Providers
 

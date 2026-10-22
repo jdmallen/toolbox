@@ -5,6 +5,160 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0]
+
+`JDMallen.Toolbox` becomes a small, dependency-light toolkit worth installing on
+its own: `MiniGuid`, LINQ helpers for any `IQueryable<T>`, and null-aware
+string extensions. The siblings build on it instead of carrying their own
+copies, and eight bugs are fixed, including JWT tokens that couldn't be signed
+or read back and password scores that depended on the server's culture. All
+eight packages move to 4.0.0; `AI`, `Data.Abstractions`, `EFCore.Identity`, and
+`EFCore.SqlServer` have no API changes.
+
+### Breaking
+
+`JDMallen.Toolbox`:
+
+- **Removed `DateTimeExtensions` and `StructExtensions.ToUnixTimestamp`.** Use
+  `DateTimeOffset.ToUnixTimeSeconds()` / `FromUnixTimeSeconds()`, available on
+  netstandard2.0 too.
+- **`StructExtensions` is renamed `StringExtensions`** (same namespace).
+  Extension-method calls such as `value.HasValue()` compile unchanged; direct
+  static calls through the old class name don't.
+- **Removed `ReflectionExtensions.IsVirtual`, `UtilityMethods`,
+  `Models.EndpointConfiguration`, and `Resources.ResourceLoader`.**
+  `UtilityMethods.GetExpressionFromPropertyName` is replaced by
+  `JDMallen.Toolbox.Linq.PropertyPath.ToLambda`. The password word lists that
+  `ResourceLoader` exposed are now internal to `JDMallen.Toolbox.AspNetCore`.
+- **Removed `SqliteEntityModel`, `SqliteEntityModel<TId>`, `MySqlEntityModel`,
+  and `MySqlEntityModel<TId>`.** Derive from `EntityModel<TId>`.
+- **`ReplaceVisitor` is internal.** `ExpressionExtensions.Replace` still works.
+- **`MiniGuid` serializes with System.Text.Json, not Newtonsoft.Json.**
+  `MiniGuidJsonConverter` is now a sealed System.Text.Json
+  `JsonConverter<MiniGuid>`, applied by attribute, and `MiniGuid` serializes as
+  its 22-character string (System.Text.Json used to write an object with `Guid`
+  and `Value`). Newtonsoft.Json users register their own converter; the package
+  README has a short one.
+- **Dependencies removed:** `Newtonsoft.Json`,
+  `Microsoft.Extensions.Configuration.Binder`,
+  `Microsoft.Extensions.Logging.Abstractions`,
+  `System.ComponentModel.Annotations`, and `JetBrains.Annotations`. Code that
+  used them through this package must reference them directly. The only new
+  dependency is `System.Text.Json`, on netstandard2.0 only.
+
+`JDMallen.Toolbox.EFCore`:
+
+- **Removed `Filters.Filters` and `Extensions.QueryExtensions`.** `Search`, the
+  `CreatedAfter` / `CreatedBefore` / `ModifiedAfter` / `ModifiedBefore`
+  filters, and `OrderBy(string, bool)` (now `OrderByProperty`) live in
+  `JDMallen.Toolbox.Linq`, which this package still brings in.
+
+`JDMallen.Toolbox.AspNetCore`:
+
+- **`AddJwtAuthentication(configuration, signingCredentials, jwtSectionName =
+  "Jwt")`**: the signing credentials are now required and second (they were
+  optional and last); null throws `ArgumentNullException`. Calls that name the
+  `signingCredentials:` argument still compile.
+- **Removed `JwtOptions.SigningCredentials`.** The credentials passed to
+  `AddJwtAuthentication` are registered as the new `JwtSigningCredentials`.
+- **`JwtTokenFactory`'s constructor** takes `(IOptions<JwtOptions>,
+  JwtSigningCredentials)`. Resolve `IJwtTokenFactory` from DI instead of
+  constructing it.
+- **Removed `RequireJwtAuth`** (obsolete since 3.0).
+- **`JwtClaims` is a static class**, like the other constant holders.
+
+`JDMallen.Toolbox.Hosting` (netstandard2.0 build only; net10.0 is unchanged):
+
+- **Removed `ITimeProvider` and `SystemTimeProvider`.** The base service
+  constructors and the `TimeProvider` property use `System.TimeProvider` on
+  every target, from the `Microsoft.Bcl.TimeProvider` package on
+  netstandard2.0.
+
+### Fixed
+
+- **JWT tokens issued from DI were unsigned.** `AddJwtAuthentication`
+  validated with the passed credentials but never gave them to
+  `JwtTokenFactory`, so a factory resolved from DI signed with null
+  credentials. Both now use the one registered `JwtSigningCredentials`, and
+  `AddJwtAuthentication` registers `IJwtTokenFactory` (unless one is already
+  registered).
+- **`GetUserIdAsGuid()` failed on the library's own tokens.**
+  `GenerateToken` wrote the email into the `id` claim and dropped the user ID.
+  It now carries the identity's `id` claim, falling back to
+  `ClaimTypes.NameIdentifier`.
+- **`GenerateToken` threw on every identity from `GenerateClaimsIdentity`**
+  ("Sequence contains more than one matching element"), because that identity
+  held two Name claims. It now holds one.
+- **`OAuthConfiguration.GoogleScopes` never bound from configuration** (it was
+  get-only). It now has a setter, like `GitHubScopes`.
+- **Password scores depended on the server's culture.** `CustomPasswordValidator`
+  parsed its frequency table with the current culture, so under de-DE scores
+  were wildly inflated and under fr-FR parsing failed. The table is now parsed
+  with the invariant culture; scores under en-US are unchanged.
+- **`OrderBy(string, bool)` threw `RuntimeBinderException` for non-public entity
+  types.** It bound through `dynamic`; `OrderByProperty` builds the call with
+  expression trees and works for any type (and without `Microsoft.CSharp`).
+- **The Hosting and EFCore.SqlServer READMEs** had markdown mangled by a
+  formatter, and the Hosting one claimed `netstandard2.1`; it targets
+  `netstandard2.0;net10.0`.
+- **`JDMallen.Toolbox.EFCore.SqlServer` pulled in a vulnerable
+  `System.Security.Cryptography.Pkcs`.** EF Core SqlServer 10.0.13 depends on
+  `Microsoft.Data.SqlClient` 6.1.7, which brings Pkcs 9.0.11 (CVE-2026-70162
+  and CVE-2026-84008, both denial of service). The package now references the
+  patched 10.0.13 directly.
+
+### Changed
+
+- **`Search` `Contains` and `StartsWith` now translate to SQL and ignore case
+  everywhere.** They used the `StringComparison` overloads, which EF Core
+  can't translate. Both sides are now upper-cased (`UPPER()` in SQL). A
+  database index can't serve these searches, and non-ASCII case folding
+  depends on the provider. `Exact` is unchanged.
+- **The date filters emit a single comparison** (`>=` or `>`) instead of a
+  conditional; results are the same.
+- **`iat` is truncated to the second** (`DateTimeOffset.ToUnixTimeSeconds()`);
+  3.x rounded up, which could stamp an `iat` up to a second in the future.
+- **The invalid-cron-schedule error log names the schedule**: `Unable to parse
+  cron schedule "<value>"; defaulting to "*/1 * * * *"` (EventId 404).
+- **`JDMallen.Toolbox` ships a README**, and its package description and the
+  EFCore one describe what the packages now contain.
+
+### Added
+
+- **`JDMallen.Toolbox.Linq`**: `Search`, `OrderByProperty`, the four date
+  filters, and `PropertyPath.ToLambda`, for any `IQueryable<T>`.
+- **`[NotNullWhen]` on the string extensions** (.NET Core 3.0+), so
+  `if (name.HasValue())` tells the compiler `name` isn't null.
+- **`JwtSigningCredentials`** in `JDMallen.Toolbox.AspNetCore.Options`.
+- **Tests**: a new `JDMallen.Toolbox.Tests` project (run against the
+  netstandard2.0 build with `-p:ToolboxTargetFramework=netstandard2.0`), SQLite
+  translation tests for the LINQ helpers, an end-to-end JWT round trip, culture
+  tests for the password validator, and Hosting tests for the invalid-schedule
+  fallback (which also run against the netstandard2.0 build).
+- **Package validation** against 3.2.2 in every packable project, with each
+  intended break recorded in `CompatibilitySuppressions.xml`.
+
+### Removed
+
+- The `JDMallen.Toolbox.Hosting.TestWorker` console harness (never packed); its
+  invalid-schedule check is now covered by the Hosting tests.
+
+### Migrating from 3.x
+
+1. `using JDMallen.Toolbox.EFCore.Filters;` or `...EFCore.Extensions;` for the
+   query helpers becomes `using JDMallen.Toolbox.Linq;`, and
+   `.OrderBy("Name", ascending)` becomes `.OrderByProperty("Name", ascending)`.
+2. Delete any manual `JwtTokenFactory` registration and its `JwtOptions` with
+   `SigningCredentials`; inject the `IJwtTokenFactory` that
+   `AddJwtAuthentication` registers.
+3. `ToUnixTimestamp()` becomes
+   `new DateTimeOffset(value).ToUnixTimeSeconds()`.
+4. If you serialize `MiniGuid` with Newtonsoft.Json, add the converter from the
+   `JDMallen.Toolbox` README; with System.Text.Json, expect the string form.
+5. Add direct references for anything you used through the removed
+   dependencies (most often `Newtonsoft.Json`).
+
+
 ## [3.2.2]
 
 Bug fix: password validation no longer hangs. Every release from 3.0.0 through

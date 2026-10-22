@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using JDMallen.Toolbox.AspNetCore.Constants;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 namespace JDMallen.Toolbox.AspNetCore.Models;
 

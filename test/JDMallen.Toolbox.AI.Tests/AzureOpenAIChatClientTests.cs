@@ -14,8 +14,7 @@ public class AzureOpenAIChatClientTests
 	private static readonly CompletionRequest Request = new("system", "user prompt", 500);
 
 	private static HttpResponseMessage Json(string content, HttpStatusCode code = HttpStatusCode.OK)
-		=>
-			new(code) { Content = new StringContent(content, Encoding.UTF8, "application/json") };
+		=> new(code) { Content = new StringContent(content, Encoding.UTF8, "application/json") };
 
 	[Fact]
 	public async Task CompleteAsync_CancellationToken_IsPropagated()
@@ -23,8 +22,8 @@ public class AzureOpenAIChatClientTests
 		var cts = new CancellationTokenSource();
 		await cts.CancelAsync();
 
-		var handler
-			= new StubHttpMessageHandler(_ => Task.FromCanceled<HttpResponseMessage>(cts.Token));
+		var handler =
+			new StubHttpMessageHandler(_ => Task.FromCanceled<HttpResponseMessage>(cts.Token));
 
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
@@ -37,10 +36,26 @@ public class AzureOpenAIChatClientTests
 		var handler = new StubHttpMessageHandler(Json("Unauthorized", HttpStatusCode.Unauthorized));
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
-		var exception
-			= await Assert.ThrowsAsync<HttpRequestException>(() => client.CompleteAsync(Request));
+		var exception =
+			await Assert.ThrowsAsync<HttpRequestException>(() => client.CompleteAsync(Request));
 
 		Assert.Contains("Azure OpenAI API request failed: Unauthorized", exception.Message);
+	}
+
+	[Fact]
+	public async Task CompleteAsync_NoImages_SendsUserContentAsPlainString()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
+		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
+
+		await client.CompleteAsync(Request);
+
+		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
+		JsonElement content = body.RootElement.GetProperty("messages")[1].GetProperty("content");
+
+		Assert.Equal(JsonValueKind.String, content.ValueKind);
+		Assert.Equal("user prompt", content.GetString());
 	}
 
 	[Fact]
@@ -62,24 +77,10 @@ public class AzureOpenAIChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_NoImages_SendsUserContentAsPlainString()
-	{
-		var handler = new StubHttpMessageHandler(Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
-		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
-
-		await client.CompleteAsync(Request);
-
-		using var body = JsonDocument.Parse(handler.RequestBody!);
-		JsonElement content = body.RootElement.GetProperty("messages")[1].GetProperty("content");
-
-		Assert.Equal(JsonValueKind.String, content.ValueKind);
-		Assert.Equal("user prompt", content.GetString());
-	}
-
-	[Fact]
 	public async Task CompleteAsync_WithImages_SendsImageUrlPartsBeforeText()
 	{
-		var handler = new StubHttpMessageHandler(Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
+		var handler = new StubHttpMessageHandler(
+			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 		CompletionRequest request = Request with
 		{
@@ -92,13 +93,18 @@ public class AzureOpenAIChatClientTests
 
 		await client.CompleteAsync(request);
 
-		using var body = JsonDocument.Parse(handler.RequestBody!);
-		JsonElement[] parts = [.. body.RootElement.GetProperty("messages")[1].GetProperty("content").EnumerateArray()];
+		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
+		JsonElement[] parts =
+			[.. body.RootElement.GetProperty("messages")[1].GetProperty("content").EnumerateArray()];
 
 		Assert.Equal(3, parts.Length);
 		Assert.Equal("image_url", parts[0].GetProperty("type").GetString());
-		Assert.Equal("data:image/jpeg;base64,AQID", parts[0].GetProperty("image_url").GetProperty("url").GetString());
-		Assert.Equal("data:image/png;base64,BAUG", parts[1].GetProperty("image_url").GetProperty("url").GetString());
+		Assert.Equal(
+			"data:image/jpeg;base64,AQID",
+			parts[0].GetProperty("image_url").GetProperty("url").GetString());
+		Assert.Equal(
+			"data:image/png;base64,BAUG",
+			parts[1].GetProperty("image_url").GetProperty("url").GetString());
 		Assert.False(parts[0].TryGetProperty("text", out _));
 		Assert.Equal("text", parts[2].GetProperty("type").GetString());
 		Assert.Equal("user prompt", parts[2].GetProperty("text").GetString());

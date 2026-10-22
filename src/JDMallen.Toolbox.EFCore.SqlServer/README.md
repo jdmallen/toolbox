@@ -20,39 +20,10 @@ dotnet add package JDMallen.Toolbox.EFCore.SqlServer
 
 For other databases, use the appropriate provider package:
 
--
+- **PostgreSQL**: `Npgsql.EntityFrameworkCore.PostgreSQL`
+- **SQLite**: `Microsoft.EntityFrameworkCore.Sqlite`
+- **MySQL**: `Pomelo.EntityFrameworkCore.MySql`
+- **Cosmos DB**: `Microsoft.EntityFrameworkCore.Cosmos`
 
-*
-
-*PostgreSQL
-**:
-`Npgsql.EntityFrameworkCore.PostgreSQL`
-
--
-
-*
-
-*SQLite
-**:
-`Microsoft.EntityFrameworkCore.Sqlite`
-
--
-
-*
-
-*MySQL
-**:
-`Pomelo.EntityFrameworkCore.MySql`
-
--
-
-*
-
-*Cosmos
-DB
-**:
-`Microsoft.EntityFrameworkCore.Cosmos`
-
-All core EF functionality from
-`JDMallen.Toolbox.EFCore` works with any
+All core EF functionality from `JDMallen.Toolbox.EFCore` works with any
 provider.

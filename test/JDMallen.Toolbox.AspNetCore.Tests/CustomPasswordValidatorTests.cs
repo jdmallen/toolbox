@@ -20,13 +20,6 @@ public class CustomPasswordValidatorTests
 	private static PasswordResult Check(string password) =>
 		new CustomPasswordValidator<IdentityUser<Guid>>().CheckPassword(password);
 
-	[Fact]
-	public void Resources_HaveTheExpectedEntryCounts()
-	{
-		Assert.Equal(7186, PasswordResources.CommonPasswords.Count);
-		Assert.Equal(27 * 27, PasswordResources.FrequencyTable.Length);
-	}
-
 	private static T WithCulture<T>(string cultureName, Func<T> action)
 	{
 		CultureInfo original = CultureInfo.CurrentCulture;
@@ -67,51 +60,57 @@ public class CustomPasswordValidatorTests
 		Assert.Equal(PasswordStrength.Poor, result.Strength);
 	}
 
-	[Fact]
-	public void PasswordResult_SerializesTheErrorAsNamesWithSystemTextJson()
-	{
-		// 4.0 switched the attribute from Newtonsoft's StringEnumConverter (which
-		// System.Text.Json, ASP.NET Core's default, ignored) to
-		// JsonStringEnumConverter.
-		string json = JsonSerializer.Serialize(Check("password"));
-
-		Assert.Contains(
-			"\"Error\":\"TooCommon, NotComplexEnough\"",
-			json,
-			StringComparison.Ordinal);
-	}
-
-	[Fact(Timeout = 10_000)]
-	public async Task CheckPassword_ReturnsForAMultiCharacterPassword()
-	{
-		// Run off the test thread so the timeout can fail the test instead of
-		// hanging the whole run if the regression comes back.
-		PasswordResult result = await Task.Run(() => Check("Tr0ub4dor&3"));
-
-		Assert.Equal(11, result.Length);
-	}
-
 	[Theory]
-	[InlineData("password", 28.693077, PasswordStrength.Poor,
+	[InlineData(
+		"password",
+		28.693077,
+		PasswordStrength.Poor,
 		PasswordError.TooCommon | PasswordError.NotComplexEnough)]
-	[InlineData("PassWord", 34.797417, PasswordStrength.Fair,
+	[InlineData(
+		"PassWord",
+		34.797417,
+		PasswordStrength.Fair,
 		PasswordError.TooCommon | PasswordError.NotComplexEnough)]
-	[InlineData("abcdefgh", 29.891434, PasswordStrength.Poor,
+	[InlineData(
+		"abcdefgh",
+		29.891434,
+		PasswordStrength.Poor,
 		PasswordError.NotComplexEnough)]
-	[InlineData("qwertyuiop", 37.33481, PasswordStrength.Fair,
+	[InlineData(
+		"qwertyuiop",
+		37.33481,
+		PasswordStrength.Fair,
 		PasswordError.NotComplexEnough)]
-	[InlineData("short1!", 26.549723, PasswordStrength.Poor,
+	[InlineData(
+		"short1!",
+		26.549723,
+		PasswordStrength.Poor,
 		PasswordError.TooShort | PasswordError.NotComplexEnough)]
-	[InlineData("ab", 4.4744873, PasswordStrength.Poor,
+	[InlineData(
+		"ab",
+		4.4744873,
+		PasswordStrength.Poor,
 		PasswordError.TooShort | PasswordError.NotComplexEnough)]
-	[InlineData("Tr0ub4dor&3", 51.7914, PasswordStrength.Fair,
+	[InlineData(
+		"Tr0ub4dor&3",
+		51.7914,
+		PasswordStrength.Fair,
 		PasswordError.None)]
-	[InlineData("zZ9!kq#Lm2@wXp", 69.02942, PasswordStrength.Good,
+	[InlineData(
+		"zZ9!kq#Lm2@wXp",
+		69.02942,
+		PasswordStrength.Good,
 		PasswordError.None)]
-	[InlineData("café au lait 2026", 94.79811, PasswordStrength.Great,
+	[InlineData(
+		"café au lait 2026",
+		94.79811,
+		PasswordStrength.Great,
 		PasswordError.None)]
-	[InlineData("correct horse battery staple", 104.19175,
-		PasswordStrength.Great, PasswordError.None)]
+	[InlineData(
+		"correct horse battery staple",
+		104.19175,
+		PasswordStrength.Great,
+		PasswordError.None)]
 	public void CheckPassword_PinsKnownResults(
 		string password,
 		double bits,
@@ -131,8 +130,7 @@ public class CustomPasswordValidatorTests
 	[InlineData("")]
 	[InlineData("a")]
 	[InlineData("   ")]
-	public void CheckPassword_ShortCircuitsBlankOrSingleCharacterInput(
-		string password)
+	public void CheckPassword_ShortCircuitsBlankOrSingleCharacterInput(string password)
 	{
 		PasswordResult result = Check(password);
 
@@ -140,6 +138,16 @@ public class CustomPasswordValidatorTests
 		Assert.Equal(PasswordStrength.Poor, result.Strength);
 		Assert.Equal(PasswordError.TooShort, result.Error);
 		Assert.Equal(password.Length, result.Length);
+	}
+
+	[Fact(Timeout = 10_000)]
+	public async Task CheckPassword_ReturnsForAMultiCharacterPassword()
+	{
+		// Run off the test thread so the timeout can fail the test instead of
+		// hanging the whole run if the regression comes back.
+		PasswordResult result = await Task.Run(() => Check("Tr0ub4dor&3"));
+
+		Assert.Equal(11, result.Length);
 	}
 
 	[Fact]
@@ -164,5 +172,26 @@ public class CustomPasswordValidatorTests
 		Assert.Equal(
 			PasswordError.TooShort | PasswordError.NotComplexEnough,
 			result.Error);
+	}
+
+	[Fact]
+	public void PasswordResult_SerializesTheErrorAsNamesWithSystemTextJson()
+	{
+		// 4.0 switched the attribute from Newtonsoft's StringEnumConverter (which
+		// System.Text.Json, ASP.NET Core's default, ignored) to
+		// JsonStringEnumConverter.
+		string json = JsonSerializer.Serialize(Check("password"));
+
+		Assert.Contains(
+			"\"Error\":\"TooCommon, NotComplexEnough\"",
+			json,
+			StringComparison.Ordinal);
+	}
+
+	[Fact]
+	public void Resources_HaveTheExpectedEntryCounts()
+	{
+		Assert.Equal(7186, PasswordResources.CommonPasswords.Count);
+		Assert.Equal(27 * 27, PasswordResources.FrequencyTable.Length);
 	}
 }

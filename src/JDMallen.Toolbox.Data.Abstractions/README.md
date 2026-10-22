@@ -14,12 +14,12 @@ dotnet add package JDMallen.Toolbox.Data.Abstractions
 
 All types live in `JDMallen.Toolbox.Data.Abstractions.Interfaces`.
 
-| Interface           | Purpose                                                                 |
-|---------------------|-------------------------------------------------------------------------|
-| `IModel`            | Marker for any model in the application                                 |
-| `IEntityModel`      | A persisted entity: `DateCreated`, `DateModified`, `IsDeleted`          |
-| `IEntityModel<TId>` | Adds a value-type primary key, `TId Id`                                 |
-| `IAggregateRoot`    | Marker for a DDD aggregate root (extends `IEntityModel`)                |
+| Interface           | Purpose                                                                  |
+|---------------------|--------------------------------------------------------------------------|
+| `IModel`            | Marker for any model in the application                                  |
+| `IEntityModel`      | A persisted entity: `DateCreated`, `DateModified`, `IsDeleted`           |
+| `IEntityModel<TId>` | Adds a value-type primary key, `TId Id`                                  |
+| `IAggregateRoot`    | Marker for a DDD aggregate root (extends `IEntityModel`)                 |
 | `IContext`          | A unit of work: `IDisposable` plus `SaveChangesAsync(CancellationToken)` |
 
 The entity properties are read-only on the interface. Implementations decide how
@@ -45,8 +45,8 @@ public class Invoice : IEntityModel<Guid>, IAggregateRoot
 }
 ```
 
-Or inherit a ready-made base class from `JDMallen.Toolbox`
-(`EntityModel<TId>`, `SqliteEntityModel<TId>`, `MySqlEntityModel<TId>`).
+Or inherit the ready-made `EntityModel` / `EntityModel<TId>` base classes from
+`JDMallen.Toolbox`.
 
 `IContext` lets services depend on "something that can save" rather than a
 concrete `DbContext`:

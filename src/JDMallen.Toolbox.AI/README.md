@@ -39,10 +39,10 @@ var request = new CompletionRequest(
 
 ## Providers
 
-| Client                       | Options                                          | Auth header             |
-|------------------------------|--------------------------------------------------|-------------------------|
-| `AnthropicChatClient`        | `AnthropicClientOptions(ApiKey, Model)`          | `x-api-key`             |
-| `AzureOpenAIChatClient`      | `AzureOpenAIClientOptions(ApiKey, Endpoint, Deployment)` | `api-key`       |
+| Client                       | Options                                                  | Auth header                                      |
+|------------------------------|----------------------------------------------------------|--------------------------------------------------|
+| `AnthropicChatClient`        | `AnthropicClientOptions(ApiKey, Model)`                  | `x-api-key`                                      |
+| `AzureOpenAIChatClient`      | `AzureOpenAIClientOptions(ApiKey, Endpoint, Deployment)` | `api-key`                                        |
 | `OpenAICompatibleChatClient` | `OpenAICompatibleClientOptions(BaseUrl, Model, ApiKey?)` | `Authorization: Bearer`, only if `ApiKey` is set |
 
 Every client takes an `HttpClient` you own. Requests use absolute URLs, so no

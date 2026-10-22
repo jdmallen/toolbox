@@ -30,24 +30,6 @@ public class IdentityResultExtensionsTests
 			});
 
 	[Fact]
-	public void Match_ReturnsSuccessResultWhenSucceeded()
-	{
-		IResult expected = Results.Ok("created");
-
-		IResult actual = IdentityResult.Success.Match(() => expected);
-
-		Assert.Same(expected, actual);
-	}
-
-	[Fact]
-	public void Match_ReturnsValidationProblemWhenFailed()
-	{
-		IResult actual = FailedResult().Match(() => Results.Ok("created"));
-
-		Assert.IsType<ValidationProblem>(actual);
-	}
-
-	[Fact]
 	public async Task MatchAsync_ReturnsSuccessResultWhenSucceeded()
 	{
 		IResult expected = Results.Ok("created");
@@ -61,6 +43,24 @@ public class IdentityResultExtensionsTests
 	public async Task MatchAsync_ReturnsValidationProblemWhenFailed()
 	{
 		IResult actual = await FailedResult().Match(() => Task.FromResult(Results.Ok("created")));
+
+		Assert.IsType<ValidationProblem>(actual);
+	}
+
+	[Fact]
+	public void Match_ReturnsSuccessResultWhenSucceeded()
+	{
+		IResult expected = Results.Ok("created");
+
+		IResult actual = IdentityResult.Success.Match(() => expected);
+
+		Assert.Same(expected, actual);
+	}
+
+	[Fact]
+	public void Match_ReturnsValidationProblemWhenFailed()
+	{
+		IResult actual = FailedResult().Match(() => Results.Ok("created"));
 
 		Assert.IsType<ValidationProblem>(actual);
 	}

@@ -2,7 +2,7 @@
 
 Entity Framework Core conventions for `IEntityModel` entities: a base
 `DbContext` that discovers entity configuration, stamps audit timestamps on
-save, and hides soft-deleted rows, plus a few `IQueryable` helpers.
+save, and hides soft-deleted rows.
 
 Provider-agnostic: add the EF Core provider you use (or
 `JDMallen.Toolbox.EFCore.SqlServer` for SQL Server).
@@ -83,47 +83,23 @@ modelBuilder.AddSoftDeleteQueryFilter();
 
 ## Query Helpers
 
-### Date filters
-
-Available on any `IQueryable<T>` where `T : IEntityModel`:
+Search, sort-by-property-name, and the `CreatedAfter` / `ModifiedBefore` date
+filters live in the base `JDMallen.Toolbox` package, under
+`JDMallen.Toolbox.Linq`, because they work on any `IQueryable<T>`. This
+package depends on it, so they're already available:
 
 ```csharp
-using JDMallen.Toolbox.EFCore.Filters;
+using JDMallen.Toolbox.Linq;
 
 var recent = context.Orders
 	.CreatedAfter(DateTime.UtcNow.AddDays(-7))
-	.ModifiedBefore(cutoff, inclusive: true);
+	.OrderByProperty("Customer.LastName", ascending: false);
 ```
 
-`CreatedAfter`, `CreatedBefore`, `ModifiedAfter`, and `ModifiedBefore` all take
-an optional `inclusive` flag (default `false`).
-
-### Search
-
-```csharp
-using JDMallen.Toolbox.Models;
-
-var matches = context.Orders.Search(
-	o => o.CustomerName,
-	"smith",
-	SearchStyle.StartsWith);
-```
-
-A null or whitespace search value returns the query unchanged; otherwise the
-value is trimmed. `Exact` uses `==`. `Contains` and `StartsWith` use the
-`StringComparison.CurrentCultureIgnoreCase` overloads, so check that your
-provider can translate them to SQL before relying on them.
-
-### Dynamic ordering
-
-```csharp
-using JDMallen.Toolbox.EFCore.Extensions;
-
-var sorted = context.Orders.OrderBy("Customer.LastName", ascending: false);
-```
-
-The field name can be a dotted property path. A null or whitespace name returns
-the query unchanged.
+They translate to SQL, including the case-insensitive `Contains` and
+`StartsWith` searches. See the `JDMallen.Toolbox` README for details. Before
+4.0.0 they were `JDMallen.Toolbox.EFCore.Filters.Filters` and
+`JDMallen.Toolbox.EFCore.Extensions.QueryExtensions.OrderBy`.
 
 ## Target Framework
 

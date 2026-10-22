@@ -44,17 +44,15 @@ internal static class OpenAIContentParts
 	}
 }
 
-internal sealed record OpenAIContentPart(
-	[property: JsonPropertyName("type")] string Type)
+internal sealed record OpenAIContentPart([property: JsonPropertyName("type")] string Type)
 {
-	[JsonPropertyName("text")]
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public string? Text { get; init; }
-
 	[JsonPropertyName("image_url")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public OpenAIImageUrl? ImageUrl { get; init; }
+
+	[JsonPropertyName("text")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Text { get; init; }
 }
 
-internal sealed record OpenAIImageUrl(
-	[property: JsonPropertyName("url")] string Url);
+internal sealed record OpenAIImageUrl([property: JsonPropertyName("url")] string Url);

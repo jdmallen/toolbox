@@ -32,30 +32,6 @@ public class JwtTokenFactoryTests
 		new JwtSecurityTokenHandler().ReadJwtToken(token);
 
 	[Fact]
-	public void GenerateToken_StampsIssuedAtInWholeUnixSeconds()
-	{
-		JwtTokenFactory factory = CreateFactory();
-		var identity = new ClaimsIdentity(
-			[new Claim(ClaimTypes.Name, "user@example.com")]);
-
-		long before = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-		string token = factory.GenerateToken(identity);
-		long after = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-		// 4.0 truncates to the second, as DateTimeOffset.ToUnixTimeSeconds does;
-		// 3.x rounded up, which could stamp an iat up to a second in the future.
-		Claim issuedAt = Read(token)
-			.Claims
-			.Single(claim => claim.Type == JwtClaimTypes.IssuedAt);
-
-		Assert.Equal(ClaimValueTypes.Integer64, issuedAt.ValueType);
-		Assert.InRange(
-			long.Parse(issuedAt.Value, CultureInfo.InvariantCulture),
-			before,
-			after);
-	}
-
-	[Fact]
 	public void GenerateClaimsIdentity_HasOneNameClaim()
 	{
 		// 3.x wrapped a GenericIdentity, which already carries a Name claim, and
@@ -112,5 +88,29 @@ public class JwtTokenFactoryTests
 		Assert.DoesNotContain(
 			token.Claims,
 			claim => claim.Type == JwtClaimTypes.UserId);
+	}
+
+	[Fact]
+	public void GenerateToken_StampsIssuedAtInWholeUnixSeconds()
+	{
+		JwtTokenFactory factory = CreateFactory();
+		var identity = new ClaimsIdentity(
+			[new Claim(ClaimTypes.Name, "user@example.com")]);
+
+		long before = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		string token = factory.GenerateToken(identity);
+		long after = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+		// 4.0 truncates to the second, as DateTimeOffset.ToUnixTimeSeconds does;
+		// 3.x rounded up, which could stamp an iat up to a second in the future.
+		Claim issuedAt = Read(token)
+			.Claims
+			.Single(claim => claim.Type == JwtClaimTypes.IssuedAt);
+
+		Assert.Equal(ClaimValueTypes.Integer64, issuedAt.ValueType);
+		Assert.InRange(
+			long.Parse(issuedAt.Value, CultureInfo.InvariantCulture),
+			before,
+			after);
 	}
 }
