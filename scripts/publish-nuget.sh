@@ -10,7 +10,7 @@
 #
 # Packable projects are discovered dynamically: any src/**/*.csproj that
 # declares a <PackageId> is packed, so the list stays correct as projects come
-# and go. (Test projects and the TestWorker have no <PackageId> and are skipped.)
+# and go. (Test projects have no <PackageId> and are skipped.)
 #
 #   ./scripts/publish-nuget.sh              # pack + push the current version
 #   ./scripts/publish-nuget.sh --no-push    # pack only; artifacts in nupkgs/

@@ -12,9 +12,12 @@ internal static partial class ScheduledBackgroundServiceLogMessages
 	[LoggerMessage(
 		EventId = 404,
 		Level = LogLevel.Error,
-		Message = "Unable to parse cron schedule; defaulting to \"{DefaultCronSchedule}\"")]
+		Message =
+			"Unable to parse cron schedule \"{CronSchedule}\"; defaulting to "
+			+ "\"{DefaultCronSchedule}\"")]
 	public static partial void LogUnableToParseCronSchedule(
 		this ILogger logger,
 		Exception exception,
+		string cronSchedule,
 		string defaultCronSchedule);
 }

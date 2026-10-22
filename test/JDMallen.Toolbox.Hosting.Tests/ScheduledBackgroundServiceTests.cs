@@ -1,7 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Time.Testing;
+using NCrontab;
 
 namespace JDMallen.Toolbox.Hosting.Tests;
 
@@ -26,17 +29,20 @@ public class ScheduledBackgroundServiceTests
 			TimeSpan.Zero);
 
 	/// <summary>
-	/// Concrete service scheduled to run every minute. It counts executions and
+	/// Concrete service scheduled to run every minute unless a test passes its
+	/// own schedule. It counts executions and
 	/// exposes the otherwise-protected per-iteration schedule check so tests can
 	/// drive scheduling decisions deterministically instead of racing the loop.
 	/// </summary>
 	private sealed class CountingScheduledService(
 		IServiceScopeFactory scopeFactory,
-		TimeProvider timeProvider)
+		TimeProvider timeProvider,
+		string cronSchedule = "* * * * *",
+		ILogger<CountingScheduledService>? logger = null)
 		: ScheduledBackgroundService<CountingScheduledService>(
-			NullLogger<CountingScheduledService>.Instance,
+			logger ?? NullLogger<CountingScheduledService>.Instance,
 			scopeFactory,
-			"* * * * *",
+			cronSchedule,
 			false,
 			timeProvider)
 	{
@@ -166,5 +172,64 @@ public class ScheduledBackgroundServiceTests
 		{
 			await hostedService.StopAsync(CancellationToken.None);
 		}
+	}
+
+	private const string InvalidSchedule = "I am a bad schedule";
+
+	[Fact]
+	public async Task FallsBackToEveryMinuteOnInvalidSchedule()
+	{
+		var fakeTimeProvider = new FakeTimeProvider(StartInstant);
+		var service = new CountingScheduledService(
+			CreateScopeFactory(),
+			fakeTimeProvider,
+			InvalidSchedule);
+
+		// The fallback "*/1 * * * *" next fires at 08:01:00, one second later.
+		fakeTimeProvider.Advance(TimeSpan.FromSeconds(59));
+		await service.RunScheduleCheckAsync();
+		Assert.Equal(0, service.ExecutionCount);
+
+		fakeTimeProvider.Advance(TimeSpan.FromSeconds(1));
+		await service.RunScheduleCheckAsync();
+		Assert.Equal(1, service.ExecutionCount);
+	}
+
+	[Fact]
+	public void LogsErrorWhenScheduleIsInvalid()
+	{
+		var logger = new FakeLogger<CountingScheduledService>();
+
+		_ = new CountingScheduledService(
+			CreateScopeFactory(),
+			new FakeTimeProvider(StartInstant),
+			InvalidSchedule,
+			logger);
+
+		// The message names both strings, since NCrontab's exception names only
+		// the first bad field ("'I' is not a valid [Minute] crontab field").
+		FakeLogRecord record = Assert.Single(logger.Collector.GetSnapshot());
+		Assert.Equal(LogLevel.Error, record.Level);
+		Assert.Equal(
+			"Unable to parse cron schedule \"I am a bad schedule\"; defaulting to "
+			+ "\"*/1 * * * *\"",
+			record.Message);
+		Assert.Equal(InvalidSchedule, record.GetStructuredStateValue("CronSchedule"));
+		Assert.IsType<CrontabException>(record.Exception);
+	}
+
+	[Theory]
+	[InlineData(null)]
+	[InlineData("")]
+	[InlineData("   ")]
+	public void ThrowsWhenScheduleIsBlank(string? cronSchedule)
+	{
+		ArgumentException exception = Assert.Throws<ArgumentException>(
+			() => new CountingScheduledService(
+				CreateScopeFactory(),
+				new FakeTimeProvider(StartInstant),
+				cronSchedule!));
+
+		Assert.Equal("cronSchedule", exception.ParamName);
 	}
 }

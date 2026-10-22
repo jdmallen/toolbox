@@ -21,6 +21,9 @@
         <!-- FakeTimeProvider, to drive the schedule deterministically -->
         <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.9.0" />
 
+        <!-- FakeLogger, to assert on the invalid-schedule error log -->
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" Version="10.9.0" />
+
         <!-- Concrete DI container for building an IServiceScopeFactory in tests -->
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
@@ -30,8 +33,23 @@
         <Using Include="Xunit"/>
     </ItemGroup>
 
+    <!-- The library multi-targets netstandard2.0;net10.0, but only the .NET 10
+         runtime is needed to test both legs: by default the net10.0 build is
+         referenced, and -p:ToolboxTargetFramework=netstandard2.0 swaps in the
+         netstandard2.0 build. Its System.TimeProvider comes from
+         Microsoft.Bcl.TimeProvider, which forwards to the inbox type on .NET 8+,
+         so FakeTimeProvider plugs into either build. -->
     <ItemGroup>
-        <ProjectReference Include="..\..\src\JDMallen.Toolbox.Hosting\JDMallen.Toolbox.Hosting.csproj"/>
+        <ProjectReference Include="..\..\src\JDMallen.Toolbox.Hosting\JDMallen.Toolbox.Hosting.csproj">
+            <SetTargetFramework Condition="'$(ToolboxTargetFramework)' != ''">TargetFramework=$(ToolboxTargetFramework)</SetTargetFramework>
+        </ProjectReference>
+    </ItemGroup>
+
+    <!-- What a .NET 8/9 consumer of the netstandard2.0 build restores through the
+         package's dependency group; restore here runs for net10.0, so the
+         library's conditional reference doesn't flow on its own. -->
+    <ItemGroup Condition="'$(ToolboxTargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="Microsoft.Bcl.TimeProvider" Version="10.0.11" />
     </ItemGroup>
 
 </Project>

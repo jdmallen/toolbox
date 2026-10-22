@@ -64,20 +64,12 @@ public abstract class ScopedBackgroundService<TService> : BackgroundService
 	protected ScopedBackgroundService(
 		ILogger<TService> logger,
 		IServiceScopeFactory scopeFactory,
-#if NET8_0_OR_GREATER
 		TimeProvider? timeProvider = null)
-#else
-		ITimeProvider? timeProvider = null)
-#endif
 	{
 		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		_scopeFactory = scopeFactory
 			?? throw new ArgumentNullException(nameof(scopeFactory));
-#if NET8_0_OR_GREATER
 		TimeProvider = timeProvider ?? TimeProvider.System;
-#else
-		TimeProvider = timeProvider ?? SystemTimeProvider.Instance;
-#endif
 	}
 
 	/// <summary>
@@ -109,15 +101,11 @@ public abstract class ScopedBackgroundService<TService> : BackgroundService
 	/// <remarks>
 	/// Exposed for derived classes that need time operations. Primarily used by
 	/// <see cref="ScheduledBackgroundService{TService}" /> for cron scheduling.
-	/// On .NET 8+ this is the built-in <c>System.TimeProvider</c> (so tests can
-	/// inject a fake such as <c>FakeTimeProvider</c>); on netstandard2.0 it is a
-	/// custom <c>ITimeProvider</c>.
+	/// Tests can inject a fake such as <c>FakeTimeProvider</c> from
+	/// <c>Microsoft.Extensions.TimeProvider.Testing</c>. On netstandard2.0 the
+	/// type comes from the <c>Microsoft.Bcl.TimeProvider</c> package.
 	/// </remarks>
-#if NET8_0_OR_GREATER
 	protected TimeProvider TimeProvider { get; }
-#else
-	protected ITimeProvider TimeProvider { get; }
-#endif
 
 	/// <summary>
 	/// Repeatedly executes work within a scoped context until the stopping token is

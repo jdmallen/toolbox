@@ -142,11 +142,7 @@ public abstract class
 		IServiceScopeFactory scopeFactory,
 		string cronSchedule,
 		bool includeSeconds = false,
-#if NET8_0_OR_GREATER
 		TimeProvider? timeProvider = null)
-#else
-		ITimeProvider? timeProvider = null)
-#endif
 		: base(logger, scopeFactory, timeProvider)
 	{
 		if (string.IsNullOrWhiteSpace(cronSchedule))
@@ -173,6 +169,7 @@ public abstract class
 				{
 					logger.LogUnableToParseCronSchedule(
 						provider.Invoke(),
+						cronSchedule,
 						DEFAULT_CRON_SCHEDULE);
 				}
 
@@ -218,15 +215,8 @@ public abstract class
 	}
 
 	/// <summary>
-	/// Gets the current UTC time as a <see cref="DateTime" /> from the configured
-	/// time provider, bridging the built-in <c>TimeProvider</c> on .NET 8+ (whose
-	/// <see cref="DateTimeOffset" />-returning clock is converted to UTC) and the
-	/// netstandard2.0 <c>ITimeProvider</c>.
+	/// Gets the current UTC time from the configured time provider as the
+	/// <see cref="DateTime" /> that NCrontab schedules with.
 	/// </summary>
-	private DateTime GetCurrentUtc() =>
-#if NET8_0_OR_GREATER
-		TimeProvider.GetUtcNow().UtcDateTime;
-#else
-		TimeProvider.GetUtcNow();
-#endif
+	private DateTime GetCurrentUtc() => TimeProvider.GetUtcNow().UtcDateTime;
 }
