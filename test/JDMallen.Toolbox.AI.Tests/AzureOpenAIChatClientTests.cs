@@ -72,8 +72,48 @@ public class AzureOpenAIChatClientTests
 		Assert.Equal("test-azure-key", handler.RequestHeaders["api-key"]);
 		Assert.Contains("/openai/deployments/gpt-4/chat/completions", handler.RequestUri?.ToString());
 		Assert.Contains("api-version=", handler.RequestUri?.ToString());
-		Assert.Contains("\"max_tokens\":500", handler.RequestBody);
+		Assert.Contains("\"max_completion_tokens\":500", handler.RequestBody);
 		Assert.Contains("\"role\":\"system\"", handler.RequestBody);
+	}
+
+	[Fact]
+	public async Task CompleteAsync_SendsOnlyBudgetAndTemperature()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
+		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
+
+		await client.CompleteAsync(Request);
+
+		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
+		JsonElement root = body.RootElement;
+
+		// max_tokens is deprecated and rejected by reasoning models; top_p and the
+		// penalties were only ever sent at their service defaults.
+		Assert.Equal(500, root.GetProperty("max_completion_tokens").GetInt32());
+		Assert.Equal(0.1, root.GetProperty("temperature").GetDouble());
+		Assert.False(root.TryGetProperty("max_tokens", out _));
+		Assert.False(root.TryGetProperty("top_p", out _));
+		Assert.False(root.TryGetProperty("frequency_penalty", out _));
+		Assert.False(root.TryGetProperty("presence_penalty", out _));
+	}
+
+	[Fact]
+	public async Task CompleteAsync_ReasoningModel_OmitsTemperature()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
+		var client = new AzureOpenAIChatClient(
+			handler.CreateClient(),
+			Options with { IsReasoningModel = true });
+
+		await client.CompleteAsync(Request with { MaxTokens = 2048 });
+
+		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
+		JsonElement root = body.RootElement;
+
+		Assert.Equal(2048, root.GetProperty("max_completion_tokens").GetInt32());
+		Assert.False(root.TryGetProperty("temperature", out _));
 	}
 
 	[Fact]

@@ -8,6 +8,14 @@ namespace JDMallen.Toolbox.AI;
 /// the Azure wire format: deployment-in-path URL, <c>api-key</c> header, request
 /// body, and the <c>choices[0].message.content</c> response shape.
 /// </summary>
+/// <remarks>
+/// The budget is sent as <c>max_completion_tokens</c>, which Azure accepts from
+/// every chat model; the deprecated <c>max_tokens</c> is rejected by reasoning
+/// models. <c>top_p</c> and the penalties are left at the service defaults, and
+/// <c>temperature</c> is omitted for
+/// <see cref="AzureOpenAIClientOptions.IsReasoningModel" /> deployments, because
+/// reasoning models reject sampling parameters.
+/// </remarks>
 /// <param name="httpClient">
 /// The HTTP client used for requests. The caller owns its lifetime; requests use
 /// absolute URIs, so no base address is required.
@@ -30,7 +38,7 @@ public sealed class AzureOpenAIChatClient(
 				new AzureOpenAIMessage("user", OpenAIContentParts.Build(request)),
 			],
 			request.MaxTokens,
-			request.Temperature);
+			options.IsReasoningModel ? null : request.Temperature);
 
 		var url =
 			$"{options.Endpoint.TrimEnd('/')}/openai/deployments/{options.Deployment}/chat/completions?api-version={API_VERSION}";
@@ -70,20 +78,11 @@ public sealed class AzureOpenAIChatClient(
 internal sealed record AzureOpenAIRequest(
 	[property: JsonPropertyName("messages")]
 	IReadOnlyList<AzureOpenAIMessage> Messages,
-	[property: JsonPropertyName("max_tokens")]
-	int MaxTokens,
+	[property: JsonPropertyName("max_completion_tokens")]
+	int MaxCompletionTokens,
 	[property: JsonPropertyName("temperature")]
-	double Temperature)
-{
-	[JsonPropertyName("frequency_penalty")]
-	public int FrequencyPenalty { get; init; }
-
-	[JsonPropertyName("presence_penalty")]
-	public int PresencePenalty { get; init; }
-
-	[JsonPropertyName("top_p")]
-	public double TopP { get; init; } = 1.0;
-}
+	[property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	double? Temperature);
 
 // Content is a string, or an OpenAIContentPart[] when images are attached.
 internal sealed record AzureOpenAIMessage(

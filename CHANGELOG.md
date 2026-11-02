@@ -5,6 +5,35 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.1]
+
+Fixes Azure OpenAI reasoning deployments, which rejected every request. One
+additive option; the Azure request body changes, as described below.
+
+### Added
+
+`JDMallen.Toolbox.AI`:
+
+- **`AzureOpenAIClientOptions.IsReasoningModel`** (init property, default
+  `false`). When `true`, `AzureOpenAIChatClient` leaves out `temperature`,
+  which reasoning models reject.
+
+### Changed
+
+`JDMallen.Toolbox.AI`:
+
+- **`AzureOpenAIChatClient` sends `max_completion_tokens` instead of
+  `max_tokens`.** Azure deprecated `max_tokens`, and reasoning models refuse
+  it with `400 unsupported_parameter` ("Use 'max_completion_tokens'
+  instead"). `CompletionRequest.MaxTokens` keeps its name and meaning; for a
+  reasoning model it now also covers the hidden reasoning tokens.
+- **`AzureOpenAIChatClient` no longer sends `top_p: 1`,
+  `frequency_penalty: 0` or `presence_penalty: 0`.** Those are the service
+  defaults, so non-reasoning models behave the same; reasoning models reject
+  the parameters outright.
+- `OpenAICompatibleChatClient` is unchanged: it still sends `max_tokens`,
+  which self-hosted runners expect.
+
 ## [4.2.0]
 
 One additive feature. No breaking changes and no behavior changes to existing

@@ -18,7 +18,22 @@ public sealed record AnthropicClientOptions(string ApiKey, string Model);
 public sealed record AzureOpenAIClientOptions(
 	string ApiKey,
 	string Endpoint,
-	string Deployment);
+	string Deployment)
+{
+	/// <summary>
+	/// Whether the deployment is a reasoning model (o-series, gpt-5 and later
+	/// reasoning deployments). Reasoning models reject sampling parameters, so
+	/// <see cref="CompletionRequest.Temperature" /> is not sent when this is
+	/// true. Reasoning tokens also come out of
+	/// <see cref="CompletionRequest.MaxTokens" />, so such a deployment usually
+	/// needs a larger budget.
+	/// </summary>
+	/// <remarks>
+	/// An init property rather than a constructor parameter, so adding it did not
+	/// change the constructor callers compiled against.
+	/// </remarks>
+	public bool IsReasoningModel { get; init; }
+}
 
 /// <summary>
 /// Connection settings for <see cref="OpenAICompatibleChatClient" />.

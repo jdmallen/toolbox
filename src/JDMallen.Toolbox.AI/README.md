@@ -72,6 +72,23 @@ var client = new AzureOpenAIChatClient(
 ```
 
 The deployment goes in the URL path, and `api-version=2024-10-21` is sent.
+`MaxTokens` is sent as `max_completion_tokens`, which every Azure chat model
+accepts; reasoning models reject the deprecated `max_tokens`. `top_p` and the
+penalties are left at the service defaults.
+
+For a reasoning deployment, set `IsReasoningModel`. Reasoning models reject
+sampling parameters, so `temperature` is then left out. Their hidden reasoning
+is also spent from `MaxTokens`, so give them a larger budget (a few thousand
+tokens) or the answer can come back empty:
+
+```csharp
+var client = new AzureOpenAIChatClient(
+	httpClient,
+	new AzureOpenAIClientOptions(apiKey, endpoint, "o4-mini")
+	{
+		IsReasoningModel = true,
+	});
+```
 
 ### OpenAI-compatible and self-hosted
 
