@@ -28,7 +28,17 @@ public sealed class AzureOpenAIChatClient(
 	private const string API_VERSION = "2024-10-21";
 
 	/// <inheritdoc />
+	[Obsolete(
+		"Use GetCompletionAsync, which also returns token usage and response "
+		+ "metadata. CompleteAsync will be removed in the next major version.")]
 	public async Task<string> CompleteAsync(
+		CompletionRequest request,
+		CancellationToken cancellationToken = default)
+		=> (await GetCompletionAsync(request, cancellationToken)
+			.ConfigureAwait(false)).Text;
+
+	/// <inheritdoc />
+	public async Task<CompletionResult> GetCompletionAsync(
 		CompletionRequest request,
 		CancellationToken cancellationToken = default)
 	{
@@ -66,12 +76,16 @@ public sealed class AzureOpenAIChatClient(
 			.ReadFromJsonAsync(AIJsonContext.Default.AzureOpenAIResponse, cancellationToken)
 			.ConfigureAwait(false);
 
-		if (result?.Choices is not { Count: > 0 } choices)
-		{
-			return string.Empty;
-		}
+		AzureOpenAIChoice? firstChoice =
+			result?.Choices is { Count: > 0 } choices ? choices[0] : null;
 
-		return choices[0].Message?.Content ?? string.Empty;
+		return new CompletionResult(firstChoice?.Message?.Content ?? string.Empty)
+		{
+			Usage = result?.Usage?.ToTokenUsage(),
+			Model = result?.Model,
+			Id = result?.Id,
+			StopReason = firstChoice?.FinishReason,
+		};
 	}
 }
 
@@ -92,11 +106,25 @@ internal sealed record AzureOpenAIMessage(
 
 internal sealed record AzureOpenAIResponse(
 	[property: JsonPropertyName("choices")]
-	IReadOnlyList<AzureOpenAIChoice>? Choices);
+	IReadOnlyList<AzureOpenAIChoice>? Choices)
+{
+	[JsonPropertyName("id")]
+	public string? Id { get; init; }
+
+	[JsonPropertyName("model")]
+	public string? Model { get; init; }
+
+	[JsonPropertyName("usage")]
+	public OpenAIUsage? Usage { get; init; }
+}
 
 internal sealed record AzureOpenAIChoice(
 	[property: JsonPropertyName("message")]
-	AzureOpenAIChoiceMessage? Message);
+	AzureOpenAIChoiceMessage? Message)
+{
+	[JsonPropertyName("finish_reason")]
+	public string? FinishReason { get; init; }
+}
 
 internal sealed record AzureOpenAIChoiceMessage(
 	[property: JsonPropertyName("content")]

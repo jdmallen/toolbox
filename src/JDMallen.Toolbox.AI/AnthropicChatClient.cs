@@ -23,7 +23,17 @@ public sealed class AnthropicChatClient(
 	private const string ANTHROPIC_VERSION = "2023-06-01";
 
 	/// <inheritdoc />
+	[Obsolete(
+		"Use GetCompletionAsync, which also returns token usage and response "
+		+ "metadata. CompleteAsync will be removed in the next major version.")]
 	public async Task<string> CompleteAsync(
+		CompletionRequest request,
+		CancellationToken cancellationToken = default)
+		=> (await GetCompletionAsync(request, cancellationToken)
+			.ConfigureAwait(false)).Text;
+
+	/// <inheritdoc />
+	public async Task<CompletionResult> GetCompletionAsync(
 		CompletionRequest request,
 		CancellationToken cancellationToken = default)
 	{
@@ -67,7 +77,19 @@ public sealed class AnthropicChatClient(
 			sb.Append(block.Text);
 		}
 
-		return sb.ToString();
+		return new CompletionResult(sb.ToString())
+		{
+			Usage = result?.Usage is { } usage
+				? new TokenUsage(
+					usage.InputTokens
+					+ (usage.CacheCreationInputTokens ?? 0)
+					+ (usage.CacheReadInputTokens ?? 0),
+					usage.OutputTokens)
+				: null,
+			Model = result?.Model,
+			Id = result?.Id,
+			StopReason = result?.StopReason,
+		};
 	}
 
 	/// <summary>
@@ -143,7 +165,36 @@ internal sealed record AnthropicImageSource(
 
 internal sealed record AnthropicResponse(
 	[property: JsonPropertyName("content")]
-	IReadOnlyList<AnthropicBlock>? Content);
+	IReadOnlyList<AnthropicBlock>? Content)
+{
+	[JsonPropertyName("id")]
+	public string? Id { get; init; }
+
+	[JsonPropertyName("model")]
+	public string? Model { get; init; }
+
+	[JsonPropertyName("stop_reason")]
+	public string? StopReason { get; init; }
+
+	[JsonPropertyName("usage")]
+	public AnthropicUsage? Usage { get; init; }
+}
+
+// The cache counters may be absent or null when prompt caching was not used.
+internal sealed record AnthropicUsage
+{
+	[JsonPropertyName("input_tokens")]
+	public int InputTokens { get; init; }
+
+	[JsonPropertyName("output_tokens")]
+	public int OutputTokens { get; init; }
+
+	[JsonPropertyName("cache_creation_input_tokens")]
+	public int? CacheCreationInputTokens { get; init; }
+
+	[JsonPropertyName("cache_read_input_tokens")]
+	public int? CacheReadInputTokens { get; init; }
+}
 
 internal sealed record AnthropicBlock(
 	[property: JsonPropertyName("type")] string? Type,

@@ -17,7 +17,7 @@ public class AzureOpenAIChatClientTests
 		=> new(code) { Content = new StringContent(content, Encoding.UTF8, "application/json") };
 
 	[Fact]
-	public async Task CompleteAsync_CancellationToken_IsPropagated()
+	public async Task GetCompletionAsync_CancellationToken_IsPropagated()
 	{
 		var cts = new CancellationTokenSource();
 		await cts.CancelAsync();
@@ -27,29 +27,29 @@ public class AzureOpenAIChatClientTests
 
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
-		await Assert.ThrowsAsync<TaskCanceledException>(() => client.CompleteAsync(Request, cts.Token));
+		await Assert.ThrowsAsync<TaskCanceledException>(() => client.GetCompletionAsync(Request, cts.Token));
 	}
 
 	[Fact]
-	public async Task CompleteAsync_ErrorResponse_ThrowsHttpRequestException()
+	public async Task GetCompletionAsync_ErrorResponse_ThrowsHttpRequestException()
 	{
 		var handler = new StubHttpMessageHandler(Json("Unauthorized", HttpStatusCode.Unauthorized));
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.CompleteAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
 
 		Assert.Contains("Azure OpenAI API request failed: Unauthorized", exception.Message);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_NoImages_SendsUserContentAsPlainString()
+	public async Task GetCompletionAsync_NoImages_SendsUserContentAsPlainString()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
-		await client.CompleteAsync(Request);
+		await client.GetCompletionAsync(Request);
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement content = body.RootElement.GetProperty("messages")[1].GetProperty("content");
@@ -59,14 +59,14 @@ public class AzureOpenAIChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_Success_ReturnsContentAndSendsAzureShape()
+	public async Task GetCompletionAsync_Success_ReturnsContentAndSendsAzureShape()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json("""{ "choices": [ { "message": { "content": "feat: add thing" } } ] }"""));
 
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
-		string result = await client.CompleteAsync(Request);
+		string result = (await client.GetCompletionAsync(Request)).Text;
 
 		Assert.Equal("feat: add thing", result);
 		Assert.Equal("test-azure-key", handler.RequestHeaders["api-key"]);
@@ -77,13 +77,13 @@ public class AzureOpenAIChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_SendsOnlyBudgetAndTemperature()
+	public async Task GetCompletionAsync_SendsOnlyBudgetAndTemperature()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
-		await client.CompleteAsync(Request);
+		await client.GetCompletionAsync(Request);
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement root = body.RootElement;
@@ -99,7 +99,7 @@ public class AzureOpenAIChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_ReasoningModel_OmitsTemperature()
+	public async Task GetCompletionAsync_ReasoningModel_OmitsTemperature()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
@@ -107,7 +107,7 @@ public class AzureOpenAIChatClientTests
 			handler.CreateClient(),
 			Options with { IsReasoningModel = true });
 
-		await client.CompleteAsync(Request with { MaxTokens = 2048 });
+		await client.GetCompletionAsync(Request with { MaxTokens = 2048 });
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement root = body.RootElement;
@@ -117,7 +117,7 @@ public class AzureOpenAIChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_WithImages_SendsImageUrlPartsBeforeText()
+	public async Task GetCompletionAsync_WithImages_SendsImageUrlPartsBeforeText()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json("""{ "choices": [ { "message": { "content": "ok" } } ] }"""));
@@ -131,7 +131,7 @@ public class AzureOpenAIChatClientTests
 			],
 		};
 
-		await client.CompleteAsync(request);
+		await client.GetCompletionAsync(request);
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement[] parts =
@@ -149,5 +149,45 @@ public class AzureOpenAIChatClientTests
 		Assert.Equal("text", parts[2].GetProperty("type").GetString());
 		Assert.Equal("user prompt", parts[2].GetProperty("text").GetString());
 		Assert.False(parts[2].TryGetProperty("image_url", out _));
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_ReportsUsageAndMetadata()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json(
+				"""
+				{
+					"id": "chatcmpl-123",
+					"model": "gpt-4o-2024-08-06",
+					"choices": [
+						{ "message": { "content": "ls" }, "finish_reason": "length" }
+					],
+					"usage": { "prompt_tokens": 50, "completion_tokens": 5, "total_tokens": 55 }
+				}
+				"""));
+		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
+
+		CompletionResult result = await client.GetCompletionAsync(Request);
+
+		Assert.Equal("ls", result.Text);
+		Assert.Equal(new TokenUsage(50, 5), result.Usage);
+		Assert.Equal("gpt-4o-2024-08-06", result.Model);
+		Assert.Equal("chatcmpl-123", result.Id);
+		Assert.Equal("length", result.StopReason);
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_NoChoices_StillReportsUsage()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json("""{ "choices": [], "usage": { "prompt_tokens": 50, "completion_tokens": 0 } }"""));
+		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
+
+		CompletionResult result = await client.GetCompletionAsync(Request);
+
+		Assert.Equal(string.Empty, result.Text);
+		Assert.Equal(new TokenUsage(50, 0), result.Usage);
+		Assert.Null(result.StopReason);
 	}
 }

@@ -22,14 +22,14 @@ public class OpenAICompatibleChatClientTests
 	[InlineData(null)]
 	[InlineData("")]
 	[InlineData("   ")]
-	public async Task CompleteAsync_NoApiKey_OmitsAuthorizationHeader(string? apiKey)
+	public async Task GetCompletionAsync_NoApiKey_OmitsAuthorizationHeader(string? apiKey)
 	{
 		var handler = new StubHttpMessageHandler(Completion("\"ok\""));
 		var client = new OpenAICompatibleChatClient(
 			handler.CreateClient(),
 			Options with { ApiKey = apiKey });
 
-		await client.CompleteAsync(Request);
+		await client.GetCompletionAsync(Request);
 
 		Assert.DoesNotContain("Authorization", handler.RequestHeaders.Keys);
 	}
@@ -52,20 +52,20 @@ public class OpenAICompatibleChatClientTests
 	[InlineData("echo '<reasoning>' > f.xml", "echo '<reasoning>' > f.xml")]
 	[InlineData("", "")]
 	[InlineData("   ", "")]
-	public async Task CompleteAsync_ReasoningBlocks_AreStripped(string content, string expected)
+	public async Task GetCompletionAsync_ReasoningBlocks_AreStripped(string content, string expected)
 	{
 		var handler = new StubHttpMessageHandler(
 			Completion(JsonSerializer.Serialize(content)));
 
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		Assert.Equal(expected, await client.CompleteAsync(Request));
+		Assert.Equal(expected, (await client.GetCompletionAsync(Request)).Text);
 	}
 
 	[Theory]
 	[InlineData("<think>the user wants to list files, so I should")]
 	[InlineData("\n\n  <think>the user wants to list files, so I should")]
-	public async Task CompleteAsync_LeadingUnclosedReasoningBlock_DiscardsTruncatedThought(
+	public async Task GetCompletionAsync_LeadingUnclosedReasoningBlock_DiscardsTruncatedThought(
 		string content)
 	{
 		// The model hit max_tokens mid-thought; returning the reasoning as if it
@@ -75,24 +75,24 @@ public class OpenAICompatibleChatClientTests
 
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		Assert.Equal(string.Empty, await client.CompleteAsync(Request));
+		Assert.Equal(string.Empty, (await client.GetCompletionAsync(Request)).Text);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_ApiKeySupplied_SendsBearerHeader()
+	public async Task GetCompletionAsync_ApiKeySupplied_SendsBearerHeader()
 	{
 		var handler = new StubHttpMessageHandler(Completion("\"ok\""));
 		var client = new OpenAICompatibleChatClient(
 			handler.CreateClient(),
 			Options with { ApiKey = "sk-test" });
 
-		await client.CompleteAsync(Request);
+		await client.GetCompletionAsync(Request);
 
 		Assert.Equal("Bearer sk-test", handler.RequestHeaders["Authorization"]);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_CancellationToken_IsPropagated()
+	public async Task GetCompletionAsync_CancellationToken_IsPropagated()
 	{
 		var cts = new CancellationTokenSource();
 		await cts.CancelAsync();
@@ -102,37 +102,37 @@ public class OpenAICompatibleChatClientTests
 
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		await Assert.ThrowsAsync<TaskCanceledException>(() => client.CompleteAsync(Request, cts.Token));
+		await Assert.ThrowsAsync<TaskCanceledException>(() => client.GetCompletionAsync(Request, cts.Token));
 	}
 
 	[Fact]
-	public async Task CompleteAsync_ErrorResponse_ThrowsHttpRequestException()
+	public async Task GetCompletionAsync_ErrorResponse_ThrowsHttpRequestException()
 	{
 		var handler = new StubHttpMessageHandler(Json("model not found", HttpStatusCode.NotFound));
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.CompleteAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
 
 		Assert.Contains("OpenAI-compatible API request failed: NotFound", exception.Message);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_NoChoices_ReturnsEmpty()
+	public async Task GetCompletionAsync_NoChoices_ReturnsEmpty()
 	{
 		var handler = new StubHttpMessageHandler(Json("""{ "choices": [] }"""));
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		Assert.Equal(string.Empty, await client.CompleteAsync(Request));
+		Assert.Equal(string.Empty, (await client.GetCompletionAsync(Request)).Text);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_NoImages_SendsUserContentAsPlainString()
+	public async Task GetCompletionAsync_NoImages_SendsUserContentAsPlainString()
 	{
 		var handler = new StubHttpMessageHandler(Completion("\"ok\""));
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		await client.CompleteAsync(Request);
+		await client.GetCompletionAsync(Request);
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement content = body.RootElement.GetProperty("messages")[1].GetProperty("content");
@@ -142,7 +142,7 @@ public class OpenAICompatibleChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_ReasoningContentField_IsIgnored()
+	public async Task GetCompletionAsync_ReasoningContentField_IsIgnored()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json(
@@ -154,16 +154,16 @@ public class OpenAICompatibleChatClientTests
 
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		Assert.Equal("ls -la", await client.CompleteAsync(Request));
+		Assert.Equal("ls -la", (await client.GetCompletionAsync(Request)).Text);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_Success_ReturnsContentAndSendsOpenAIShape()
+	public async Task GetCompletionAsync_Success_ReturnsContentAndSendsOpenAIShape()
 	{
 		var handler = new StubHttpMessageHandler(Completion("\"ls -la\""));
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		string result = await client.CompleteAsync(Request);
+		string result = (await client.GetCompletionAsync(Request)).Text;
 
 		Assert.Equal("ls -la", result);
 		Assert.Equal("http://10.10.0.20:8080/v1/chat/completions", handler.RequestUri?.ToString());
@@ -174,20 +174,20 @@ public class OpenAICompatibleChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_TrailingSlashInBaseUrl_DoesNotDoubleUpPath()
+	public async Task GetCompletionAsync_TrailingSlashInBaseUrl_DoesNotDoubleUpPath()
 	{
 		var handler = new StubHttpMessageHandler(Completion("\"ok\""));
 		var client = new OpenAICompatibleChatClient(
 			handler.CreateClient(),
 			Options with { BaseUrl = "http://10.10.0.20:8080/v1/" });
 
-		await client.CompleteAsync(Request);
+		await client.GetCompletionAsync(Request);
 
 		Assert.Equal("http://10.10.0.20:8080/v1/chat/completions", handler.RequestUri?.ToString());
 	}
 
 	[Fact]
-	public async Task CompleteAsync_WithImages_SendsImageUrlPartsBeforeText()
+	public async Task GetCompletionAsync_WithImages_SendsImageUrlPartsBeforeText()
 	{
 		var handler = new StubHttpMessageHandler(Completion("\"ok\""));
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
@@ -200,7 +200,7 @@ public class OpenAICompatibleChatClientTests
 			],
 		};
 
-		await client.CompleteAsync(request);
+		await client.GetCompletionAsync(request);
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement[] parts =
@@ -218,5 +218,46 @@ public class OpenAICompatibleChatClientTests
 		Assert.Equal("text", parts[2].GetProperty("type").GetString());
 		Assert.Equal("user prompt", parts[2].GetProperty("text").GetString());
 		Assert.False(parts[2].TryGetProperty("image_url", out _));
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_ReportsUsageAndMetadata()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json(
+				"""
+				{
+					"id": "chatcmpl-local",
+					"model": "thinkingcap-27b-q4km",
+					"choices": [
+						{
+							"message": { "content": "<think>hmm</think>ls -la" },
+							"finish_reason": "stop"
+						}
+					],
+					"usage": { "prompt_tokens": 80, "completion_tokens": 300 }
+				}
+				"""));
+		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
+
+		CompletionResult result = await client.GetCompletionAsync(Request);
+
+		Assert.Equal("ls -la", result.Text);
+		Assert.Equal(new TokenUsage(80, 300), result.Usage);
+		Assert.Equal("thinkingcap-27b-q4km", result.Model);
+		Assert.Equal("chatcmpl-local", result.Id);
+		Assert.Equal("stop", result.StopReason);
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_RunnerOmitsUsage_UsageIsNull()
+	{
+		var handler = new StubHttpMessageHandler(Completion("\"ls\""));
+		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
+
+		CompletionResult result = await client.GetCompletionAsync(Request);
+
+		Assert.Equal("ls", result.Text);
+		Assert.Null(result.Usage);
 	}
 }

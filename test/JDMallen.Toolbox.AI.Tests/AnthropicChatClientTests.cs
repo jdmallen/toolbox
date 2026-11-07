@@ -16,22 +16,22 @@ public class AnthropicChatClientTests
 		=> new(code) { Content = new StringContent(content, Encoding.UTF8, "application/json") };
 
 	[Fact]
-	public async Task CompleteAsync_ErrorResponse_ThrowsHttpRequestException()
+	public async Task GetCompletionAsync_ErrorResponse_ThrowsHttpRequestException()
 	{
 		var handler = new StubHttpMessageHandler(Json("bad request", HttpStatusCode.BadRequest));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.CompleteAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
 		Assert.Contains("Anthropic API request failed: BadRequest", exception.Message);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_NoImages_SendsUserContentAsPlainString()
+	public async Task GetCompletionAsync_NoImages_SendsUserContentAsPlainString()
 	{
 		var handler =
 			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
-		await client.CompleteAsync(Request);
+		await client.GetCompletionAsync(Request);
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement content = body.RootElement.GetProperty("messages")[0].GetProperty("content");
 		Assert.Equal(JsonValueKind.String, content.ValueKind);
@@ -39,7 +39,7 @@ public class AnthropicChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_SkipsNonTextBlocks()
+	public async Task GetCompletionAsync_SkipsNonTextBlocks()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json(
@@ -50,17 +50,17 @@ public class AnthropicChatClientTests
 				] }
 				"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
-		string result = await client.CompleteAsync(Request);
+		string result = (await client.GetCompletionAsync(Request)).Text;
 		Assert.Equal("fix: the bug", result);
 	}
 
 	[Fact]
-	public async Task CompleteAsync_Success_ReturnsTextAndSendsAnthropicShape()
+	public async Task GetCompletionAsync_Success_ReturnsTextAndSendsAnthropicShape()
 	{
 		var handler = new StubHttpMessageHandler(
 			Json("""{ "content": [ { "type": "text", "text": "feat: add thing\n\nDetail." } ] }"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
-		string result = await client.CompleteAsync(Request);
+		string result = (await client.GetCompletionAsync(Request)).Text;
 		Assert.Equal("feat: add thing\n\nDetail.", result);
 		Assert.Equal("test-anthropic-key", handler.RequestHeaders["x-api-key"]);
 		Assert.Equal("2023-06-01", handler.RequestHeaders["anthropic-version"]);
@@ -71,7 +71,7 @@ public class AnthropicChatClientTests
 	}
 
 	[Fact]
-	public async Task CompleteAsync_WithImages_SendsBase64ImageBlocksBeforeText()
+	public async Task GetCompletionAsync_WithImages_SendsBase64ImageBlocksBeforeText()
 	{
 		var handler =
 			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
@@ -80,7 +80,7 @@ public class AnthropicChatClientTests
 		{
 			Images = [new ImageInput(new byte[] { 1, 2, 3 }, "image/jpeg")],
 		};
-		await client.CompleteAsync(request);
+		await client.GetCompletionAsync(request);
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement[] blocks =
 			[.. body.RootElement.GetProperty("messages")[0].GetProperty("content").EnumerateArray()];
@@ -94,5 +94,64 @@ public class AnthropicChatClientTests
 		Assert.Equal("text", blocks[1].GetProperty("type").GetString());
 		Assert.Equal("user prompt", blocks[1].GetProperty("text").GetString());
 		Assert.False(blocks[1].TryGetProperty("source", out _));
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_ReportsUsageAndMetadata()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json(
+				"""
+				{
+					"id": "msg_01ABC",
+					"model": "claude-haiku-4-5-20251001",
+					"stop_reason": "end_turn",
+					"content": [ { "type": "text", "text": "ls" } ],
+					"usage": {
+						"input_tokens": 100,
+						"output_tokens": 7,
+						"cache_creation_input_tokens": 20,
+						"cache_read_input_tokens": null
+					}
+				}
+				"""));
+		var client = new AnthropicChatClient(handler.CreateClient(), Options);
+
+		CompletionResult result = await client.GetCompletionAsync(Request);
+
+		Assert.Equal("ls", result.Text);
+		Assert.Equal(new TokenUsage(120, 7), result.Usage);
+		Assert.Equal(127, result.Usage!.TotalTokens);
+		Assert.Equal("claude-haiku-4-5-20251001", result.Model);
+		Assert.Equal("msg_01ABC", result.Id);
+		Assert.Equal("end_turn", result.StopReason);
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_NoUsageInResponse_UsageIsNull()
+	{
+		var handler =
+			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+		var client = new AnthropicChatClient(handler.CreateClient(), Options);
+
+		CompletionResult result = await client.GetCompletionAsync(Request);
+
+		Assert.Null(result.Usage);
+		Assert.Null(result.Model);
+		Assert.Null(result.StopReason);
+	}
+
+	[Fact]
+	public async Task CompleteAsync_Obsolete_StillReturnsText()
+	{
+		var handler =
+			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+		var client = new AnthropicChatClient(handler.CreateClient(), Options);
+
+#pragma warning disable CS0618
+		string text = await client.CompleteAsync(Request);
+#pragma warning restore CS0618
+
+		Assert.Equal("ok", text);
 	}
 }

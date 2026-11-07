@@ -5,6 +5,36 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.3.0]
+
+Completions now report token usage and response metadata. Additive: existing
+callers and custom clients keep compiling, with a deprecation warning.
+
+### Added
+
+`JDMallen.Toolbox.AI`:
+
+- **`IChatCompletionClient.GetCompletionAsync`**, returning a
+  **`CompletionResult`**: the completion `Text` plus the provider-reported
+  `Usage`, `Model`, `Id` and `StopReason`. Each metadata member is null when
+  the response left it out. Every built-in client implements it. The interface
+  supplies a default implementation that wraps `CompleteAsync` and reports no
+  metadata, so custom implementations written for 4.2.x still compile.
+- **`TokenUsage(InputTokens, OutputTokens)`** with `TotalTokens`, normalized
+  across providers: Anthropic's `InputTokens` adds
+  `cache_creation_input_tokens` and `cache_read_input_tokens` to
+  `input_tokens`, so it counts the same thing as OpenAI's `prompt_tokens`.
+
+### Deprecated
+
+`JDMallen.Toolbox.AI`:
+
+- **`IChatCompletionClient.CompleteAsync`** and its implementations on
+  `AnthropicChatClient`, `AzureOpenAIChatClient` and
+  `OpenAICompatibleChatClient` are marked `[Obsolete]`. Switch to
+  `GetCompletionAsync(...)` and read `.Text`. `CompleteAsync` will be removed
+  in 5.0.0.
+
 ## [4.2.1]
 
 Fixes Azure OpenAI reasoning deployments, which rejected every request. One

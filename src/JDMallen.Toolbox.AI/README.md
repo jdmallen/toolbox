@@ -18,7 +18,7 @@ Every provider implements one method:
 ```csharp
 public interface IChatCompletionClient
 {
-	Task<string> CompleteAsync(
+	Task<CompletionResult> GetCompletionAsync(
 		CompletionRequest request,
 		CancellationToken cancellationToken = default);
 }
@@ -28,6 +28,38 @@ It returns the completion text (empty string if the model returned none) and
 throws `HttpRequestException` on a non-success status, with the response body in
 the message. Prompt building and response parsing stay in your code, so
 switching providers is a registration change.
+
+`CompletionResult` carries what the provider reported alongside the text. Every
+member except `Text` is null when the response left it out (self-hosted
+runners in particular may not report usage):
+
+| Member       | Anthropic                                           | Azure / OpenAI-compatible     |
+|--------------|-----------------------------------------------------|-------------------------------|
+| `Text`       | concatenated `text` content blocks                  | `choices[0].message.content`  |
+| `Usage`      | `TokenUsage(InputTokens, OutputTokens)`, see below  | `prompt_tokens`, `completion_tokens` |
+| `Model`      | `model`                                             | `model`                       |
+| `Id`         | `id`                                                | `id`                          |
+| `StopReason` | `stop_reason` (`end_turn`, `max_tokens`, ...)       | `choices[0].finish_reason` (`stop`, `length`, ...) |
+
+`TokenUsage.InputTokens` counts every billed prompt token on both providers:
+for Anthropic it adds the cache-creation and cache-read counters to
+`input_tokens`, matching OpenAI's `prompt_tokens`, which already includes
+cached tokens. `OutputTokens` includes hidden reasoning tokens.
+`TotalTokens` is their sum.
+
+```csharp
+CompletionResult result = await client.GetCompletionAsync(request, ct);
+Console.WriteLine(result.Text);
+if (result.Usage is { } usage)
+{
+	Console.WriteLine($"{usage.TotalTokens} tokens");
+}
+```
+
+`CompleteAsync`, which returns only the text, is deprecated since 4.3.0 and
+will be removed in 5.0.0. Its replacement has a default implementation that
+calls it, so a custom `IChatCompletionClient` written for 4.2.x keeps
+compiling (reporting no metadata) until it implements `GetCompletionAsync`.
 
 ```csharp
 var request = new CompletionRequest(

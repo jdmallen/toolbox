@@ -36,7 +36,17 @@ public sealed class OpenAICompatibleChatClient(
 	private static readonly string[] ReasoningTagNames = ["think", "thinking", "reasoning"];
 
 	/// <inheritdoc />
+	[Obsolete(
+		"Use GetCompletionAsync, which also returns token usage and response "
+		+ "metadata. CompleteAsync will be removed in the next major version.")]
 	public async Task<string> CompleteAsync(
+		CompletionRequest request,
+		CancellationToken cancellationToken = default)
+		=> (await GetCompletionAsync(request, cancellationToken)
+			.ConfigureAwait(false)).Text;
+
+	/// <inheritdoc />
+	public async Task<CompletionResult> GetCompletionAsync(
 		CompletionRequest request,
 		CancellationToken cancellationToken = default)
 	{
@@ -80,11 +90,20 @@ public sealed class OpenAICompatibleChatClient(
 			.ReadFromJsonAsync(AIJsonContext.Default.OpenAICompatibleResponse, cancellationToken)
 			.ConfigureAwait(false);
 
+		OpenAICompatibleChoice? firstChoice =
+			result?.Choices is { Count: > 0 } choices ? choices[0] : null;
+
 		// reasoning_content, when present, is deliberately dropped: callers asked
-		// for the completion, not the model's scratch work.
-		return result?.Choices is not { Count: > 0 } choices
-			? string.Empty
-			: StripReasoning(choices[0].Message?.Content ?? string.Empty);
+		// for the completion, not the model's scratch work. Its tokens are still
+		// counted in the usage, since they were generated (and billed).
+		return new CompletionResult(
+			StripReasoning(firstChoice?.Message?.Content ?? string.Empty))
+		{
+			Usage = result?.Usage?.ToTokenUsage(),
+			Model = result?.Model,
+			Id = result?.Id,
+			StopReason = firstChoice?.FinishReason,
+		};
 	}
 
 	/// <summary>
@@ -197,11 +216,25 @@ internal sealed record OpenAICompatibleMessage(
 
 internal sealed record OpenAICompatibleResponse(
 	[property: JsonPropertyName("choices")]
-	IReadOnlyList<OpenAICompatibleChoice>? Choices);
+	IReadOnlyList<OpenAICompatibleChoice>? Choices)
+{
+	[JsonPropertyName("id")]
+	public string? Id { get; init; }
+
+	[JsonPropertyName("model")]
+	public string? Model { get; init; }
+
+	[JsonPropertyName("usage")]
+	public OpenAIUsage? Usage { get; init; }
+}
 
 internal sealed record OpenAICompatibleChoice(
 	[property: JsonPropertyName("message")]
-	OpenAICompatibleChoiceMessage? Message);
+	OpenAICompatibleChoiceMessage? Message)
+{
+	[JsonPropertyName("finish_reason")]
+	public string? FinishReason { get; init; }
+}
 
 internal sealed record OpenAICompatibleChoiceMessage(
 	[property: JsonPropertyName("content")]
