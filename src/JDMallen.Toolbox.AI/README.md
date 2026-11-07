@@ -173,6 +173,33 @@ var request = new CompletionRequest(
   `mmproj` projector. Supported media types vary by provider (Anthropic accepts
   jpeg, png, gif, and webp).
 
+## Token Usage Totals
+
+`CompletionResult.Usage` covers one request. To keep a running count, add each
+request's usage to a `TokenUsageTally`, then fold the run into a lifetime total
+on disk when it ends:
+
+```csharp
+var run = new TokenUsageTally();
+run.Add(result.Usage); // null (no usage reported) is ignored
+
+string path = TokenUsageLog.DefaultPath("myapp"); // ~/.local/share/myapp/usage.json
+if (!TokenUsageLog.TryRecord(path, run, DateTimeOffset.Now, out string? error))
+{
+	Console.Error.WriteLine($"Usage not recorded: {error}");
+}
+
+TokenUsageTotals? totals = TokenUsageLog.Read(path, out error);
+TokenUsageAverages? perRun = totals?.AveragePerRun();
+```
+
+- A run with no reported usage isn't counted, so it doesn't pull the average
+  down.
+- Several processes can record at once: updates take a lock file next to
+  `usage.json` and are written through a temporary file.
+- A file that won't parse is reported through `error` and left as it is, never
+  overwritten.
+
 ## Testing
 
 Depend on `IChatCompletionClient` in your code and substitute it in tests. To

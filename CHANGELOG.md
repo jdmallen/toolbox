@@ -5,6 +5,28 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.0]
+
+Lifetime token totals, shared by apps that previously each kept their own copy.
+Additive.
+
+### Added
+
+`JDMallen.Toolbox.AI`:
+
+- **`TokenUsageTally`** adds up the `TokenUsage` of every request in one run
+  (`Requests`, `InputTokens`, `OutputTokens`, `TotalTokens`, `HasUsage`). A
+  null usage is ignored.
+- **`TokenUsageLog`** keeps an app's lifetime **`TokenUsageTotals`** (`Runs`,
+  `Requests`, `InputTokens`, `OutputTokens`, `Since`) in a JSON file.
+  `DefaultPath(appName)` gives `usage.json` under the local app data folder.
+  `Read` and `TryRecord` report failures through an `error` out parameter
+  instead of throwing. Updates from several processes at once are serialized
+  on a lock file and written through a temporary file. A run with no usage is
+  not counted, and an unparseable file is never overwritten.
+- **`TokenUsageTotals.AveragePerRun()`** returns **`TokenUsageAverages`**, with
+  each figure rounded half away from zero, or null before the first run.
+
 ## [4.3.0]
 
 Completions now report token usage and response metadata. Additive: existing
