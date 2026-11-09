@@ -1,9 +1,10 @@
-# EditorConfig — analyzer severities only.
+# EditorConfig — analyzer severities, plus one formatting rule.
 #
-# This file intentionally configures *only* Roslyn analyzer (CAxxxx) severities,
-# not code formatting. Formatting is governed by the Rider/ReSharper settings in
+# This file configures Roslyn analyzer (CAxxxx) severities. Code formatting is
+# otherwise governed by the Rider/ReSharper settings in
 # JDMallen.Toolbox.sln.DotSettings, so nothing here should fight tab/alignment
-# preferences.
+# preferences. The one exception is the tab fill style below, recorded here so
+# every tool that formats the code (Rider, `jb cleanupcode`) agrees on it.
 #
 # These overrides reflect deliberate decisions when building under the strict
 # `-p:AnalysisMode=All` rule set. Genuine, localized exceptions are handled with
@@ -13,6 +14,11 @@
 root = true
 
 [*.cs]
+
+# Rider's "Best fit": tabs indent, and spaces after them nudge continuation
+# lines into alignment (e.g. "\t\t\t    || ..."). Mixed leading whitespace is
+# therefore intended; don't normalize it to all tabs or all spaces.
+resharper_csharp_alignment_tab_fill_style = optimal_fill
 
 # CA1707: Identifiers should not contain underscores.
 # Intentional: SCREAMING_CASE private constants and Method_Scenario_Expected test
