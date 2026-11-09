@@ -74,7 +74,7 @@ var request = new CompletionRequest(
 | Client                       | Options                                                  | Auth header                                      |
 |------------------------------|----------------------------------------------------------|--------------------------------------------------|
 | `AnthropicChatClient`        | `AnthropicClientOptions(ApiKey, Model)`                  | `x-api-key`                                      |
-| `AzureOpenAIChatClient`      | `AzureOpenAIClientOptions(ApiKey, Endpoint, Deployment)` | `api-key`                                        |
+| `AzureOpenAIChatClient`      | `AzureOpenAIClientOptions(ApiKey, Endpoint, Deployment)` | `api-key`, or `Authorization: Bearer` with Entra ID |
 | `OpenAICompatibleChatClient` | `OpenAICompatibleClientOptions(BaseUrl, Model, ApiKey?)` | `Authorization: Bearer`, only if `ApiKey` is set |
 
 Every client takes an `HttpClient` you own. Requests use absolute URLs, so no
@@ -121,6 +121,60 @@ var client = new AzureOpenAIChatClient(
 		IsReasoningModel = true,
 	});
 ```
+
+The endpoint is the resource host, e.g. `https://myresource.openai.azure.com`
+or `https://myresource.services.ai.azure.com`. A trailing `/openai` or
+`/openai/v1` copied from the portal is removed; any other path (such as an API
+Management prefix) is kept.
+
+### Azure OpenAI with Microsoft Entra ID (no API key)
+
+Set a token provider instead of a key. Requests then carry
+`Authorization: Bearer <token>` and no `api-key` header:
+
+```csharp
+var tokens = new CachingBearerTokenProvider(
+	new AzureCliTokenProvider(new AzureCliTokenProviderOptions
+	{
+		TenantId = "contoso.onmicrosoft.com", // optional; default: az's current tenant
+	}));
+
+var client = new AzureOpenAIChatClient(
+	httpClient,
+	AzureOpenAIClientOptions.ForEntraId(
+		"https://myresource.openai.azure.com",
+		"gpt-6-luna",
+		tokens));
+```
+
+- `AzureCliTokenProvider` runs
+  `az account get-access-token --scope <scope> [--tenant <tenant>] --output json`,
+  so whoever ran `az login` (with their MFA and Conditional Access) is the
+  identity. Needs Azure CLI 2.54 or later. No Azure SDK dependency, so it stays
+  trim- and AOT-safe. Set `AzExecutablePath` when `az` is not on the app's
+  PATH.
+- `CachingBearerTokenProvider` reuses the token until 5 minutes before it
+  expires and shares one fetch between concurrent callers. Without it, every
+  request starts an `az` process.
+- The scope defaults to `AzureOpenAIScopes.Default` (`https://ai.azure.com/.default`).
+  `AzureOpenAIScopes.CognitiveServices` is also accepted by Azure OpenAI and
+  Foundry resources.
+- `IBearerTokenProvider` is the seam: implement it to use any other source of
+  tokens, such as an Azure.Identity `TokenCredential`.
+
+Setup on the Azure side:
+
+1. The identity needs a data-plane role on the resource, such as
+   "Cognitive Services OpenAI User". Owner and Contributor are not enough. New
+   assignments take up to 5 minutes to apply.
+2. The endpoint must be the resource's own custom subdomain (not a regional
+   endpoint).
+3. Sign in: `az login --scope https://ai.azure.com/.default`.
+
+A 401 or 403 adds a hint covering these to the `HttpRequestException` message,
+and the exception's `StatusCode` is set. Failures getting a token throw
+`AzureCliCredentialException`, whose message says what to run. Tokens are only
+sent over https (or http to loopback), and never appear in exception messages.
 
 ### OpenAI-compatible and self-hosted
 

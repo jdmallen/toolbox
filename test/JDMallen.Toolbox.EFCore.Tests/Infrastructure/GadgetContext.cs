@@ -24,12 +24,12 @@ public sealed class Gadget : EntityModel<Guid>
 /// </summary>
 public sealed class GadgetConfiguration : IEntityTypeConfiguration<Gadget>
 {
-	internal const int NameMaxLength = 64;
+	internal const int NAME_MAX_LENGTH = 64;
 
 	public void Configure(EntityTypeBuilder<Gadget> builder)
 	{
 		builder.Property(gadget => gadget.Name)
-			.HasMaxLength(NameMaxLength)
+			.HasMaxLength(NAME_MAX_LENGTH)
 			.IsRequired();
 	}
 }

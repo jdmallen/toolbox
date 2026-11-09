@@ -1,6 +1,7 @@
 using JDMallen.Toolbox.EFCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Time.Testing;
+
 // ReSharper disable EntityFramework.ModelValidation.UnlimitedStringLength
 
 namespace JDMallen.Toolbox.EFCore.Tests;
@@ -13,7 +14,14 @@ namespace JDMallen.Toolbox.EFCore.Tests;
 /// </summary>
 public class AuditTimestampOptionsTests
 {
-	private static readonly DateTimeOffset StartInstant = new(2026, 1, 1, 12, 0, 0, TimeSpan.Zero);
+	private static readonly DateTimeOffset StartInstant = new(
+		2026,
+		1,
+		1,
+		12,
+		0,
+		0,
+		TimeSpan.Zero);
 
 	private static readonly AuditTimestampOptions CustomNames = new()
 	{
@@ -49,7 +57,9 @@ public class AuditTimestampOptionsTests
 		public DbSet<Label> Labels => Set<Label>();
 	}
 
-	private static SprocketContext CreateContext(AuditTimestampOptions options, FakeTimeProvider clock)
+	private static SprocketContext CreateContext(
+		AuditTimestampOptions options,
+		FakeTimeProvider clock)
 		=> new(
 			new DbContextOptionsBuilder<SprocketContext>()
 				.UseInMemoryDatabase($"sprockets-{Guid.NewGuid()}")
@@ -117,8 +127,7 @@ public class AuditTimestampOptionsTests
 	[Fact]
 	public void Constructor_RejectsBlankPropertyNames()
 	{
-		Assert.Throws<ArgumentException>(
-			() => new AuditableEntitySaveChangesInterceptor(
-				CustomNames with { CreatedPropertyName = " " }));
+		Assert.Throws<ArgumentException>(() => new AuditableEntitySaveChangesInterceptor(
+			CustomNames with { CreatedPropertyName = " " }));
 	}
 }

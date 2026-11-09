@@ -1,5 +1,6 @@
 using JDMallen.Toolbox.AspNetCore.MinimalApi.Pagination;
 using Microsoft.EntityFrameworkCore;
+
 // ReSharper disable InvalidXmlDocComment
 
 namespace JDMallen.Toolbox.AspNetCore.Tests;
@@ -72,8 +73,8 @@ public class PaginationTests
 			.OrderBy(gadget => gadget.Id)
 			.ToPagedListAsync(new PagedRequest(1, 500));
 
-		Assert.Equal(IPagedRequest.MaxPageSize, page.PageSize);
-		Assert.Equal(IPagedRequest.MaxPageSize, page.Items.Count);
+		Assert.Equal(IPagedRequest.MAX_PAGE_SIZE, page.PageSize);
+		Assert.Equal(IPagedRequest.MAX_PAGE_SIZE, page.Items.Count);
 	}
 
 	[Fact]
@@ -144,12 +145,12 @@ public class PaginationTests
 
 	[Theory]
 	[InlineData(0)]
-	[InlineData(IPagedRequest.MaxPageSize + 1)]
+	[InlineData(IPagedRequest.MAX_PAGE_SIZE + 1)]
 	public async Task ToPagedListAsync_RejectsOutOfRangeDefaultPageSize(int defaultPageSize)
 	{
 		await using GadgetContext context = SeededContext(1);
 
-		await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-			() => context.Gadgets.ToPagedListAsync(new PagedRequest(null, null), defaultPageSize));
+		await Assert.ThrowsAsync<ArgumentOutOfRangeException>(()
+			=> context.Gadgets.ToPagedListAsync(new PagedRequest(null, null), defaultPageSize));
 	}
 }

@@ -5,6 +5,43 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0]
+
+Keyless Azure OpenAI: Microsoft Entra ID bearer tokens instead of API keys.
+Additive: the API key path is unchanged and remains the default.
+
+### Added
+
+`JDMallen.Toolbox.AI`:
+
+- **`AzureOpenAIClientOptions.TokenProvider`** and
+  **`AzureOpenAIClientOptions.ForEntraId(endpoint, deployment, tokenProvider)`**.
+  With a token provider, requests send `Authorization: Bearer` and no
+  `api-key` header.
+- **`IBearerTokenProvider`** and **`BearerToken`** (`Value`, `ExpiresOn`): the
+  seam between clients and token sources. `BearerToken.ToString()` never shows
+  the token.
+- **`AzureCliTokenProvider`** (+ **`AzureCliTokenProviderOptions`**: `Scope`,
+  `TenantId`, `Timeout`, `AzExecutablePath`): tokens from
+  `az account get-access-token`, with no Azure SDK dependency. Failures throw
+  **`AzureCliCredentialException`** with an actionable message (install `az`,
+  the exact `az login` command, upgrade to 2.54+).
+- **`CachingBearerTokenProvider`**: reuses a token until 5 minutes (configurable)
+  before expiry; concurrent callers share one fetch; failures are not cached.
+- **`AzureOpenAIScopes`**: `AIFoundry` (`https://ai.azure.com/.default`, the
+  `Default`) and `CognitiveServices`.
+
+### Changed
+
+`JDMallen.Toolbox.AI`:
+
+- `AzureOpenAIChatClient` errors now set `HttpRequestException.StatusCode`.
+  With a token provider, a 401 or 403 message also explains the usual causes
+  (missing data-plane role, propagation delay, custom subdomain, scope).
+- A trailing `/openai` or `/openai/v1` on the Azure endpoint is removed instead
+  of producing a doubled path. Other paths are kept.
+- Bearer tokens are refused over plain http unless the endpoint is loopback.
+
 ## [4.4.0]
 
 Lifetime token totals, shared by apps that previously each kept their own copy.

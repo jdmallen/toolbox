@@ -192,7 +192,7 @@ public class QueryableExtensionsTests
 		// ThenBy can follow.
 		IQueryable<Person> sorted = People().OrderByProperty("Name");
 
-		Assert.IsType<IOrderedQueryable<Person>>(sorted, exactMatch: false);
+		Assert.IsType<IOrderedQueryable<Person>>(sorted, false);
 		Assert.Equal(
 			nameof(Queryable.OrderBy),
 			((MethodCallExpression)sorted.Expression).Method.Name);

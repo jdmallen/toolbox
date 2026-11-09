@@ -33,7 +33,7 @@ public class EndpointExtensionsTests
 			});
 
 		var request = new HttpRequestMessage(HttpMethod.Get, "/secure/data");
-		request.Headers.Add(TestAuthHandler.UserHeader, Guid.NewGuid().ToString());
+		request.Headers.Add(TestAuthHandler.USER_HEADER, Guid.NewGuid().ToString());
 
 		HttpResponseMessage response = await host.Client.SendAsync(request);
 

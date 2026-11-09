@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
@@ -5,8 +7,9 @@ namespace JDMallen.Toolbox.AI;
 
 /// <summary>
 /// Azure OpenAI implementation of <see cref="IChatCompletionClient" />. Owns only
-/// the Azure wire format: deployment-in-path URL, <c>api-key</c> header, request
-/// body, and the <c>choices[0].message.content</c> response shape.
+/// the Azure wire format: deployment-in-path URL, <c>api-key</c> header (or an
+/// Entra ID bearer token, see <see cref="AzureOpenAIClientOptions.TokenProvider" />),
+/// request body, and the <c>choices[0].message.content</c> response shape.
 /// </summary>
 /// <remarks>
 /// The budget is sent as <c>max_completion_tokens</c>, which Azure accepts from
@@ -20,12 +23,25 @@ namespace JDMallen.Toolbox.AI;
 /// The HTTP client used for requests. The caller owns its lifetime; requests use
 /// absolute URIs, so no base address is required.
 /// </param>
-/// <param name="options">The API key, endpoint, and deployment to use.</param>
+/// <param name="options">
+/// The credentials (API key or token provider), endpoint, and deployment to use.
+/// </param>
 public sealed class AzureOpenAIChatClient(
 	HttpClient httpClient,
 	AzureOpenAIClientOptions options) : IChatCompletionClient
 {
 	private const string API_VERSION = "2024-10-21";
+
+	private const string ENTRA_ID_HINT =
+		" (Entra ID auth: the signed-in identity needs a data-plane role such as "
+		+ "\"Cognitive Services OpenAI User\" or \"Cognitive Services User\" on the "
+		+ "resource, and new assignments take up to 5 minutes to apply. The "
+		+ "endpoint must be the resource's custom subdomain, and the token's scope "
+		+ "must be one the resource accepts.)";
+
+	// Portal-copied endpoints sometimes carry the API root; the client appends
+	// its own, so a pasted one is removed rather than doubled.
+	private static readonly string[] PastedApiRoots = ["/openai/v1", "/openai"];
 
 	/// <inheritdoc />
 	[Obsolete(
@@ -50,14 +66,30 @@ public sealed class AzureOpenAIChatClient(
 			request.MaxTokens,
 			options.IsReasoningModel ? null : request.Temperature);
 
+		string endpoint = NormalizeEndpoint(options.Endpoint);
 		var url =
-			$"{options.Endpoint.TrimEnd('/')}/openai/deployments/{options.Deployment}/chat/completions?api-version={API_VERSION}";
+			$"{endpoint}/openai/deployments/{options.Deployment}/chat/completions?api-version={API_VERSION}";
 
 		using var message = new HttpRequestMessage(HttpMethod.Post, url);
 		message.Content = JsonContent.Create(
 			body,
 			AIJsonContext.Default.AzureOpenAIRequest);
-		message.Headers.Add("api-key", options.ApiKey);
+
+		if (options.TokenProvider is { } tokenProvider)
+		{
+			EnsureSafeForBearerToken(message.RequestUri!);
+
+			BearerToken token = await tokenProvider
+				.GetTokenAsync(cancellationToken)
+				.ConfigureAwait(false);
+
+			message.Headers.Authorization =
+				new AuthenticationHeaderValue("Bearer", token.Value);
+		}
+		else
+		{
+			message.Headers.Add("api-key", options.ApiKey);
+		}
 
 		HttpResponseMessage response = await httpClient
 			.SendAsync(message, cancellationToken)
@@ -68,8 +100,17 @@ public sealed class AzureOpenAIChatClient(
 			string error = await response.Content.ReadAsStringAsync(cancellationToken)
 				.ConfigureAwait(false);
 
+			bool isAuthFailure =
+				response.StatusCode is HttpStatusCode.Unauthorized
+					or HttpStatusCode.Forbidden;
+			string hint = options.TokenProvider is not null && isAuthFailure
+				? ENTRA_ID_HINT
+				: string.Empty;
+
 			throw new HttpRequestException(
-				$"Azure OpenAI API request failed: {response.StatusCode} - {error}");
+				$"Azure OpenAI API request failed: {response.StatusCode} - {error}{hint}",
+				null,
+				response.StatusCode);
 		}
 
 		AzureOpenAIResponse? result = await response.Content
@@ -86,6 +127,36 @@ public sealed class AzureOpenAIChatClient(
 			Id = result?.Id,
 			StopReason = firstChoice?.FinishReason,
 		};
+	}
+
+	/// <summary>
+	/// Trims trailing slashes and a pasted API root (<c>/openai</c>,
+	/// <c>/openai/v1</c>). Any other path is kept, so endpoints behind a gateway
+	/// with a path prefix (e.g. API Management) still work.
+	/// </summary>
+	internal static string NormalizeEndpoint(string endpoint)
+	{
+		string trimmed = endpoint.TrimEnd('/');
+
+		foreach (string apiRoot in PastedApiRoots.Where(apiRoot
+			         => trimmed.EndsWith(apiRoot, StringComparison.OrdinalIgnoreCase)))
+		{
+			return trimmed[..^apiRoot.Length].TrimEnd('/');
+		}
+
+		return trimmed;
+	}
+
+	// A bearer token is a credential for every resource that accepts its scope,
+	// not just this one; never send it in clear text off the machine.
+	private static void EnsureSafeForBearerToken(Uri requestUri)
+	{
+		if (requestUri.Scheme != Uri.UriSchemeHttps && !requestUri.IsLoopback)
+		{
+			throw new InvalidOperationException(
+				$"Refusing to send an Entra ID token over {requestUri.Scheme}; "
+				+ "use an https endpoint.");
+		}
 	}
 }
 

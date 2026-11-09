@@ -9,7 +9,7 @@ namespace JDMallen.Toolbox.AspNetCore.Tests.Infrastructure;
 
 /// <summary>
 /// Authentication handler for the in-process test server. A request is treated
-/// as authenticated only when it carries the <see cref="UserHeader" /> header;
+/// as authenticated only when it carries the <see cref="USER_HEADER" /> header;
 /// its value becomes the <see cref="ClaimTypes.NameIdentifier" /> claim. This
 /// lets a single test host produce both authenticated and anonymous requests so
 /// the authorization-related endpoint helpers can be exercised end to end.
@@ -21,17 +21,17 @@ internal sealed class TestAuthHandler(
 	: AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
 	/// <summary>The name of the test authentication scheme.</summary>
-	public const string SchemeName = "Test";
+	public const string SCHEME_NAME = "Test";
 
 	/// <summary>
 	/// Request header whose presence authenticates the caller; its value is
 	/// used as the user identifier claim.
 	/// </summary>
-	public const string UserHeader = "X-Test-User";
+	public const string USER_HEADER = "X-Test-User";
 
 	protected override Task<AuthenticateResult> HandleAuthenticateAsync()
 	{
-		if (!Request.Headers.TryGetValue(UserHeader, out StringValues userId)
+		if (!Request.Headers.TryGetValue(USER_HEADER, out StringValues userId)
 		    || string.IsNullOrWhiteSpace(userId))
 		{
 			return Task.FromResult(AuthenticateResult.NoResult());
@@ -39,10 +39,10 @@ internal sealed class TestAuthHandler(
 
 		var identity = new ClaimsIdentity(
 			[new Claim(ClaimTypes.NameIdentifier, userId.ToString())],
-			SchemeName);
+			SCHEME_NAME);
 		var ticket = new AuthenticationTicket(
 			new ClaimsPrincipal(identity),
-			SchemeName);
+			SCHEME_NAME);
 
 		return Task.FromResult(AuthenticateResult.Success(ticket));
 	}

@@ -8,10 +8,10 @@ public static class OtherJwtClaimTypes
 	/// <summary>
 	/// The primary security identifier claim type.
 	/// </summary>
-	public const string PrimarySid = "sid";
+	public const string PRIMARY_SID = "sid";
 
 	/// <summary>
 	/// The email address claim type.
 	/// </summary>
-	public const string Email = "email";
+	public const string EMAIL = "email";
 }

@@ -27,7 +27,8 @@ public class AzureOpenAIChatClientTests
 
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
-		await Assert.ThrowsAsync<TaskCanceledException>(() => client.GetCompletionAsync(Request, cts.Token));
+		await Assert.ThrowsAsync<TaskCanceledException>(()
+			=> client.GetCompletionAsync(Request, cts.Token));
 	}
 
 	[Fact]

@@ -102,7 +102,8 @@ public class OpenAICompatibleChatClientTests
 
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
-		await Assert.ThrowsAsync<TaskCanceledException>(() => client.GetCompletionAsync(Request, cts.Token));
+		await Assert.ThrowsAsync<TaskCanceledException>(()
+			=> client.GetCompletionAsync(Request, cts.Token));
 	}
 
 	[Fact]

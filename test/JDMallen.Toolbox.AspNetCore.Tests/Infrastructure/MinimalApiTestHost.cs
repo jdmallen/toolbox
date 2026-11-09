@@ -49,9 +49,9 @@ internal sealed class MinimalApiTestHost : IAsyncDisposable
 		builder.WebHost.UseTestServer();
 
 		builder.Services
-			.AddAuthentication(TestAuthHandler.SchemeName)
+			.AddAuthentication(TestAuthHandler.SCHEME_NAME)
 			.AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
-				TestAuthHandler.SchemeName,
+				TestAuthHandler.SCHEME_NAME,
 				_ => { });
 		builder.Services.AddAuthorization();
 

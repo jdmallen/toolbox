@@ -38,6 +38,7 @@ dotnet_diagnostic.CA1515.severity = none
 
 # CS1574: XML comment has cref attribute that could not be resolved
 dotnet_diagnostic.CS1574.severity = none
+
 [test/**/*.cs]
 
 # CA2000: Dispose objects before losing scope.

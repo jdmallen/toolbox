@@ -1,6 +1,7 @@
 using JDMallen.Toolbox.EFCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+
 // ReSharper disable EntityFramework.ModelValidation.UnlimitedStringLength
 // ReSharper disable ClassNeverInstantiated.Local
 

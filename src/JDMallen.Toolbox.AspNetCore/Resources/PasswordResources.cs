@@ -13,7 +13,7 @@ internal static class PasswordResources
 	/// The size of the frequency table's alphabet: index 0 for anything that
 	/// isn't a letter, then 'a' to 'z' as 1 to 26.
 	/// </summary>
-	internal const int AlphabetSize = 27;
+	internal const int ALPHABET_SIZE = 27;
 
 	/// <summary>
 	/// Common passwords, lowercase, for exact (case-folded) matching.
@@ -42,11 +42,11 @@ internal static class PasswordResources
 					CultureInfo.InvariantCulture)),
 		];
 
-		if (table.Length != AlphabetSize * AlphabetSize)
+		if (table.Length != ALPHABET_SIZE * ALPHABET_SIZE)
 		{
 			throw new InvalidOperationException(
 				$"FrequencyTable.txt has {table.Length} entries; expected "
-				+ $"{AlphabetSize * AlphabetSize}.");
+				+ $"{ALPHABET_SIZE * ALPHABET_SIZE}.");
 		}
 
 		return table;

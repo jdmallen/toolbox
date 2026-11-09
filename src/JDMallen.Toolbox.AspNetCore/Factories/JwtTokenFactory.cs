@@ -40,7 +40,7 @@ public class JwtTokenFactory : IJwtTokenFactory
 	/// <inheritdoc />
 	public ClaimsIdentity GenerateClaimsIdentity(string email, string id) => new(
 		[
-			new Claim(JwtClaimTypes.UserId, id),
+			new Claim(JwtClaimTypes.USER_ID, id),
 			new Claim(ClaimTypes.Name, email),
 			new Claim(ClaimTypes.Email, email),
 		],
@@ -57,15 +57,15 @@ public class JwtTokenFactory : IJwtTokenFactory
 
 		// The same lookup order ClaimsPrincipalExtensions.GetUserId reads back.
 		string? userId =
-			(identity.FindFirst(JwtClaimTypes.UserId)
+			(identity.FindFirst(JwtClaimTypes.USER_ID)
 				?? identity.FindFirst(ClaimTypes.NameIdentifier))
 			?.Value;
 
 		var claims = new List<Claim?>
 		{
-			new(JwtClaimTypes.JwtId, JwtOptions.NewJti),
+			new(JwtClaimTypes.JWT_ID, JwtOptions.NewJti),
 			new(
-				JwtClaimTypes.IssuedAt,
+				JwtClaimTypes.ISSUED_AT,
 				new DateTimeOffset(JwtOptions.IssuedAt)
 					.ToUnixTimeSeconds()
 					.ToString(CultureInfo.InvariantCulture),
@@ -74,20 +74,20 @@ public class JwtTokenFactory : IJwtTokenFactory
 
 		if (!string.IsNullOrWhiteSpace(userId))
 		{
-			claims.Add(new Claim(JwtClaimTypes.UserId, userId));
+			claims.Add(new Claim(JwtClaimTypes.USER_ID, userId));
 		}
 
 		claims.Add(
 			identity.FindAll(ClaimTypes.PrimarySid)
-				.Select(claim => new Claim(OtherJwtClaimTypes.PrimarySid, claim.Value))
+				.Select(claim => new Claim(OtherJwtClaimTypes.PRIMARY_SID, claim.Value))
 				.FirstOrDefault());
 
 		claims.Add(
 			identity.FindAll(ClaimTypes.Email)
-				.Select(claim => new Claim(OtherJwtClaimTypes.Email, claim.Value))
+				.Select(claim => new Claim(OtherJwtClaimTypes.EMAIL, claim.Value))
 				.FirstOrDefault());
 
-		claims.AddRange(identity.FindAll(JwtClaimTypes.UserRole));
+		claims.AddRange(identity.FindAll(JwtClaimTypes.USER_ROLE));
 
 		var token = new JwtSecurityToken(
 			JwtOptions.Issuer,

@@ -85,7 +85,11 @@ public abstract class TypedProblemResult
 /// A 400 Bad Request problem result that documents itself in OpenAPI.
 /// </summary>
 public sealed class BadRequestProblem(string detail, string? instance = null)
-	: TypedProblemResult(StatusCodes.Status400BadRequest, "Bad Request", detail, instance),
+	: TypedProblemResult(
+			StatusCodes.Status400BadRequest,
+			"Bad Request",
+			detail,
+			instance),
 		IEndpointMetadataProvider
 {
 	/// <inheritdoc />
@@ -97,7 +101,11 @@ public sealed class BadRequestProblem(string detail, string? instance = null)
 /// A 403 Forbidden problem result that documents itself in OpenAPI.
 /// </summary>
 public sealed class ForbiddenProblem(string detail, string? instance = null)
-	: TypedProblemResult(StatusCodes.Status403Forbidden, "Forbidden", detail, instance),
+	: TypedProblemResult(
+			StatusCodes.Status403Forbidden,
+			"Forbidden",
+			detail,
+			instance),
 		IEndpointMetadataProvider
 {
 	/// <inheritdoc />
@@ -109,7 +117,11 @@ public sealed class ForbiddenProblem(string detail, string? instance = null)
 /// A 404 Not Found problem result that documents itself in OpenAPI.
 /// </summary>
 public sealed class NotFoundProblem(string detail, string? instance = null)
-	: TypedProblemResult(StatusCodes.Status404NotFound, "Not Found", detail, instance),
+	: TypedProblemResult(
+			StatusCodes.Status404NotFound,
+			"Not Found",
+			detail,
+			instance),
 		IEndpointMetadataProvider
 {
 	/// <inheritdoc />
@@ -121,7 +133,11 @@ public sealed class NotFoundProblem(string detail, string? instance = null)
 /// A 409 Conflict problem result that documents itself in OpenAPI.
 /// </summary>
 public sealed class ConflictProblem(string detail, string? instance = null)
-	: TypedProblemResult(StatusCodes.Status409Conflict, "Conflict", detail, instance),
+	: TypedProblemResult(
+			StatusCodes.Status409Conflict,
+			"Conflict",
+			detail,
+			instance),
 		IEndpointMetadataProvider
 {
 	/// <inheritdoc />

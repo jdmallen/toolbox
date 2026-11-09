@@ -21,4 +21,9 @@
         <None Include="README.md" Pack="true" PackagePath="/"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <!-- The process seam (IProcessRunner) behind AzureCliTokenProvider. -->
+        <InternalsVisibleTo Include="JDMallen.Toolbox.AI.Tests"/>
+    </ItemGroup>
+
 </Project>

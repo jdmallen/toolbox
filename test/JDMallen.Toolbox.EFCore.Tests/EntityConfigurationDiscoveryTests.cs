@@ -24,7 +24,7 @@ public class EntityConfigurationDiscoveryTests
 
 		// The max length only exists in the model if GadgetConfiguration was
 		// discovered and applied via ApplyConfigurationsFromAssembly.
-		Assert.Equal(GadgetConfiguration.NameMaxLength, nameProperty.GetMaxLength());
+		Assert.Equal(GadgetConfiguration.NAME_MAX_LENGTH, nameProperty.GetMaxLength());
 		Assert.False(nameProperty.IsNullable);
 	}
 }

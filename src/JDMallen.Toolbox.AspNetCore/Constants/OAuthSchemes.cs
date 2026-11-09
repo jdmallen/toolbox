@@ -8,20 +8,20 @@ public static class OAuthSchemes
 	/// <summary>
 	/// Facebook OAuth scheme name.
 	/// </summary>
-	public const string Facebook = "Facebook";
+	public const string FACEBOOK = "Facebook";
 
 	/// <summary>
 	/// GitHub OAuth scheme name.
 	/// </summary>
-	public const string GitHub = "GitHub";
+	public const string GIT_HUB = "GitHub";
 
 	/// <summary>
 	/// Google OAuth scheme name.
 	/// </summary>
-	public const string Google = "Google";
+	public const string GOOGLE = "Google";
 
 	/// <summary>
 	/// Twitter OAuth scheme name.
 	/// </summary>
-	public const string Twitter = "Twitter";
+	public const string TWITTER = "Twitter";
 }

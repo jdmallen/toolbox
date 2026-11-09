@@ -8,10 +8,10 @@ public static class JwtClaims
 	/// <summary>
 	/// Claim value for standard API user role.
 	/// </summary>
-	public const string ApiUser = "ApiUser";
+	public const string API_USER = "ApiUser";
 
 	/// <summary>
 	/// Claim value for API manager role with elevated permissions.
 	/// </summary>
-	public const string ApiManager = "ApiManager";
+	public const string API_MANAGER = "ApiManager";
 }

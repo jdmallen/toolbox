@@ -10,9 +10,18 @@ public sealed record AnthropicClientOptions(string ApiKey, string Model);
 /// <summary>
 /// Connection settings for <see cref="AzureOpenAIChatClient" />.
 /// </summary>
-/// <param name="ApiKey">The Azure OpenAI API key.</param>
+/// <remarks>
+/// Authenticates with <see cref="ApiKey" /> (the <c>api-key</c> header) unless
+/// <see cref="TokenProvider" /> is set, in which case it sends a Microsoft Entra
+/// ID bearer token instead; see <see cref="ForEntraId" />.
+/// </remarks>
+/// <param name="ApiKey">
+/// The Azure OpenAI API key. Ignored when <see cref="TokenProvider" /> is set.
+/// </param>
 /// <param name="Endpoint">
-/// The resource endpoint, e.g. "https://myresource.openai.azure.com".
+/// The resource endpoint, e.g. "https://myresource.openai.azure.com" or
+/// "https://myresource.services.ai.azure.com". A trailing <c>/openai</c> or
+/// <c>/openai/v1</c> pasted from the portal is tolerated.
 /// </param>
 /// <param name="Deployment">The deployment (model) name.</param>
 public sealed record AzureOpenAIClientOptions(
@@ -20,6 +29,42 @@ public sealed record AzureOpenAIClientOptions(
 	string Endpoint,
 	string Deployment)
 {
+	/// <summary>
+	/// Supplies Microsoft Entra ID bearer tokens. When set, requests carry
+	/// <c>Authorization: Bearer</c> and no <c>api-key</c> header, and
+	/// <see cref="ApiKey" /> is ignored. Null (the default) uses the API key.
+	/// </summary>
+	/// <remarks>
+	/// The identity needs a data-plane role on the resource, such as "Cognitive
+	/// Services OpenAI User", and the endpoint must be the resource's own custom
+	/// subdomain. Tokens are only sent over https (or http to loopback).
+	/// </remarks>
+	public IBearerTokenProvider? TokenProvider { get; init; }
+
+	/// <summary>
+	/// Options that authenticate with Microsoft Entra ID tokens instead of an API
+	/// key.
+	/// </summary>
+	/// <param name="endpoint">The resource endpoint.</param>
+	/// <param name="deployment">The deployment (model) name.</param>
+	/// <param name="tokenProvider">
+	/// Supplies the tokens, e.g. a <see cref="CachingBearerTokenProvider" /> over
+	/// an <see cref="AzureCliTokenProvider" />.
+	/// </param>
+	/// <returns>Options with <see cref="TokenProvider" /> set and no API key.</returns>
+	public static AzureOpenAIClientOptions ForEntraId(
+		string endpoint,
+		string deployment,
+		IBearerTokenProvider tokenProvider)
+	{
+		ArgumentNullException.ThrowIfNull(tokenProvider);
+
+		return new AzureOpenAIClientOptions(string.Empty, endpoint, deployment)
+		{
+			TokenProvider = tokenProvider,
+		};
+	}
+
 	/// <summary>
 	/// Whether the deployment is a reasoning model (o-series, gpt-5 and later
 	/// reasoning deployments). Reasoning models reject sampling parameters, so

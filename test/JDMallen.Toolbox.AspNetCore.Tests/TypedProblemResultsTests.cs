@@ -21,7 +21,9 @@ namespace JDMallen.Toolbox.AspNetCore.Tests;
 public class TypedProblemResultsTests
 {
 	private static readonly MethodInfo AnyMethod =
-		typeof(TypedProblemResultsTests).GetMethod(nameof(AnyMethodTarget), BindingFlags.NonPublic | BindingFlags.Static)!;
+		typeof(TypedProblemResultsTests).GetMethod(
+			nameof(AnyMethodTarget),
+			BindingFlags.NonPublic | BindingFlags.Static)!;
 
 	private static void AnyMethodTarget()
 	{
@@ -36,8 +38,7 @@ public class TypedProblemResultsTests
 		{ typeof(NotFoundProblem), StatusCodes.Status404NotFound, "Not Found" },
 		{ typeof(ConflictProblem), StatusCodes.Status409Conflict, "Conflict" },
 		{
-			typeof(InternalServerErrorProblem),
-			StatusCodes.Status500InternalServerError,
+			typeof(InternalServerErrorProblem), StatusCodes.Status500InternalServerError,
 			"Internal Server Error"
 		},
 	};
@@ -79,10 +80,13 @@ public class TypedProblemResultsTests
 			.Where(metadata => metadata.Type == typeof(ProblemDetails))
 			.Select(metadata => metadata.StatusCode)
 			.Order()
+
 			// ReSharper disable once UseCollectionExpression
 			.ToArray();
 
-		Assert.Equal([StatusCodes.Status404NotFound, StatusCodes.Status409Conflict], documentedStatuses);
+		Assert.Equal(
+			[StatusCodes.Status404NotFound, StatusCodes.Status409Conflict],
+			documentedStatuses);
 	}
 
 	[Fact]

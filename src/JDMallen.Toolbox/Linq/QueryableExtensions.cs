@@ -98,7 +98,7 @@ public static class QueryableExtensions
 		{
 			// Explicit null check for netstandard2.0; see OrderByProperty.
 			if (searchValue is null
-				|| string.IsNullOrWhiteSpace(searchValue))
+			    || string.IsNullOrWhiteSpace(searchValue))
 			{
 				return query;
 			}

@@ -113,8 +113,8 @@ public static class TokenUsageLog
 			return ReadUnlocked(path);
 		}
 		catch (Exception ex) when (ex is IOException
-									   or UnauthorizedAccessException
-									   or JsonException)
+			                           or UnauthorizedAccessException
+			                           or JsonException)
 		{
 			error = ex.Message;
 
@@ -165,8 +165,8 @@ public static class TokenUsageLog
 			return true;
 		}
 		catch (Exception ex) when (ex is IOException
-									   or UnauthorizedAccessException
-									   or JsonException)
+			                           or UnauthorizedAccessException
+			                           or JsonException)
 		{
 			error = ex.Message;
 
@@ -219,7 +219,7 @@ public static class TokenUsageLog
 	// stream is disposed. The file's contents are never used.
 	private static FileStream AcquireLock(string lockPath)
 	{
-		for (var attempt = 1; ; attempt++)
+		for (var attempt = 1;; attempt++)
 		{
 			try
 			{

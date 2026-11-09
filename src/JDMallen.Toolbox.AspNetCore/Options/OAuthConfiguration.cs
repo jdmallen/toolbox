@@ -1,4 +1,5 @@
 ﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
+
 namespace JDMallen.Toolbox.AspNetCore.Options;
 
 /// <summary>

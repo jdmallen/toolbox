@@ -7,7 +7,8 @@ public class ChatCompletionClientDefaultTests
 	{
 		IChatCompletionClient client = new LegacyClient();
 
-		CompletionResult result = await client.GetCompletionAsync(new CompletionRequest("system", "user", 10));
+		CompletionResult result =
+			await client.GetCompletionAsync(new CompletionRequest("system", "user", 10));
 
 		Assert.Equal("legacy text", result.Text);
 		Assert.Null(result.Usage);

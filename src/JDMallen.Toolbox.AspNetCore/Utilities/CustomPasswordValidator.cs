@@ -21,27 +21,27 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 	/// <summary>
 	/// Character set containing lowercase letters.
 	/// </summary>
-	public const string LowerSet = "abcdefghijklmnopqrstuvwxyz";
+	public const string LOWER_SET = "abcdefghijklmnopqrstuvwxyz";
 
 	/// <summary>
 	/// Character set containing uppercase letters.
 	/// </summary>
-	public const string UpperSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public const string UPPER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	/// <summary>
 	/// Character set containing digits.
 	/// </summary>
-	public const string NumberSet = "0123456789";
+	public const string NUMBER_SET = "0123456789";
 
 	/// <summary>
 	/// Character set containing common symbols.
 	/// </summary>
-	public const string SymbolSet1 = "!@#$%^&*()";
+	public const string SYMBOL_SET1 = "!@#$%^&*()";
 
 	/// <summary>
 	/// Character set containing additional symbols.
 	/// </summary>
-	public const string SymbolSet2 = @"`~-_=+[{]}\|;:'"",<.>/?";
+	public const string SYMBOL_SET2 = @"`~-_=+[{]}\|;:'"",<.>/?";
 
 	private readonly CustomIdentityErrorDescriber _errors;
 	private readonly PasswordComplexityOptions _options;
@@ -95,7 +95,7 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 		{
 			int bidx = GetIndex(plower[b]);
 			float freq =
-				frequencyTable[aidx * PasswordResources.AlphabetSize + bidx];
+				frequencyTable[aidx * PasswordResources.ALPHABET_SIZE + bidx];
 			float c = 1.0F - freq;
 			bits += bitsPerCharacter * c * c;
 			aidx = bidx;
@@ -145,33 +145,33 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 
 		foreach (char c in password)
 		{
-			if (!containsLower && LowerSet.Contains(c, StringComparison.Ordinal))
+			if (!containsLower && LOWER_SET.Contains(c, StringComparison.Ordinal))
 			{
-				characters += LowerSet.Length;
+				characters += LOWER_SET.Length;
 				containsLower = true;
 			}
 
-			if (!containsUpper && UpperSet.Contains(c, StringComparison.Ordinal))
+			if (!containsUpper && UPPER_SET.Contains(c, StringComparison.Ordinal))
 			{
-				characters += UpperSet.Length;
+				characters += UPPER_SET.Length;
 				containsUpper = true;
 			}
 
-			if (!containsNumber && NumberSet.Contains(c, StringComparison.Ordinal))
+			if (!containsNumber && NUMBER_SET.Contains(c, StringComparison.Ordinal))
 			{
-				characters += NumberSet.Length;
+				characters += NUMBER_SET.Length;
 				containsNumber = true;
 			}
 
-			if (!containsSym1 && SymbolSet1.Contains(c, StringComparison.Ordinal))
+			if (!containsSym1 && SYMBOL_SET1.Contains(c, StringComparison.Ordinal))
 			{
-				characters += SymbolSet1.Length;
+				characters += SYMBOL_SET1.Length;
 				containsSym1 = true;
 			}
 
-			if (!containsSym2 && SymbolSet2.Contains(c, StringComparison.Ordinal))
+			if (!containsSym2 && SYMBOL_SET2.Contains(c, StringComparison.Ordinal))
 			{
-				characters += SymbolSet2.Length;
+				characters += SYMBOL_SET2.Length;
 				containsSym2 = true;
 			}
 

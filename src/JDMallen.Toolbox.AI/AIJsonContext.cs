@@ -11,6 +11,7 @@ namespace JDMallen.Toolbox.AI;
 [JsonSerializable(typeof(AnthropicResponse))]
 [JsonSerializable(typeof(AzureOpenAIRequest))]
 [JsonSerializable(typeof(AzureOpenAIResponse))]
+[JsonSerializable(typeof(AzureCliTokenResponse))]
 [JsonSerializable(typeof(OpenAICompatibleRequest))]
 [JsonSerializable(typeof(OpenAICompatibleResponse))]
 
