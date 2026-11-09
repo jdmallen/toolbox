@@ -5,6 +5,16 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+`JDMallen.Toolbox.AI`:
+
+- **README and changelog named the scope constants wrong.** They are
+  `AzureOpenAIScopes.DEFAULT`, `AI_FOUNDRY`, and `COGNITIVE_SERVICES`, not
+  `Default`, `AIFoundry`, and `CognitiveServices`. Docs only; no code change.
+
 ## [4.5.0]
 
 Keyless Azure OpenAI: Microsoft Entra ID bearer tokens instead of API keys.
@@ -28,8 +38,8 @@ Additive: the API key path is unchanged and remains the default.
   the exact `az login` command, upgrade to 2.54+).
 - **`CachingBearerTokenProvider`**: reuses a token until 5 minutes (configurable)
   before expiry; concurrent callers share one fetch; failures are not cached.
-- **`AzureOpenAIScopes`**: `AIFoundry` (`https://ai.azure.com/.default`, the
-  `Default`) and `CognitiveServices`.
+- **`AzureOpenAIScopes`**: `AI_FOUNDRY` (`https://ai.azure.com/.default`, the
+  `DEFAULT`) and `COGNITIVE_SERVICES`.
 
 ### Changed
 

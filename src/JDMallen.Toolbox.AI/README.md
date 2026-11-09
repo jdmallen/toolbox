@@ -156,8 +156,8 @@ var client = new AzureOpenAIChatClient(
 - `CachingBearerTokenProvider` reuses the token until 5 minutes before it
   expires and shares one fetch between concurrent callers. Without it, every
   request starts an `az` process.
-- The scope defaults to `AzureOpenAIScopes.Default` (`https://ai.azure.com/.default`).
-  `AzureOpenAIScopes.CognitiveServices` is also accepted by Azure OpenAI and
+- The scope defaults to `AzureOpenAIScopes.DEFAULT` (`https://ai.azure.com/.default`).
+  `AzureOpenAIScopes.COGNITIVE_SERVICES` is also accepted by Azure OpenAI and
   Foundry resources.
 - `IBearerTokenProvider` is the seam: implement it to use any other source of
   tokens, such as an Azure.Identity `TokenCredential`.
