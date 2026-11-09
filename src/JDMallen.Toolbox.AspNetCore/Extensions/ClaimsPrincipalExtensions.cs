@@ -7,7 +7,7 @@ namespace JDMallen.Toolbox.AspNetCore.Extensions;
 /// Extension methods for ClaimsPrincipal objects.
 /// </summary>
 /// <remarks>
-/// User ID lookups prefer the library's <see cref="JwtClaimTypes.USER_ID" />
+/// User ID lookups prefer the library's <see cref="JwtClaimTypes.UserId" />
 /// claim and fall back to the framework's
 /// <see cref="ClaimTypes.NameIdentifier" /> so tokens minted by either
 /// convention resolve correctly.
@@ -23,7 +23,7 @@ public static class ClaimsPrincipalExtensions
 		/// <returns>The email claim value, or <see langword="null" /> if absent.</returns>
 		public string? GetEmail()
 			=> principal.FindFirst(ClaimTypes.Email)?.Value
-				?? principal.FindFirst(OtherJwtClaimTypes.EMAIL)?.Value;
+				?? principal.FindFirst(OtherJwtClaimTypes.Email)?.Value;
 
 		/// <summary>
 		/// Gets the user's roles from the ClaimsPrincipal.
@@ -31,7 +31,7 @@ public static class ClaimsPrincipalExtensions
 		/// <returns>The non-empty role claim values.</returns>
 		public IEnumerable<string> GetRoles()
 		{
-			return principal.FindAll(JwtClaimTypes.USER_ROLE)
+			return principal.FindAll(JwtClaimTypes.UserRole)
 				.Select(c => c.Value)
 				.Where(v => !string.IsNullOrWhiteSpace(v));
 		}
@@ -44,7 +44,7 @@ public static class ClaimsPrincipalExtensions
 		/// Thrown when the user ID claim is missing.
 		/// </exception>
 		public string GetUserId()
-			=> principal.FindFirst(JwtClaimTypes.USER_ID)?.Value
+			=> principal.FindFirst(JwtClaimTypes.UserId)?.Value
 				?? principal.FindFirst(ClaimTypes.NameIdentifier)?.Value
 				?? throw new InvalidOperationException("User ID claim not found.");
 
@@ -58,7 +58,7 @@ public static class ClaimsPrincipalExtensions
 		/// </exception>
 		public Guid GetUserIdAsGuid()
 		{
-			Claim? claim = principal.FindFirst(JwtClaimTypes.USER_ID)
+			Claim? claim = principal.FindFirst(JwtClaimTypes.UserId)
 				?? principal.FindFirst(ClaimTypes.NameIdentifier);
 
 			if (claim is null || !Guid.TryParse(claim.Value, out Guid userId))
@@ -84,7 +84,7 @@ public static class ClaimsPrincipalExtensions
 		public bool TryGetUserIdAsGuid(out Guid userId)
 		{
 			userId = Guid.Empty;
-			Claim? claim = principal.FindFirst(JwtClaimTypes.USER_ID)
+			Claim? claim = principal.FindFirst(JwtClaimTypes.UserId)
 				?? principal.FindFirst(ClaimTypes.NameIdentifier);
 
 			return claim is not null && Guid.TryParse(claim.Value, out userId);

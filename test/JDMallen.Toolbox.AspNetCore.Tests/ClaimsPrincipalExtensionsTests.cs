@@ -13,7 +13,7 @@ public class ClaimsPrincipalExtensionsTests
 	public void GetEmail_FallsBackToJwtEmailClaim()
 	{
 		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(OtherJwtClaimTypes.EMAIL, "jwt@example.com"));
+			new Claim(OtherJwtClaimTypes.Email, "jwt@example.com"));
 
 		Assert.Equal("jwt@example.com", principal.GetEmail());
 	}
@@ -23,7 +23,7 @@ public class ClaimsPrincipalExtensionsTests
 	{
 		ClaimsPrincipal principal = PrincipalWith(
 			new Claim(ClaimTypes.Email, "standard@example.com"),
-			new Claim(OtherJwtClaimTypes.EMAIL, "jwt@example.com"));
+			new Claim(OtherJwtClaimTypes.Email, "jwt@example.com"));
 
 		Assert.Equal("standard@example.com", principal.GetEmail());
 	}
@@ -40,7 +40,7 @@ public class ClaimsPrincipalExtensionsTests
 	public void GetRoles_ReturnsEmptyWhenNoRoleClaims()
 	{
 		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(JwtClaimTypes.USER_ID, "id"));
+			new Claim(JwtClaimTypes.UserId, "id"));
 
 		Assert.Empty(principal.GetRoles());
 	}
@@ -49,9 +49,9 @@ public class ClaimsPrincipalExtensionsTests
 	public void GetRoles_ReturnsNonEmptyRoleClaims()
 	{
 		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(JwtClaimTypes.USER_ROLE, "admin"),
-			new Claim(JwtClaimTypes.USER_ROLE, "user"),
-			new Claim(JwtClaimTypes.USER_ROLE, "   "));
+			new Claim(JwtClaimTypes.UserRole, "admin"),
+			new Claim(JwtClaimTypes.UserRole, "user"),
+			new Claim(JwtClaimTypes.UserRole, "   "));
 
 		Assert.Equal(["admin", "user"], principal.GetRoles());
 	}
@@ -61,7 +61,7 @@ public class ClaimsPrincipalExtensionsTests
 	{
 		var expected = Guid.NewGuid();
 		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(JwtClaimTypes.USER_ID, expected.ToString()));
+			new Claim(JwtClaimTypes.UserId, expected.ToString()));
 
 		Assert.Equal(expected, principal.GetUserIdAsGuid());
 	}
@@ -70,7 +70,7 @@ public class ClaimsPrincipalExtensionsTests
 	public void GetUserIdAsGuid_ThrowsWhenNotAGuid()
 	{
 		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(JwtClaimTypes.USER_ID, "not-a-guid"));
+			new Claim(JwtClaimTypes.UserId, "not-a-guid"));
 
 		Assert.Throws<InvalidOperationException>(() => principal.GetUserIdAsGuid());
 	}
@@ -88,7 +88,7 @@ public class ClaimsPrincipalExtensionsTests
 	public void GetUserId_PrefersJwtUserIdClaim()
 	{
 		ClaimsPrincipal principal = PrincipalWith(
-			new Claim(JwtClaimTypes.USER_ID, "primary"),
+			new Claim(JwtClaimTypes.UserId, "primary"),
 			new Claim(ClaimTypes.NameIdentifier, "fallback"));
 
 		Assert.Equal("primary", principal.GetUserId());

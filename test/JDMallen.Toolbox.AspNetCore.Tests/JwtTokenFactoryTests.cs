@@ -58,10 +58,10 @@ public class JwtTokenFactoryTests
 
 		Assert.Equal(
 			userId.ToString("D"),
-			token.Claims.Single(claim => claim.Type == JwtClaimTypes.USER_ID).Value);
+			token.Claims.Single(claim => claim.Type == JwtClaimTypes.UserId).Value);
 		Assert.Equal(
 			"user@example.com",
-			token.Claims.Single(claim => claim.Type == OtherJwtClaimTypes.EMAIL).Value);
+			token.Claims.Single(claim => claim.Type == OtherJwtClaimTypes.Email).Value);
 	}
 
 	[Fact]
@@ -74,7 +74,7 @@ public class JwtTokenFactoryTests
 
 		Assert.Equal(
 			"42",
-			token.Claims.Single(claim => claim.Type == JwtClaimTypes.USER_ID).Value);
+			token.Claims.Single(claim => claim.Type == JwtClaimTypes.UserId).Value);
 	}
 
 	[Fact]
@@ -87,7 +87,7 @@ public class JwtTokenFactoryTests
 
 		Assert.DoesNotContain(
 			token.Claims,
-			claim => claim.Type == JwtClaimTypes.USER_ID);
+			claim => claim.Type == JwtClaimTypes.UserId);
 	}
 
 	[Fact]
@@ -105,7 +105,7 @@ public class JwtTokenFactoryTests
 		// 3.x rounded up, which could stamp an iat up to a second in the future.
 		Claim issuedAt = Read(token)
 			.Claims
-			.Single(claim => claim.Type == JwtClaimTypes.ISSUED_AT);
+			.Single(claim => claim.Type == JwtClaimTypes.IssuedAt);
 
 		Assert.Equal(ClaimValueTypes.Integer64, issuedAt.ValueType);
 		Assert.InRange(

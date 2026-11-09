@@ -26,7 +26,7 @@ public static class StringExtensions
 #if NETCOREAPP3_0_OR_GREATER
 	extension([NotNullWhen(true)] string? str)
 #else
-    extension(string? str)
+	extension(string? str)
 #endif
 	{
 		/// <summary>
@@ -44,7 +44,7 @@ public static class StringExtensions
 #if NETCOREAPP3_0_OR_GREATER
 	extension([NotNullWhen(false)] string? str)
 #else
-    extension(string? str)
+	extension(string? str)
 #endif
 	{
 		/// <summary>

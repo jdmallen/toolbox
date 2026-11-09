@@ -4,6 +4,7 @@ using JDMallen.Toolbox.AspNetCore.Options;
 using JDMallen.Toolbox.AspNetCore.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+// ReSharper disable InconsistentNaming
 
 namespace JDMallen.Toolbox.AspNetCore.Utilities;
 
@@ -21,27 +22,27 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 	/// <summary>
 	/// Character set containing lowercase letters.
 	/// </summary>
-	public const string LOWER_SET = "abcdefghijklmnopqrstuvwxyz";
+	public const string LowerSet = "abcdefghijklmnopqrstuvwxyz";
 
 	/// <summary>
 	/// Character set containing uppercase letters.
 	/// </summary>
-	public const string UPPER_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	public const string UpperSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	/// <summary>
 	/// Character set containing digits.
 	/// </summary>
-	public const string NUMBER_SET = "0123456789";
+	public const string NumberSet = "0123456789";
 
 	/// <summary>
 	/// Character set containing common symbols.
 	/// </summary>
-	public const string SYMBOL_SET1 = "!@#$%^&*()";
+	public const string SymbolSet1 = "!@#$%^&*()";
 
 	/// <summary>
 	/// Character set containing additional symbols.
 	/// </summary>
-	public const string SYMBOL_SET2 = @"`~-_=+[{]}\|;:'"",<.>/?";
+	public const string SymbolSet2 = @"`~-_=+[{]}\|;:'"",<.>/?";
 
 	private readonly CustomIdentityErrorDescriber _errors;
 	private readonly PasswordComplexityOptions _options;
@@ -145,33 +146,33 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 
 		foreach (char c in password)
 		{
-			if (!containsLower && LOWER_SET.Contains(c, StringComparison.Ordinal))
+			if (!containsLower && LowerSet.Contains(c, StringComparison.Ordinal))
 			{
-				characters += LOWER_SET.Length;
+				characters += LowerSet.Length;
 				containsLower = true;
 			}
 
-			if (!containsUpper && UPPER_SET.Contains(c, StringComparison.Ordinal))
+			if (!containsUpper && UpperSet.Contains(c, StringComparison.Ordinal))
 			{
-				characters += UPPER_SET.Length;
+				characters += UpperSet.Length;
 				containsUpper = true;
 			}
 
-			if (!containsNumber && NUMBER_SET.Contains(c, StringComparison.Ordinal))
+			if (!containsNumber && NumberSet.Contains(c, StringComparison.Ordinal))
 			{
-				characters += NUMBER_SET.Length;
+				characters += NumberSet.Length;
 				containsNumber = true;
 			}
 
-			if (!containsSym1 && SYMBOL_SET1.Contains(c, StringComparison.Ordinal))
+			if (!containsSym1 && SymbolSet1.Contains(c, StringComparison.Ordinal))
 			{
-				characters += SYMBOL_SET1.Length;
+				characters += SymbolSet1.Length;
 				containsSym1 = true;
 			}
 
-			if (!containsSym2 && SYMBOL_SET2.Contains(c, StringComparison.Ordinal))
+			if (!containsSym2 && SymbolSet2.Contains(c, StringComparison.Ordinal))
 			{
-				characters += SYMBOL_SET2.Length;
+				characters += SymbolSet2.Length;
 				containsSym2 = true;
 			}
 

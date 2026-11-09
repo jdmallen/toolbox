@@ -1,4 +1,5 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
+// ReSharper disable InconsistentNaming
 
 /// <summary>
 /// Constants for JWT claim types following RFC 7519 standard.
@@ -8,12 +9,12 @@ public static class JwtClaimTypes
 	/// <summary>
 	/// Custom claim type to represent an AppUser's primary ID
 	/// </summary>
-	public const string USER_ID = "id";
+	public const string UserId = "id";
 
 	/// <summary>
 	/// Custom claim type to represent an AppRole's primary ID.
 	/// </summary>
-	public const string USER_ROLE = "role";
+	public const string UserRole = "role";
 
 	/// <summary>
 	/// RFC 7519 - 4.1.1.  "iss" (Issuer) Claim
@@ -24,7 +25,7 @@ public static class JwtClaimTypes
 	/// The "iss" value is a case-sensitive string containing a StringOrURI
 	/// value.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public const string ISSUER = "iss";
+	public const string Issuer = "iss";
 
 	/// <summary>
 	/// RFC 7519 - 4.1.2.  "sub" (Subject) Claim
@@ -38,7 +39,7 @@ public static class JwtClaimTypes
 	/// "sub" value is a case-sensitive string containing a StringOrURI
 	/// value.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public const string SUBJECT = "sub";
+	public const string Subject = "sub";
 
 	/// <summary>
 	/// RFC 7519 - 4.1.3.  "aud" (Audience) Claim
@@ -56,7 +57,7 @@ public static class JwtClaimTypes
 	/// interpretation of audience values is generally application specific.
 	/// Use of this claim is OPTIONAL.
 	/// </remarks>
-	public const string AUDIENCE = "aud";
+	public const string Audience = "aud";
 
 	/// <summary>
 	/// RFC 7519 - 4.1.4.  "exp" (Expiration Time) Claim
@@ -70,7 +71,7 @@ public static class JwtClaimTypes
 	/// a few minutes, to account for clock skew.  Its value MUST be a number
 	/// containing a NumericDate value.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public const string EXPIRATION = "exp";
+	public const string Expiration = "exp";
 
 	/// <summary>
 	/// RFC 7519 - 4.1.5.  "nbf" (Not Before) Claim
@@ -84,7 +85,7 @@ public static class JwtClaimTypes
 	/// account for clock skew.  Its value MUST be a number containing a
 	/// NumericDate value.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public const string NOT_BEFORE = "nbf";
+	public const string NotBefore = "nbf";
 
 	/// <summary>
 	/// RFC 7519 - 4.1.6.  "iat" (Issued At) Claim
@@ -95,7 +96,7 @@ public static class JwtClaimTypes
 	/// value MUST be a number containing a NumericDate value.  Use of this
 	/// claim is OPTIONAL.
 	/// </remarks>
-	public const string ISSUED_AT = "iat";
+	public const string IssuedAt = "iat";
 
 	/// <summary>
 	/// RFC 7519 - 4.1.7.  "jti" (JWT ID) Claim
@@ -110,7 +111,7 @@ public static class JwtClaimTypes
 	/// to prevent the JWT from being replayed.  The "jti" value is a case-
 	/// sensitive string.  Use of this claim is OPTIONAL.
 	/// </remarks>
-	public const string JWT_ID = "jti";
+	public const string JwtId = "jti";
 
 	/// <summary>
 	/// RFC 7519 - 5.1.  "typ" (Type) Header Parameter
@@ -131,7 +132,7 @@ public static class JwtClaimTypes
 	/// always be spelled using uppercase characters for compatibility with
 	/// legacy implementations.  Use of this Header Parameter is OPTIONAL.
 	/// </remarks>
-	public const string TYPE = "typ";
+	public const string Type = "typ";
 
 	/// <summary>
 	/// RFC 7519 - 5.2.  "cty" (Content Type) Header Parameter
@@ -150,5 +151,5 @@ public static class JwtClaimTypes
 	/// for compatibility with legacy implementations.  See Appendix A.2 for
 	/// an example of a Nested JWT.
 	/// </remarks>
-	public const string CONTENT_TYPE = "cty";
+	public const string ContentType = "cty";
 }

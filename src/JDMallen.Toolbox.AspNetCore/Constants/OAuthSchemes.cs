@@ -1,4 +1,5 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
+// ReSharper disable InconsistentNaming
 
 /// <summary>
 /// Constants for OAuth authentication scheme names.
@@ -8,20 +9,20 @@ public static class OAuthSchemes
 	/// <summary>
 	/// Facebook OAuth scheme name.
 	/// </summary>
-	public const string FACEBOOK = "Facebook";
+	public const string Facebook = "Facebook";
 
 	/// <summary>
 	/// GitHub OAuth scheme name.
 	/// </summary>
-	public const string GIT_HUB = "GitHub";
+	public const string GitHub = "GitHub";
 
 	/// <summary>
 	/// Google OAuth scheme name.
 	/// </summary>
-	public const string GOOGLE = "Google";
+	public const string Google = "Google";
 
 	/// <summary>
 	/// Twitter OAuth scheme name.
 	/// </summary>
-	public const string TWITTER = "Twitter";
+	public const string Twitter = "Twitter";
 }

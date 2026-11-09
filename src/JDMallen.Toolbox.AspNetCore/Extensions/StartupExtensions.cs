@@ -37,7 +37,7 @@ public static class StartupExtensions
 			}
 
 			return builder.AddOAuth(
-				OAuthSchemes.GIT_HUB,
+				OAuthSchemes.GitHub,
 				options =>
 				{
 					options.ClientId = config.GitHubClientId;
@@ -98,7 +98,7 @@ public static class StartupExtensions
 			}
 
 			return builder.AddGoogle(
-				OAuthSchemes.GOOGLE,
+				OAuthSchemes.Google,
 				options =>
 				{
 					options.ClientId = config.GoogleClientId;

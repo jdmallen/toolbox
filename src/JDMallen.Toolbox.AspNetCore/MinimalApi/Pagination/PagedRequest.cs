@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+// ReSharper disable InconsistentNaming
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Pagination;
 
@@ -10,7 +11,7 @@ public interface IPagedRequest
 	/// <summary>
 	/// The maximum allowed page size to prevent excessive data retrieval.
 	/// </summary>
-	const int MAX_PAGE_SIZE = 100;
+	const int MaxPageSize = 100;
 
 	/// <summary>
 	/// Gets the page number (1-based index).
@@ -63,7 +64,7 @@ public static class PaginationExtensions
 	/// <summary>
 	/// The page size used when neither the request nor the caller sets one.
 	/// </summary>
-	public const int DEFAULT_PAGE_SIZE = 10;
+	public const int DefaultPageSize = 10;
 
 	/// <summary>
 	/// Converts an IQueryable to a paginated list asynchronously.
@@ -77,7 +78,7 @@ public static class PaginationExtensions
 		this IQueryable<T> query,
 		IPagedRequest request,
 		CancellationToken cancellationToken = default)
-		=> query.ToPagedListAsync(request, DEFAULT_PAGE_SIZE, cancellationToken);
+		=> query.ToPagedListAsync(request, DefaultPageSize, cancellationToken);
 
 	/// <summary>
 	/// Converts an IQueryable to a paginated list asynchronously, using
@@ -88,7 +89,7 @@ public static class PaginationExtensions
 	/// <param name="request">The pagination request parameters.</param>
 	/// <param name="defaultPageSize">
 	/// The page size used when <see cref="IPagedRequest.PageSize" /> is null.
-	/// Must be between 1 and <see cref="IPagedRequest.MAX_PAGE_SIZE" />.
+	/// Must be between 1 and <see cref="IPagedRequest.MaxPageSize" />.
 	/// </param>
 	/// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
 	/// <returns>A paginated list containing the requested page of items.</returns>
@@ -99,10 +100,10 @@ public static class PaginationExtensions
 		CancellationToken cancellationToken = default)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(defaultPageSize, 0);
-		ArgumentOutOfRangeException.ThrowIfGreaterThan(defaultPageSize, IPagedRequest.MAX_PAGE_SIZE);
+		ArgumentOutOfRangeException.ThrowIfGreaterThan(defaultPageSize, IPagedRequest.MaxPageSize);
 
 		int page = request.Page ?? 1;
-		int pageSize = Math.Min(request.PageSize ?? defaultPageSize, IPagedRequest.MAX_PAGE_SIZE);
+		int pageSize = Math.Min(request.PageSize ?? defaultPageSize, IPagedRequest.MaxPageSize);
 
 		ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(page, 0);
 		ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(pageSize, 0);

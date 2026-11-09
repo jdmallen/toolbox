@@ -1,4 +1,5 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
+// ReSharper disable InconsistentNaming
 
 /// <summary>
 /// Constants for custom JWT claim values used in application authorization.
@@ -8,10 +9,10 @@ public static class JwtClaims
 	/// <summary>
 	/// Claim value for standard API user role.
 	/// </summary>
-	public const string API_USER = "ApiUser";
+	public const string ApiUser = "ApiUser";
 
 	/// <summary>
 	/// Claim value for API manager role with elevated permissions.
 	/// </summary>
-	public const string API_MANAGER = "ApiManager";
+	public const string ApiManager = "ApiManager";
 }

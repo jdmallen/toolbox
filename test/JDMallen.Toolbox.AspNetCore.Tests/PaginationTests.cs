@@ -73,8 +73,8 @@ public class PaginationTests
 			.OrderBy(gadget => gadget.Id)
 			.ToPagedListAsync(new PagedRequest(1, 500));
 
-		Assert.Equal(IPagedRequest.MAX_PAGE_SIZE, page.PageSize);
-		Assert.Equal(IPagedRequest.MAX_PAGE_SIZE, page.Items.Count);
+		Assert.Equal(IPagedRequest.MaxPageSize, page.PageSize);
+		Assert.Equal(IPagedRequest.MaxPageSize, page.Items.Count);
 	}
 
 	[Fact]
@@ -145,7 +145,7 @@ public class PaginationTests
 
 	[Theory]
 	[InlineData(0)]
-	[InlineData(IPagedRequest.MAX_PAGE_SIZE + 1)]
+	[InlineData(IPagedRequest.MaxPageSize + 1)]
 	public async Task ToPagedListAsync_RejectsOutOfRangeDefaultPageSize(int defaultPageSize)
 	{
 		await using GadgetContext context = SeededContext(1);

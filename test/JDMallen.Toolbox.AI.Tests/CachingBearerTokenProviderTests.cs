@@ -135,7 +135,9 @@ public class CachingBearerTokenProviderTests
 		using var cancellation = new CancellationTokenSource();
 
 		Task<BearerToken> cancelled = cache.GetTokenAsync(cancellation.Token).AsTask();
-		Task<BearerToken> patient = cache.GetTokenAsync(cancellation.Token).AsTask();
+		// Deliberately not cancellation.Token: this caller must outlive the
+		// cancelled one, so it can't share its token.
+		Task<BearerToken> patient = cache.GetTokenAsync(CancellationToken.None).AsTask();
 		await cancellation.CancelAsync();
 		inner.Gate.SetResult();
 

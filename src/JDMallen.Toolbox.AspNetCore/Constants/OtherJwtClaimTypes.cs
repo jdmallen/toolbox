@@ -1,4 +1,5 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
+// ReSharper disable InconsistentNaming
 
 /// <summary>
 /// Additional JWT claim type constants not covered by standard claims.
@@ -8,10 +9,10 @@ public static class OtherJwtClaimTypes
 	/// <summary>
 	/// The primary security identifier claim type.
 	/// </summary>
-	public const string PRIMARY_SID = "sid";
+	public const string PrimarySid = "sid";
 
 	/// <summary>
 	/// The email address claim type.
 	/// </summary>
-	public const string EMAIL = "email";
+	public const string Email = "email";
 }
