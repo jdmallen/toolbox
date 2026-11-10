@@ -30,7 +30,7 @@ public static class StartupExtensions
 		public AuthenticationBuilder AddOAuthGitHub(OAuthConfiguration config)
 		{
 			if (string.IsNullOrWhiteSpace(config.GitHubClientId)
-			    || string.IsNullOrWhiteSpace(config.GitHubClientSecret))
+				|| string.IsNullOrWhiteSpace(config.GitHubClientSecret))
 			{
 				throw new InvalidOperationException(
 					"GitHub OAuth client ID and secret must be provided in configuration.");
@@ -91,7 +91,7 @@ public static class StartupExtensions
 		public AuthenticationBuilder AddOAuthGoogle(OAuthConfiguration config)
 		{
 			if (string.IsNullOrWhiteSpace(config.GoogleClientId)
-			    || string.IsNullOrWhiteSpace(config.GoogleClientSecret))
+				|| string.IsNullOrWhiteSpace(config.GoogleClientSecret))
 			{
 				throw new InvalidOperationException(
 					"Google OAuth client ID and secret must be provided in configuration.");

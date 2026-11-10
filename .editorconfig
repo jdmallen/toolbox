@@ -13,7 +13,32 @@
 # through the code.
 root = true
 
+# Indentation, matching committy and shelly. `dotnet format` reads only this
+# file (not JDMallen.Toolbox.sln.DotSettings), so it must be set here.
+
+# All files
+[*]
+indent_style = tab
+
+# Xml files
+[*.xml]
+indent_size = 2
+
+# Xml project files
+[*.{csproj,fsproj,vbproj,proj,slnx}]
+indent_size = 2
+
+# Xml config files
+[*.{props,targets,config,nuspec}]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+# C# files
 [*.cs]
+indent_size = 4
+tab_width = 4
 
 # Rider's "Best fit": tabs indent, and spaces after them nudge continuation
 # lines into alignment (e.g. "\t\t\t    || ..."). Mixed leading whitespace is

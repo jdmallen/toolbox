@@ -33,7 +33,7 @@ public static class SoftDeleteModelBuilderExtensions
 				// A query filter may only be defined on the root of an inheritance
 				// hierarchy, so derived types are skipped to avoid EF throwing.
 				if (entityType.BaseType is not null
-				    || !typeof(IEntityModel).IsAssignableFrom(entityType.ClrType))
+					|| !typeof(IEntityModel).IsAssignableFrom(entityType.ClrType))
 				{
 					continue;
 				}
@@ -83,8 +83,8 @@ public static class SoftDeleteModelBuilderExtensions
 				// Filters are only allowed on hierarchy roots, and owned types are
 				// filtered through their owner.
 				if (entityType.BaseType is not null
-				    || entityType.IsOwned()
-				    || entityType.FindProperty(options.PropertyName)?.ClrType != typeof(bool))
+					|| entityType.IsOwned()
+					|| entityType.FindProperty(options.PropertyName)?.ClrType != typeof(bool))
 				{
 					continue;
 				}

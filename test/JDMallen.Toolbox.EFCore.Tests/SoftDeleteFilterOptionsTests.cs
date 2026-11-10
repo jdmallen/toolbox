@@ -108,7 +108,8 @@ public class SoftDeleteFilterOptionsTests
 			=> (context.GetType(), ((WidgetContext)context).FilterOptions, designTime);
 	}
 
-	private static async Task<WidgetContext> SeededContextAsync(SoftDeleteFilterOptions filterOptions)
+	private static async Task<WidgetContext> SeededContextAsync(
+		SoftDeleteFilterOptions filterOptions)
 	{
 		WidgetContext context = CreateContext(filterOptions);
 
@@ -180,7 +181,8 @@ public class SoftDeleteFilterOptionsTests
 
 		Assert.Empty(context.Model.FindEntityType(typeof(Label))!.GetDeclaredQueryFilters());
 		Assert.Empty(context.Model.FindEntityType(typeof(Counter))!.GetDeclaredQueryFilters());
-		Assert.Empty(context.Model.FindEntityType(typeof(WidgetDetails))!.GetDeclaredQueryFilters());
+		Assert.Empty(
+			context.Model.FindEntityType(typeof(WidgetDetails))!.GetDeclaredQueryFilters());
 		Assert.Single(context.Model.FindEntityType(typeof(Widget))!.GetDeclaredQueryFilters());
 	}
 

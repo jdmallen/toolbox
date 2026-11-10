@@ -140,7 +140,9 @@ public class AzureCliTokenProviderTests
 	[Fact]
 	public async Task GetTokenAsync_NoAccessToken_Throws()
 	{
-		FakeProcessRunner runner = FakeProcessRunner.Returning(0, """{ "expires_on": 1794259231 }""");
+		FakeProcessRunner runner = FakeProcessRunner.Returning(
+			0,
+			"""{ "expires_on": 1794259231 }""");
 
 		var exception =
 			await Assert.ThrowsAsync<AzureCliCredentialException>(()
@@ -215,7 +217,9 @@ public class AzureCliTokenProviderTests
 	[Fact]
 	public async Task GetTokenAsync_LongStderr_IsTruncated()
 	{
-		FakeProcessRunner runner = FakeProcessRunner.Returning(1, standardError: new string('x', 5000));
+		FakeProcessRunner runner = FakeProcessRunner.Returning(
+			1,
+			standardError: new string('x', 5000));
 
 		var exception =
 			await Assert.ThrowsAsync<AzureCliCredentialException>(()
@@ -227,7 +231,8 @@ public class AzureCliTokenProviderTests
 	[Fact]
 	public async Task GetTokenAsync_AzMissing_SaysToInstall()
 	{
-		FakeProcessRunner runner = FakeProcessRunner.Throwing(new Win32Exception(2, "No such file"));
+		FakeProcessRunner runner =
+			FakeProcessRunner.Throwing(new Win32Exception(2, "No such file"));
 
 		var exception =
 			await Assert.ThrowsAsync<AzureCliCredentialException>(()

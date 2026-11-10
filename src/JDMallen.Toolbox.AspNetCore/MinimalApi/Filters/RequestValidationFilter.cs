@@ -34,7 +34,7 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 		// Try FluentValidation first
 
 		if (context.HttpContext.RequestServices
-			    .GetService(typeof(IValidator<TRequest>)) is IValidator<TRequest> validator)
+				.GetService(typeof(IValidator<TRequest>)) is IValidator<TRequest> validator)
 		{
 			ValidationResult? validationResult = await validator.ValidateAsync(
 				request,
@@ -48,14 +48,15 @@ public class RequestValidationFilter<TRequest> : IEndpointFilter
 		else
 		{
 			// Fallback to DataAnnotations
-			var validationResults = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
+			var validationResults =
+				new List<System.ComponentModel.DataAnnotations.ValidationResult>();
 			var validationContext = new ValidationContext(request);
 
 			if (Validator.TryValidateObject(
-				    request,
-				    validationContext,
-				    validationResults,
-				    true))
+					request,
+					validationContext,
+					validationResults,
+					true))
 			{
 				return await next(context);
 			}

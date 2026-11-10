@@ -4,6 +4,7 @@ using JDMallen.Toolbox.AspNetCore.Options;
 using JDMallen.Toolbox.AspNetCore.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+
 // ReSharper disable InconsistentNaming
 
 namespace JDMallen.Toolbox.AspNetCore.Utilities;
@@ -136,12 +137,12 @@ public class CustomPasswordValidator<TUser> : PasswordValidator<TUser>
 	private static int GetCharacterSet(string password)
 	{
 		bool containsLower = false,
-		     containsUpper = false,
-		     containsNumber = false,
-		     containsSym1 = false,
-		     containsSym2 = false,
-		     containsSpace = false,
-		     containsOther = false;
+			 containsUpper = false,
+			 containsNumber = false,
+			 containsSym1 = false,
+			 containsSym2 = false,
+			 containsSpace = false,
+			 containsOther = false;
 		var characters = 0;
 
 		foreach (char c in password)

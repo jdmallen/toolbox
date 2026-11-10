@@ -135,7 +135,7 @@ public sealed partial class AzureCliTokenProvider : IBearerTokenProvider
 	private static void Validate(AzureCliTokenProviderOptions options)
 	{
 		if (string.IsNullOrWhiteSpace(options.Scope)
-		    || !ScopePattern().IsMatch(options.Scope))
+			|| !ScopePattern().IsMatch(options.Scope))
 		{
 			throw new ArgumentException(
 				$"Scope must be an https URL such as \"{AzureOpenAIScopes.DEFAULT}\".",
@@ -143,7 +143,7 @@ public sealed partial class AzureCliTokenProvider : IBearerTokenProvider
 		}
 
 		if (!string.IsNullOrWhiteSpace(options.TenantId)
-		    && !TenantPattern().IsMatch(options.TenantId))
+			&& !TenantPattern().IsMatch(options.TenantId))
 		{
 			throw new ArgumentException(
 				"TenantId must be a tenant GUID or domain name.",
@@ -198,8 +198,8 @@ public sealed partial class AzureCliTokenProvider : IBearerTokenProvider
 		string error = result.StandardError.Trim();
 
 		if (_isWindows
-		    && (result.ExitCode == WINDOWS_COMMAND_NOT_FOUND_EXIT_CODE
-			    || error.Contains("is not recognized", StringComparison.OrdinalIgnoreCase)))
+			&& (result.ExitCode == WINDOWS_COMMAND_NOT_FOUND_EXIT_CODE
+				|| error.Contains("is not recognized", StringComparison.OrdinalIgnoreCase)))
 		{
 			return NotFoundMessage();
 		}

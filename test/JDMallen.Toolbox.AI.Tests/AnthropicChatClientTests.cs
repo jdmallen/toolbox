@@ -21,7 +21,8 @@ public class AnthropicChatClientTests
 		var handler = new StubHttpMessageHandler(Json("bad request", HttpStatusCode.BadRequest));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(()
+				=> client.GetCompletionAsync(Request));
 		Assert.Contains("Anthropic API request failed: BadRequest", exception.Message);
 	}
 
@@ -29,7 +30,8 @@ public class AnthropicChatClientTests
 	public async Task GetCompletionAsync_NoImages_SendsUserContentAsPlainString()
 	{
 		var handler =
-			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+			new StubHttpMessageHandler(
+				Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
 		await client.GetCompletionAsync(Request);
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
@@ -58,7 +60,8 @@ public class AnthropicChatClientTests
 	public async Task GetCompletionAsync_Success_ReturnsTextAndSendsAnthropicShape()
 	{
 		var handler = new StubHttpMessageHandler(
-			Json("""{ "content": [ { "type": "text", "text": "feat: add thing\n\nDetail." } ] }"""));
+			Json(
+				"""{ "content": [ { "type": "text", "text": "feat: add thing\n\nDetail." } ] }"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
 		string result = (await client.GetCompletionAsync(Request)).Text;
 		Assert.Equal("feat: add thing\n\nDetail.", result);
@@ -74,7 +77,8 @@ public class AnthropicChatClientTests
 	public async Task GetCompletionAsync_WithImages_SendsBase64ImageBlocksBeforeText()
 	{
 		var handler =
-			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+			new StubHttpMessageHandler(
+				Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
 		CompletionRequest request = Request with
 		{
@@ -83,7 +87,9 @@ public class AnthropicChatClientTests
 		await client.GetCompletionAsync(request);
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement[] blocks =
-			[.. body.RootElement.GetProperty("messages")[0].GetProperty("content").EnumerateArray()];
+		[
+			.. body.RootElement.GetProperty("messages")[0].GetProperty("content").EnumerateArray(),
+		];
 		Assert.Equal(2, blocks.Length);
 		Assert.Equal("image", blocks[0].GetProperty("type").GetString());
 		JsonElement source = blocks[0].GetProperty("source");
@@ -131,7 +137,8 @@ public class AnthropicChatClientTests
 	public async Task GetCompletionAsync_NoUsageInResponse_UsageIsNull()
 	{
 		var handler =
-			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+			new StubHttpMessageHandler(
+				Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
 
 		CompletionResult result = await client.GetCompletionAsync(Request);
@@ -145,7 +152,8 @@ public class AnthropicChatClientTests
 	public async Task CompleteAsync_Obsolete_StillReturnsText()
 	{
 		var handler =
-			new StubHttpMessageHandler(Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+			new StubHttpMessageHandler(
+				Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
 		var client = new AnthropicChatClient(handler.CreateClient(), Options);
 
 #pragma warning disable CS0618

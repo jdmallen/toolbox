@@ -52,7 +52,9 @@ public class OpenAICompatibleChatClientTests
 	[InlineData("echo '<reasoning>' > f.xml", "echo '<reasoning>' > f.xml")]
 	[InlineData("", "")]
 	[InlineData("   ", "")]
-	public async Task GetCompletionAsync_ReasoningBlocks_AreStripped(string content, string expected)
+	public async Task GetCompletionAsync_ReasoningBlocks_AreStripped(
+		string content,
+		string expected)
 	{
 		var handler = new StubHttpMessageHandler(
 			Completion(JsonSerializer.Serialize(content)));
@@ -113,7 +115,8 @@ public class OpenAICompatibleChatClientTests
 		var client = new OpenAICompatibleChatClient(handler.CreateClient(), Options);
 
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(()
+				=> client.GetCompletionAsync(Request));
 
 		Assert.Contains("OpenAI-compatible API request failed: NotFound", exception.Message);
 	}
@@ -205,7 +208,9 @@ public class OpenAICompatibleChatClientTests
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement[] parts =
-			[.. body.RootElement.GetProperty("messages")[1].GetProperty("content").EnumerateArray()];
+		[
+			.. body.RootElement.GetProperty("messages")[1].GetProperty("content").EnumerateArray(),
+		];
 
 		Assert.Equal(3, parts.Length);
 		Assert.Equal("image_url", parts[0].GetProperty("type").GetString());

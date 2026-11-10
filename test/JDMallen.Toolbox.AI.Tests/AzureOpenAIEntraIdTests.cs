@@ -35,7 +35,10 @@ public class AzureOpenAIEntraIdTests
 		var tokens = new StaticTokenProvider();
 		var client = new AzureOpenAIChatClient(
 			handler.CreateClient(),
-			AzureOpenAIClientOptions.ForEntraId("https://test.openai.azure.com", "gpt-6-luna", tokens));
+			AzureOpenAIClientOptions.ForEntraId(
+				"https://test.openai.azure.com",
+				"gpt-6-luna",
+				tokens));
 
 		CompletionResult result = await client.GetCompletionAsync(Request);
 
@@ -49,10 +52,11 @@ public class AzureOpenAIEntraIdTests
 	public async Task GetCompletionAsync_TokenProviderSetWithApiKey_ProviderWins()
 	{
 		StubHttpMessageHandler handler = OkHandler();
-		var options = new AzureOpenAIClientOptions("leftover-key", "https://test.openai.azure.com", "d")
-		{
-			TokenProvider = new StaticTokenProvider(),
-		};
+		var options =
+			new AzureOpenAIClientOptions("leftover-key", "https://test.openai.azure.com", "d")
+			{
+				TokenProvider = new StaticTokenProvider(),
+			};
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), options);
 
 		await client.GetCompletionAsync(Request);
@@ -90,7 +94,8 @@ public class AzureOpenAIEntraIdTests
 				new StaticTokenProvider()));
 
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(()
+				=> client.GetCompletionAsync(Request));
 
 		Assert.Contains("Cognitive Services OpenAI User", exception.Message);
 		Assert.Contains("PermissionDenied", exception.Message);
@@ -107,7 +112,8 @@ public class AzureOpenAIEntraIdTests
 			new AzureOpenAIClientOptions("key", "https://test.openai.azure.com", "d"));
 
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(()
+				=> client.GetCompletionAsync(Request));
 
 		Assert.DoesNotContain("Entra ID", exception.Message);
 		Assert.Equal(HttpStatusCode.Unauthorized, exception.StatusCode);
@@ -125,7 +131,8 @@ public class AzureOpenAIEntraIdTests
 				new StaticTokenProvider()));
 
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(()
+				=> client.GetCompletionAsync(Request));
 
 		Assert.DoesNotContain("Entra ID", exception.Message);
 	}
@@ -140,7 +147,8 @@ public class AzureOpenAIEntraIdTests
 			AzureOpenAIClientOptions.ForEntraId("http://test.openai.azure.com", "d", tokens));
 
 		var exception =
-			await Assert.ThrowsAsync<InvalidOperationException>(() => client.GetCompletionAsync(Request));
+			await Assert.ThrowsAsync<InvalidOperationException>(()
+				=> client.GetCompletionAsync(Request));
 
 		Assert.Contains("https", exception.Message);
 		Assert.Equal(0, tokens.Calls);
@@ -153,7 +161,10 @@ public class AzureOpenAIEntraIdTests
 		StubHttpMessageHandler handler = OkHandler();
 		var client = new AzureOpenAIChatClient(
 			handler.CreateClient(),
-			AzureOpenAIClientOptions.ForEntraId("http://localhost:8080", "d", new StaticTokenProvider()));
+			AzureOpenAIClientOptions.ForEntraId(
+				"http://localhost:8080",
+				"d",
+				new StaticTokenProvider()));
 
 		await client.GetCompletionAsync(Request);
 
@@ -193,7 +204,10 @@ public class AzureOpenAIEntraIdTests
 		StubHttpMessageHandler handler = OkHandler();
 		var client = new AzureOpenAIChatClient(
 			handler.CreateClient(),
-			new AzureOpenAIClientOptions("key", "https://x.openai.azure.com/openai/v1/", "gpt-6-luna"));
+			new AzureOpenAIClientOptions(
+				"key",
+				"https://x.openai.azure.com/openai/v1/",
+				"gpt-6-luna"));
 
 		await client.GetCompletionAsync(Request);
 

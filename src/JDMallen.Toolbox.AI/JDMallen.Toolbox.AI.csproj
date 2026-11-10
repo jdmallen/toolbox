@@ -1,29 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <AssemblyName>JDMallen.Toolbox.AI</AssemblyName>
-        <RootNamespace>JDMallen.Toolbox.AI</RootNamespace>
-        <TargetFramework>net10.0</TargetFramework>
-        <PackageId>JDMallen.Toolbox.AI</PackageId>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
+	<PropertyGroup>
+		<AssemblyName>JDMallen.Toolbox.AI</AssemblyName>
+		<RootNamespace>JDMallen.Toolbox.AI</RootNamespace>
+		<TargetFramework>net10.0</TargetFramework>
+		<PackageId>JDMallen.Toolbox.AI</PackageId>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 
-        <!-- Package validation: pack fails on any API break against the
-             baseline that isn't recorded in CompatibilitySuppressions.xml. -->
-        <EnablePackageValidation>true</EnablePackageValidation>
-        <PackageValidationBaselineVersion>4.4.0</PackageValidationBaselineVersion>
+		<!-- Package validation: pack fails on any API break against the
+				 baseline that isn't recorded in CompatibilitySuppressions.xml. -->
+		<EnablePackageValidation>true</EnablePackageValidation>
+		<PackageValidationBaselineVersion>4.4.0</PackageValidationBaselineVersion>
 
-        <Description>Minimal, trim-safe chat completion clients for Anthropic, Azure OpenAI, and any OpenAI-compatible endpoint (including self-hosted models) over raw HTTP with source-generated JSON.</Description>
-        <IsTrimmable>true</IsTrimmable>
-        <IsAotCompatible>true</IsAotCompatible>
-    </PropertyGroup>
+		<Description>Minimal, trim-safe chat completion clients for Anthropic, Azure OpenAI, and any OpenAI-compatible endpoint (including self-hosted models) over raw HTTP with source-generated JSON.</Description>
+		<IsTrimmable>true</IsTrimmable>
+		<IsAotCompatible>true</IsAotCompatible>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="/"/>
-    </ItemGroup>
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="/"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <!-- The process seam (IProcessRunner) behind AzureCliTokenProvider. -->
-        <InternalsVisibleTo Include="JDMallen.Toolbox.AI.Tests"/>
-    </ItemGroup>
+	<ItemGroup>
+		<!-- The process seam (IProcessRunner) behind AzureCliTokenProvider. -->
+		<InternalsVisibleTo Include="JDMallen.Toolbox.AI.Tests"/>
+	</ItemGroup>
 
 </Project>

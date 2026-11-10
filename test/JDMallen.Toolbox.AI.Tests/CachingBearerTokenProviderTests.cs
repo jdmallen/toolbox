@@ -30,7 +30,8 @@ public class CachingBearerTokenProviderTests
 
 		public Exception? FailWith { get; set; }
 
-		public async ValueTask<BearerToken> GetTokenAsync(CancellationToken cancellationToken = default)
+		public async ValueTask<BearerToken> GetTokenAsync(
+			CancellationToken cancellationToken = default)
 		{
 			int call = Interlocked.Increment(ref _calls);
 
@@ -135,6 +136,7 @@ public class CachingBearerTokenProviderTests
 		using var cancellation = new CancellationTokenSource();
 
 		Task<BearerToken> cancelled = cache.GetTokenAsync(cancellation.Token).AsTask();
+
 		// Deliberately not cancellation.Token: this caller must outlive the
 		// cancelled one, so it can't share its token.
 		Task<BearerToken> patient = cache.GetTokenAsync(CancellationToken.None).AsTask();

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+
 // ReSharper disable InconsistentNaming
 
 namespace JDMallen.Toolbox.AspNetCore.MinimalApi.Pagination;

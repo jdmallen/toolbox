@@ -216,11 +216,11 @@ public struct MiniGuid
 	{
 		return obj switch
 		{
-			null              => 1,
-			Guid guid         => CompareTo(guid),
+			null => 1,
+			Guid guid => CompareTo(guid),
 			MiniGuid miniGuid => CompareTo(miniGuid),
-			string str        => string.Compare(Value, str, StringComparison.Ordinal),
-			_                 => throw new ArgumentException("Object is not a MiniGuid", nameof(obj)),
+			string str => string.Compare(Value, str, StringComparison.Ordinal),
+			_ => throw new ArgumentException("Object is not a MiniGuid", nameof(obj)),
 		};
 	}
 

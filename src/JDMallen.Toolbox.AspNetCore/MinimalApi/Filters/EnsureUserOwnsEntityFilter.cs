@@ -67,8 +67,8 @@ public class EnsureUserOwnsEntityFilter<TEntity> : IEndpointFilter
 	{
 		// Try route values first
 		if (context.HttpContext.Request.RouteValues.TryGetValue(
-			    "id",
-			    out object? routeId))
+				"id",
+				out object? routeId))
 		{
 			if (Guid.TryParse(routeId?.ToString(), out Guid guid))
 			{

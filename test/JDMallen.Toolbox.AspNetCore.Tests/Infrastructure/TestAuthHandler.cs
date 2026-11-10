@@ -32,7 +32,7 @@ internal sealed class TestAuthHandler(
 	protected override Task<AuthenticateResult> HandleAuthenticateAsync()
 	{
 		if (!Request.Headers.TryGetValue(USER_HEADER, out StringValues userId)
-		    || string.IsNullOrWhiteSpace(userId))
+			|| string.IsNullOrWhiteSpace(userId))
 		{
 			return Task.FromResult(AuthenticateResult.NoResult());
 		}

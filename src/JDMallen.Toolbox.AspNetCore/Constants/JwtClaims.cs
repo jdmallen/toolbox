@@ -1,6 +1,6 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
-// ReSharper disable InconsistentNaming
 
+// ReSharper disable InconsistentNaming
 /// <summary>
 /// Constants for custom JWT claim values used in application authorization.
 /// </summary>

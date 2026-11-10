@@ -72,7 +72,7 @@ public sealed class AnthropicChatClient(
 		var sb = new StringBuilder();
 
 		foreach (AnthropicBlock block in (result?.Content ?? [])
-		         .Where(block => block.Type == "text"))
+				 .Where(block => block.Type == "text"))
 		{
 			sb.Append(block.Text);
 		}

@@ -139,7 +139,7 @@ public sealed class AzureOpenAIChatClient(
 		string trimmed = endpoint.TrimEnd('/');
 
 		foreach (string apiRoot in PastedApiRoots.Where(apiRoot
-			         => trimmed.EndsWith(apiRoot, StringComparison.OrdinalIgnoreCase)))
+					 => trimmed.EndsWith(apiRoot, StringComparison.OrdinalIgnoreCase)))
 		{
 			return trimmed[..^apiRoot.Length].TrimEnd('/');
 		}

@@ -1,6 +1,6 @@
 ﻿namespace JDMallen.Toolbox.AspNetCore.Constants;
-// ReSharper disable InconsistentNaming
 
+// ReSharper disable InconsistentNaming
 /// <summary>
 /// Additional JWT claim type constants not covered by standard claims.
 /// </summary>

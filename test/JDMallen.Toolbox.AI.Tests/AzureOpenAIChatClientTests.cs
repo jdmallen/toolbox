@@ -38,7 +38,8 @@ public class AzureOpenAIChatClientTests
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
 		var exception =
-			await Assert.ThrowsAsync<HttpRequestException>(() => client.GetCompletionAsync(Request));
+			await Assert.ThrowsAsync<HttpRequestException>(()
+				=> client.GetCompletionAsync(Request));
 
 		Assert.Contains("Azure OpenAI API request failed: Unauthorized", exception.Message);
 	}
@@ -71,7 +72,9 @@ public class AzureOpenAIChatClientTests
 
 		Assert.Equal("feat: add thing", result);
 		Assert.Equal("test-azure-key", handler.RequestHeaders["api-key"]);
-		Assert.Contains("/openai/deployments/gpt-4/chat/completions", handler.RequestUri?.ToString());
+		Assert.Contains(
+			"/openai/deployments/gpt-4/chat/completions",
+			handler.RequestUri?.ToString());
 		Assert.Contains("api-version=", handler.RequestUri?.ToString());
 		Assert.Contains("\"max_completion_tokens\":500", handler.RequestBody);
 		Assert.Contains("\"role\":\"system\"", handler.RequestBody);
@@ -136,7 +139,9 @@ public class AzureOpenAIChatClientTests
 
 		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
 		JsonElement[] parts =
-			[.. body.RootElement.GetProperty("messages")[1].GetProperty("content").EnumerateArray()];
+		[
+			.. body.RootElement.GetProperty("messages")[1].GetProperty("content").EnumerateArray(),
+		];
 
 		Assert.Equal(3, parts.Length);
 		Assert.Equal("image_url", parts[0].GetProperty("type").GetString());
@@ -182,7 +187,8 @@ public class AzureOpenAIChatClientTests
 	public async Task GetCompletionAsync_NoChoices_StillReportsUsage()
 	{
 		var handler = new StubHttpMessageHandler(
-			Json("""{ "choices": [], "usage": { "prompt_tokens": 50, "completion_tokens": 0 } }"""));
+			Json(
+				"""{ "choices": [], "usage": { "prompt_tokens": 50, "completion_tokens": 0 } }"""));
 		var client = new AzureOpenAIChatClient(handler.CreateClient(), Options);
 
 		CompletionResult result = await client.GetCompletionAsync(Request);
