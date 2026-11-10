@@ -5,6 +5,40 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.0]
+
+Azure.Identity sign-in for the Azure OpenAI client, in a new package so
+`JDMallen.Toolbox.AI` itself keeps no Azure SDK dependency and stays trim- and
+AOT-safe. No changes to the existing packages' APIs.
+
+### Added
+
+New package **`JDMallen.Toolbox.AI.Azure`** (net10.0; depends on
+`Azure.Identity` 1.21.0):
+
+- **`TokenCredentialBearerTokenProvider`**: adapts any Azure.Identity
+  `TokenCredential` to `IBearerTokenProvider`, for
+  `AzureOpenAIClientOptions.ForEntraId`. Scope (default
+  `AzureOpenAIScopes.DEFAULT`) and optional tenant go in the
+  `TokenRequestContext`.
+- **`AzureCredentialFactory`**:
+  - `Create(options)`: a `TokenCredential` for an **`AzureCredentialKind`**:
+    `Default` (`DefaultAzureCredential`, narrowed by `AZURE_TOKEN_CREDENTIALS`),
+    `AzureCli`, `AzureDeveloperCli`, `InteractiveBrowser`, or `DeviceCode`.
+  - `CreateTokenProvider(options, scope)`: the same, wrapped in
+    `CachingBearerTokenProvider`. For an interactive kind with no saved
+    sign-in, the first request signs in and saves the `AuthenticationRecord`.
+  - `SignInAsync(options, scope)`: sign in ahead of time (for a setup
+    command), returning the account as **`AzureSignInResult`**.
+  - `IsInteractive(kind)`.
+- **`AzureCredentialOptions`**: `Kind`, `TenantId`, `CacheName` (persistent
+  token cache name), `AuthenticationRecordPath`, and
+  `AllowInteractiveAuthentication` (false: fail with
+  `AuthenticationRequiredException` rather than prompt, e.g. in a git hook).
+  The interactive kinds' token cache is encrypted by the OS (libsecret,
+  Keychain, DPAPI) and never written unencrypted; with no keyring they throw
+  `CredentialUnavailableException` suggesting the Azure CLI.
+
 ## [4.5.0]
 
 Keyless Azure OpenAI: Microsoft Entra ID bearer tokens instead of API keys.

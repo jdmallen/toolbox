@@ -1,32 +1,32 @@
 <Project>
-    <PropertyGroup>
-        <!-- Common package metadata -->
-        <Version>4.5.0</Version>
-        <Authors>J.D. Mallen</Authors>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
-        <RepositoryType>git</RepositoryType>
-        <LangVersion>latest</LangVersion>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
+	<PropertyGroup>
+		<!-- Common package metadata -->
+		<Version>4.6.0</Version>
+		<Authors>J.D. Mallen</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/jdmallen/toolbox</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 
-        <!-- Build settings -->
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<!-- Build settings -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-        <!-- Package settings -->
-        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-        <!-- Embed the PDBs in the assemblies (rather than shipping separate
-             .snupkg symbol packages) so stack traces stay debuggable without a
-             symbol-server round trip. -->
-        <DebugType>embedded</DebugType>
-        <!-- Source Link: let debuggers fetch the exact source from GitHub for
-             the embedded symbols. The .NET SDK supplies the GitHub provider, so
-             no PackageReference is needed. Tracked sources are fetched on demand
-             (not embedded), so packages stay lean; EmbedUntrackedSources covers
-             generated files. CI builds get deterministic, repo-relative source
-             paths so the Source Link URLs resolve to the right commit. -->
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-    </PropertyGroup>
+		<!-- Package settings -->
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<!-- Embed the PDBs in the assemblies (rather than shipping separate
+				 .snupkg symbol packages) so stack traces stay debuggable without a
+				 symbol-server round trip. -->
+		<DebugType>embedded</DebugType>
+		<!-- Source Link: let debuggers fetch the exact source from GitHub for
+				 the embedded symbols. The .NET SDK supplies the GitHub provider, so
+				 no PackageReference is needed. Tracked sources are fetched on demand
+				 (not embedded), so packages stay lean; EmbedUntrackedSources covers
+				 generated files. CI builds get deterministic, repo-relative source
+				 paths so the Source Link URLs resolve to the right commit. -->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+	</PropertyGroup>
 </Project>

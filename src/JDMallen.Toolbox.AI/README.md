@@ -160,7 +160,10 @@ var client = new AzureOpenAIChatClient(
   `AzureOpenAIScopes.COGNITIVE_SERVICES` is also accepted by Azure OpenAI and
   Foundry resources.
 - `IBearerTokenProvider` is the seam: implement it to use any other source of
-  tokens, such as an Azure.Identity `TokenCredential`.
+  tokens. For Azure.Identity (browser or device code sign-in, managed
+  identity, `DefaultAzureCredential`), use the
+  [JDMallen.Toolbox.AI.Azure](https://www.nuget.org/packages/JDMallen.Toolbox.AI.Azure)
+  package.
 
 Setup on the Azure side:
 

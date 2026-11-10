@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>JDMallen.Toolbox.AI.Azure</AssemblyName>
+		<RootNamespace>JDMallen.Toolbox.AI.Azure</RootNamespace>
+		<TargetFramework>net10.0</TargetFramework>
+		<PackageId>JDMallen.Toolbox.AI.Azure</PackageId>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<!-- Package validation: no baseline until a version has shipped. -->
+		<EnablePackageValidation>true</EnablePackageValidation>
+
+		<Description>Microsoft Entra ID sign-in for JDMallen.Toolbox.AI's Azure OpenAI client via Azure.Identity: any TokenCredential as a bearer token provider, plus a credential factory with a persistent token cache for one-shot CLIs.</Description>
+		<!-- Azure.Identity (MSAL) makes no trim/AOT claims, so neither does
+				 this package. JDMallen.Toolbox.AI's own AzureCliTokenProvider is
+				 the AOT-safe alternative. -->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="/"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Identity" Version="1.21.0"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\JDMallen.Toolbox.AI\JDMallen.Toolbox.AI.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="JDMallen.Toolbox.AI.Azure.Tests"/>
+	</ItemGroup>
+
+</Project>
