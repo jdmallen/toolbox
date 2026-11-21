@@ -134,29 +134,31 @@ public sealed partial class AzureCliTokenProvider : IBearerTokenProvider
 
 	private static void Validate(AzureCliTokenProviderOptions options)
 	{
-		if (string.IsNullOrWhiteSpace(options.Scope)
-			|| !ScopePattern().IsMatch(options.Scope))
+		string? invalidProperty = options.FindInvalidProperty();
+		if (invalidProperty is null)
 		{
-			throw new ArgumentException(
+			return;
+		}
+
+		string message = invalidProperty switch
+		{
+			nameof(AzureCliTokenProviderOptions.Scope) =>
 				$"Scope must be an https URL such as \"{AzureOpenAIScopes.DEFAULT}\".",
-				nameof(options));
-		}
-
-		if (!string.IsNullOrWhiteSpace(options.TenantId)
-			&& !TenantPattern().IsMatch(options.TenantId))
-		{
-			throw new ArgumentException(
+			nameof(AzureCliTokenProviderOptions.TenantId) =>
 				"TenantId must be a tenant GUID or domain name.",
-				nameof(options));
-		}
+			_ => "Timeout must be greater than zero.",
+		};
 
-		if (options.Timeout <= TimeSpan.Zero)
-		{
-			throw new ArgumentException(
-				"Timeout must be greater than zero.",
-				nameof(options));
-		}
+		throw new ArgumentException(message, nameof(options));
 	}
+
+	/// <summary>Whether <paramref name="scope" /> is an https URL safe to pass to <c>az</c>.</summary>
+	internal static bool IsValidScope(string? scope) =>
+		!string.IsNullOrWhiteSpace(scope) && ScopePattern().IsMatch(scope);
+
+	/// <summary>Whether <paramref name="tenantId" /> is empty, a tenant GUID, or a domain name.</summary>
+	internal static bool IsValidTenant(string? tenantId) =>
+		string.IsNullOrWhiteSpace(tenantId) || TenantPattern().IsMatch(tenantId);
 
 	private BearerToken ParseToken(string standardOutput)
 	{
@@ -267,6 +269,23 @@ public sealed record AzureCliTokenProviderOptions
 	/// <c>az</c> from PATH.
 	/// </summary>
 	public string? AzExecutablePath { get; init; }
+
+	/// <summary>
+	/// The first property <see cref="AzureCliTokenProvider" />'s constructor
+	/// would reject, checked in the order <see cref="Scope" />,
+	/// <see cref="TenantId" />, <see cref="Timeout" />; null when all are valid.
+	/// Lets a caller name the setting to fix without catching the
+	/// <see cref="ArgumentException" />, whose parameter is the whole options.
+	/// </summary>
+	/// <returns>
+	/// <c>nameof(Scope)</c>, <c>nameof(TenantId)</c>, <c>nameof(Timeout)</c>,
+	/// or null.
+	/// </returns>
+	public string? FindInvalidProperty() =>
+		!AzureCliTokenProvider.IsValidScope(Scope) ? nameof(Scope)
+		: !AzureCliTokenProvider.IsValidTenant(TenantId) ? nameof(TenantId)
+		: Timeout <= TimeSpan.Zero ? nameof(Timeout)
+		: null;
 }
 
 /// <summary>

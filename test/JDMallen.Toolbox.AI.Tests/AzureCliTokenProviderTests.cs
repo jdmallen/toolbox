@@ -309,6 +309,45 @@ public class AzureCliTokenProviderTests
 	}
 
 	[Fact]
+	public void FindInvalidProperty_Defaults_IsNull()
+		=> Assert.Null(new AzureCliTokenProviderOptions().FindInvalidProperty());
+
+	[Theory]
+	[InlineData("--debug", null, 30, "Scope")]
+	[InlineData(AzureOpenAIScopes.DEFAULT, "contoso & calc", 30, "TenantId")]
+	[InlineData(AzureOpenAIScopes.DEFAULT, null, 0, "Timeout")]
+	[InlineData("--debug", "contoso & calc", 0, "Scope")]
+	[InlineData(AzureOpenAIScopes.DEFAULT, "contoso.onmicrosoft.com", 5, null)]
+	[InlineData(AzureOpenAIScopes.DEFAULT, "  ", 5, null)]
+	public void FindInvalidProperty_NamesFirstInvalidProperty(
+		string scope,
+		string? tenantId,
+		int timeoutSeconds,
+		string? expected)
+	{
+		var options = new AzureCliTokenProviderOptions
+		{
+			Scope = scope,
+			TenantId = tenantId,
+			Timeout = TimeSpan.FromSeconds(timeoutSeconds),
+		};
+
+		Assert.Equal(expected, options.FindInvalidProperty());
+	}
+
+	[Fact]
+	public void Constructor_InvalidTenant_ThrowsWithTenantMessage()
+	{
+		var options = new AzureCliTokenProviderOptions { TenantId = "--subscription" };
+
+		var exception = Assert.Throws<ArgumentException>(()
+			=> Provider(FakeProcessRunner.Returning(0), options));
+
+		Assert.Equal("options", exception.ParamName);
+		Assert.StartsWith("TenantId must be", exception.Message, StringComparison.Ordinal);
+	}
+
+	[Fact]
 	public void BearerToken_ToString_HidesValue()
 	{
 		var token = new BearerToken(FAKE_TOKEN, DateTimeOffset.UnixEpoch);

@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.0]
+
+### Added
+
+- **`AzureCliTokenProviderOptions.FindInvalidProperty()`** in
+  `JDMallen.Toolbox.AI`: the first property `AzureCliTokenProvider`'s
+  constructor would reject, as `nameof(Scope)`, `nameof(TenantId)` or
+  `nameof(Timeout)` (checked in that order), or null when all are valid. The
+  constructor still throws `ArgumentException` naming the whole `options`
+  parameter; this lets a caller point at the one setting to fix without
+  catching that exception and retrying with values removed.
+
+### Changed
+
+- `AzureCliTokenProvider`'s constructor validates through
+  `FindInvalidProperty()`, so the two always agree. The exception type,
+  parameter name and messages are unchanged.
+- `JDMallen.Toolbox.AI.Azure` is versioned 4.7.0 alongside it, with no
+  changes of its own.
+
 ## [4.6.0]
 
 Azure.Identity sign-in for the Azure OpenAI client, in a new package so
