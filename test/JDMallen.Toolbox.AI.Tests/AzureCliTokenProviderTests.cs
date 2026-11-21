@@ -312,6 +312,7 @@ public class AzureCliTokenProviderTests
 	public void FindInvalidProperty_Defaults_IsNull()
 		=> Assert.Null(new AzureCliTokenProviderOptions().FindInvalidProperty());
 
+	// @formatter:off
 	[Theory]
 	[InlineData("--debug", null, 30, "Scope")]
 	[InlineData(AzureOpenAIScopes.DEFAULT, "contoso & calc", 30, "TenantId")]
@@ -319,6 +320,7 @@ public class AzureCliTokenProviderTests
 	[InlineData("--debug", "contoso & calc", 0, "Scope")]
 	[InlineData(AzureOpenAIScopes.DEFAULT, "contoso.onmicrosoft.com", 5, null)]
 	[InlineData(AzureOpenAIScopes.DEFAULT, "  ", 5, null)]
+	// @formatter:on
 	public void FindInvalidProperty_NamesFirstInvalidProperty(
 		string scope,
 		string? tenantId,
