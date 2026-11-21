@@ -4,8 +4,22 @@ namespace JDMallen.Toolbox.AI;
 /// Connection settings for <see cref="AnthropicChatClient" />.
 /// </summary>
 /// <param name="ApiKey">The Anthropic API key.</param>
-/// <param name="Model">The model identifier, e.g. "claude-haiku-4-5-20251001".</param>
-public sealed record AnthropicClientOptions(string ApiKey, string Model);
+/// <param name="Model">The model identifier, e.g. "claude-haiku-5-5".</param>
+public sealed record AnthropicClientOptions(string ApiKey, string Model)
+{
+	/// <summary>
+	/// Whether to leave <see cref="CompletionRequest.Temperature" /> out of the
+	/// request. Newer Claude models (Claude Haiku 5.5, Claude Opus 4.7 and
+	/// later) reject a <c>temperature</c> other than their default with a 400,
+	/// so set this for them; older models such as Claude Haiku 4.5 accept it.
+	/// False (the default) sends it, as before.
+	/// </summary>
+	/// <remarks>
+	/// An init property rather than a constructor parameter, so adding it did not
+	/// change the constructor callers compiled against.
+	/// </remarks>
+	public bool OmitTemperature { get; init; }
+}
 
 /// <summary>
 /// Connection settings for <see cref="AzureOpenAIChatClient" />.

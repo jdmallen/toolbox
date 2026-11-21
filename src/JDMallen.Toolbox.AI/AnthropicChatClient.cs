@@ -40,7 +40,7 @@ public sealed class AnthropicChatClient(
 		var body = new AnthropicRequest(
 			options.Model,
 			request.MaxTokens,
-			request.Temperature,
+			options.OmitTemperature ? null : request.Temperature,
 			request.SystemPrompt,
 			[new AnthropicMessage("user", BuildUserContent(request))]);
 
@@ -135,7 +135,8 @@ internal sealed record AnthropicRequest(
 	[property: JsonPropertyName("max_tokens")]
 	int MaxTokens,
 	[property: JsonPropertyName("temperature")]
-	double Temperature,
+	[property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	double? Temperature,
 	[property: JsonPropertyName("system")] string System,
 	[property: JsonPropertyName("messages")]
 	IReadOnlyList<AnthropicMessage> Messages);

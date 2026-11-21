@@ -74,6 +74,31 @@ public class AnthropicChatClientTests
 	}
 
 	[Fact]
+	public async Task GetCompletionAsync_SendsTemperatureByDefault()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+		var client = new AnthropicChatClient(handler.CreateClient(), Options);
+		await client.GetCompletionAsync(Request);
+		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
+		Assert.Equal(0.1, body.RootElement.GetProperty("temperature").GetDouble());
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_OmitTemperature_LeavesItOut()
+	{
+		var handler = new StubHttpMessageHandler(
+			Json("""{ "content": [ { "type": "text", "text": "ok" } ] }"""));
+		var client = new AnthropicChatClient(
+			handler.CreateClient(),
+			Options with { OmitTemperature = true });
+		await client.GetCompletionAsync(Request);
+		using JsonDocument body = JsonDocument.Parse(handler.RequestBody!);
+		Assert.False(body.RootElement.TryGetProperty("temperature", out _));
+		Assert.Contains("\"max_tokens\":500", handler.RequestBody);
+	}
+
+	[Fact]
 	public async Task GetCompletionAsync_WithImages_SendsBase64ImageBlocksBeforeText()
 	{
 		var handler =
