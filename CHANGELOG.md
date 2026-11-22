@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.9.0]
+
+### Added
+
+- **`OpenAICompatibleClientOptions.IsReasoningModel`**: for OpenAI's
+  reasoning models (o-series, gpt-5 reasoning models). When set, the budget
+  is sent as `max_completion_tokens` instead of `max_tokens`, which OpenAI
+  documents as not compatible with o-series models, and `temperature` is
+  left out, matching `AzureOpenAIClientOptions.IsReasoningModel`. It
+  defaults to false, which sends `max_tokens` and `temperature` as before,
+  so self-hosted runners and existing callers are unaffected.
+
+### Changed
+
+- `JDMallen.Toolbox.AI.Azure` is versioned 4.9.0 alongside it, with no
+  changes of its own.
+
 ## [4.8.0]
 
 ### Added

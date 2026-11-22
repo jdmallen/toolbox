@@ -195,6 +195,23 @@ var client = new OpenAICompatibleChatClient(
   sent, which is what most local runners expect.
 - A cold local model can take minutes to load, so raise the `HttpClient`
   timeout above the 100-second default.
+- For OpenAI's own reasoning models (o-series, gpt-5 reasoning models) on
+  `https://api.openai.com/v1`, set `IsReasoningModel`: the budget is then
+  sent as `max_completion_tokens` (OpenAI documents `max_tokens` as not
+  compatible with o-series models) and `temperature` is left out, as for
+  Azure. Leave it off for self-hosted runners, which expect `max_tokens`.
+
+```csharp
+var client = new OpenAICompatibleChatClient(
+	httpClient,
+	new OpenAICompatibleClientOptions(
+		"https://api.openai.com/v1",
+		"o4-mini",
+		apiKey)
+	{
+		IsReasoningModel = true,
+	});
+```
 
 **Reasoning models.** This client drops any `reasoning_content` field and strips
 inline `<think>`, `<thinking>`, and `<reasoning>` blocks from the answer. If the

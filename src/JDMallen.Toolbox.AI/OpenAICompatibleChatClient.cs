@@ -56,8 +56,9 @@ public sealed class OpenAICompatibleChatClient(
 				new OpenAICompatibleMessage("system", request.SystemPrompt),
 				new OpenAICompatibleMessage("user", OpenAIContentParts.Build(request)),
 			],
-			request.MaxTokens,
-			request.Temperature);
+			options.IsReasoningModel ? null : request.MaxTokens,
+			options.IsReasoningModel ? request.MaxTokens : null,
+			options.IsReasoningModel ? null : request.Temperature);
 
 		var url = $"{options.BaseUrl.TrimEnd('/')}/chat/completions";
 
@@ -194,9 +195,14 @@ internal sealed record OpenAICompatibleRequest(
 	[property: JsonPropertyName("messages")]
 	IReadOnlyList<OpenAICompatibleMessage> Messages,
 	[property: JsonPropertyName("max_tokens")]
-	int MaxTokens,
+	[property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	int? MaxTokens,
+	[property: JsonPropertyName("max_completion_tokens")]
+	[property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	int? MaxCompletionTokens,
 	[property: JsonPropertyName("temperature")]
-	double Temperature)
+	[property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	double? Temperature)
 {
 #pragma warning disable CA1822
 

@@ -173,7 +173,28 @@ public class OpenAICompatibleChatClientTests
 		Assert.Equal("http://10.10.0.20:8080/v1/chat/completions", handler.RequestUri?.ToString());
 		Assert.Contains("\"model\":\"thinkingcap-27b-q4km\"", handler.RequestBody);
 		Assert.Contains("\"max_tokens\":500", handler.RequestBody);
+		Assert.Contains("\"temperature\":", handler.RequestBody);
+		Assert.DoesNotContain("max_completion_tokens", handler.RequestBody);
 		Assert.Contains("\"role\":\"system\"", handler.RequestBody);
+		Assert.Contains("\"stream\":false", handler.RequestBody);
+	}
+
+	[Fact]
+	public async Task GetCompletionAsync_ReasoningModel_SendsMaxCompletionTokensAndNoTemperature()
+	{
+		var handler = new StubHttpMessageHandler(Completion("\"ls -la\""));
+		var client = new OpenAICompatibleChatClient(
+			handler.CreateClient(),
+			new OpenAICompatibleClientOptions("https://api.openai.com/v1", "o4-mini", "sk-test")
+			{
+				IsReasoningModel = true,
+			});
+
+		await client.GetCompletionAsync(Request);
+
+		Assert.Contains("\"max_completion_tokens\":500", handler.RequestBody);
+		Assert.DoesNotContain("\"max_tokens\"", handler.RequestBody);
+		Assert.DoesNotContain("temperature", handler.RequestBody);
 		Assert.Contains("\"stream\":false", handler.RequestBody);
 	}
 

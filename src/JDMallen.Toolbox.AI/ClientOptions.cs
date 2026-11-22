@@ -114,4 +114,24 @@ public sealed record AzureOpenAIClientOptions(
 public sealed record OpenAICompatibleClientOptions(
 	string BaseUrl,
 	string Model,
-	string? ApiKey = null);
+	string? ApiKey = null)
+{
+	/// <summary>
+	/// Whether <see cref="Model" /> is a reasoning model (OpenAI's o-series and
+	/// gpt-5 reasoning models). OpenAI documents <c>max_tokens</c> as not
+	/// compatible with them, so the budget is sent as
+	/// <c>max_completion_tokens</c> instead, and
+	/// <see cref="CompletionRequest.Temperature" /> is not sent, as for
+	/// <see cref="AzureOpenAIClientOptions.IsReasoningModel" />. Reasoning
+	/// tokens come out of that budget, so such a model usually needs a larger
+	/// <see cref="CompletionRequest.MaxTokens" />.
+	/// </summary>
+	/// <remarks>
+	/// False (the default) sends <c>max_tokens</c> and <c>temperature</c> as
+	/// before: self-hosted runners understand those, and not all of them honor
+	/// <c>max_completion_tokens</c>. An init property rather than a constructor
+	/// parameter, so adding it did not change the constructor callers compiled
+	/// against.
+	/// </remarks>
+	public bool IsReasoningModel { get; init; }
+}
